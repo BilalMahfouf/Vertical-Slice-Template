@@ -1,4 +1,5 @@
 using VeterinaryApi.Common.CQRS;
+using VeterinaryApi.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,11 @@ builder.Services.Scan(scan => scan.FromAssembliesOf(typeof(Program))
     .AddClasses(classes => classes
         .AssignableTo(typeof(ICommandHandler<,>)), publicOnly: false)
     .AsImplementedInterfaces().WithScopedLifetime());
+
+builder.Services.AddInfrastructure();
+
+
+
 
 var app = builder.Build();
 

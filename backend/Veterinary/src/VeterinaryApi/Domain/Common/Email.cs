@@ -2,14 +2,14 @@
 
 public class Email
 {
-    public string Address { get; set; } = string.Empty;
+    public string Value { get; set; } = string.Empty;
 
     private Email()
     { 
     }
-    private Email(string address)
+    private Email(string value)
     {
-       this.Address = address; 
+       this.Value = value; 
     }
 
     public static Email Create(string address)

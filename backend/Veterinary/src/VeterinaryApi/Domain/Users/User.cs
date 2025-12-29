@@ -5,8 +5,11 @@ namespace VeterinaryApi.Domain.Users;
 public class User
 {
     public Guid Id { get; private set; }
-    public Name Name { get; private set; } = null!;
-    public Email Email { get; private set; } = null!;
+
+    public string UserName {  get; private set; }
+    public string FirstName { get; private set; } = null!;
+    public string LastName { get; private set; } = null!;
+    public string Email { get; private set; } = null!;
     public string PasswordHash { get; private set; } = null!;
     public UserRoles Role { get; private set; }
     public bool IsActive { get; private set; }
@@ -17,8 +20,9 @@ public class User
     }
 
     public static User Create(
-        Name name,
-        Email email,
+        string firstName,
+        string lastName,
+        string email,
         string passwordHash,
         UserRoles role)
     {
@@ -26,10 +30,12 @@ public class User
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Name = name,
+            FirstName = firstName,
+            LastName= lastName,
             PasswordHash = passwordHash,
             Email = email,
             Role = role,
+            IsActive = true
         };
         return user;
     }
