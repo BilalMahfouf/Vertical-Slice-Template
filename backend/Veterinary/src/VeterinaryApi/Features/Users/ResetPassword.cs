@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
+using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Users;
 
@@ -51,6 +52,22 @@ public static class ResetPassword
 
             await _db.SaveChangesAsync(cancellationToken);
             return Result.Success;
+        }
+    }
+
+    public sealed class Endpoint : IEndpoint
+    {
+        public void AddRoutes(IEndpointRouteBuilder app)
+        {
+            app.MapPut("/auth/reset-passowrd", async (
+                ResetPasswordCommand command,
+                ICommandHandler<ResetPasswordCommand> handler,
+                CancellationToken cancellationToken = default) =>
+            {
+                var result = await handler.Handle(command, cancellationToken);
+                return Results.Ok();
+
+            });
         }
     }
 }

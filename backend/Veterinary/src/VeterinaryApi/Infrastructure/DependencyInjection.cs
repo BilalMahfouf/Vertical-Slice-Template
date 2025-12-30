@@ -32,6 +32,10 @@ public static class DependencyInjection
                options.Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? throw new InvalidOperationException("JWT_AUDIENCE environment variable is not set");
                options.LifeTime = byte.Parse(Environment.GetEnvironmentVariable("JWT_ACCESS_TOKEN_LIFETIME_MINUTES") ?? "15");
            });
+        services.AddScoped<IJwtProvider, JwtProvider>();
+
+        var ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+        var ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
 
 
         // auth config 
@@ -58,7 +62,7 @@ public static class DependencyInjection
 
         // interceptors config
 
-        services.AddSingleton<AuditInterceptor>();
+        services.AddScoped<AuditInterceptor>();
 
         // ef core config  
         var connectionString = Environment

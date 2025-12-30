@@ -2,6 +2,7 @@
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.Abstracions.Emails;
 using VeterinaryApi.Common.CQRS;
+using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Common.Util;
 using VeterinaryApi.Domain.Users;
@@ -63,6 +64,20 @@ public static class ForgetPassword
             var message = new SendEmailRequest(user.Email, "Reset Password", body);
             await _emailService.SendEmailAsync(message, cancellationToken);
             return Result.Success;
+        }
+    }
+    public class Endpoint : IEndpoint
+    {
+        public void AddRoutes(IEndpointRouteBuilder app)
+        {
+            app.MapPost("/auth/forget-password", async (
+                ForgetPasswordCommand command,
+                ICommandHandler<ForgetPasswordCommand> handler,
+                CancellationToken cancellationToken = default) =>
+            {
+                var result = await handler.Handle(command, cancellationToken);
+                return Results.Ok();
+            });
         }
     }
 }

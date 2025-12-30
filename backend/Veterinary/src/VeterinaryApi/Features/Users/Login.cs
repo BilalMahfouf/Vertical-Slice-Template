@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
+using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Users;
 
@@ -37,14 +39,14 @@ public static class Login
                 e => e.Email == command.Email,
                 cancellationToken);
 
-            if(user is null)
+            if (user is null)
             {
                 var error = UserErrors.UserNotFound(command.Email);
                 return Result<Response>.Failure(error);
             }
             bool validPassword = _passwordHahser
                 .Verify(command.Password, user.PasswordHash);
-            if(!validPassword)
+            if (!validPassword)
             {
                 return Result<Response>.Failure(
                     UserErrors.InvalidCredentials);
@@ -65,6 +67,22 @@ public static class Login
             var response = new Response(token, refreshToken);
             return Result<Response>.Success(response);
         }
+
+
     }
 
+    internal class Endpoint : IEndpoint
+    {
+        public void AddRoutes(IEndpointRouteBuilder app)
+        {
+            app.MapPost("auth/login", async (
+                [FromBody] Login.LoginCommand request,
+                [FromServices] ICommandHandler<LoginCommand, Response> handler,
+                CancellationToken cancellationToken = default) =>
+            {
+                var result = await handler.Handle(request, cancellationToken);
+                return Results.Ok();
+            });
+        }
+    }
 }

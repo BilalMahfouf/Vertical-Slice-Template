@@ -1,7 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Carter;
+using Carter.OpenApi;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Windows.Input;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
+using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Users;
 
@@ -51,6 +55,20 @@ public static class RefreshToken
 
             var response = new Response(token, refreshToken);
             return Result<Response>.Success(response);
+        }
+    }
+    public class Endpoint : ICarterModule
+    {
+        public void AddRoutes(IEndpointRouteBuilder app)
+        {
+            app.MapPost("/auth/refresh-token", async (
+                [FromBody] RefreshTokenCommand command,
+                [FromServices] ICommandHandler<RefreshTokenCommand, Response> handler,
+                CancellationToken cancellationToken=default) =>
+            {
+                var result = await handler.Handle(command, cancellationToken);
+                return Results.Ok();
+            });
         }
     }
 }

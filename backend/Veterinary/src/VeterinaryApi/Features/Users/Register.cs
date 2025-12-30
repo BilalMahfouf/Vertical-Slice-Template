@@ -1,5 +1,6 @@
 ﻿using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
+using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Users;
 
@@ -46,6 +47,20 @@ public static class Register
             _db.Users.Add(user);
             await _db.SaveChangesAsync(cancellationToken);
             return Result.Success;
+        }
+    }
+    public class Endpoint : IEndpoint
+    {
+        public void AddRoutes(IEndpointRouteBuilder app)
+        {
+            app.MapPost("/auth/register", async (
+                RegisterCommand command,
+                ICommandHandler<RegisterCommand> hander,
+                CancellationToken cancellationToken=default) =>
+            {
+                var result = await hander.Handle(command,cancellationToken);
+                return Results.Ok();
+            });
         }
     }
 }
