@@ -18,7 +18,8 @@
     }
     public enum UserSessionTokenType : byte
     {
-        Refresh = 1
+        Refresh = 1,
+        ResetPassword= 2,
     }
 }
 

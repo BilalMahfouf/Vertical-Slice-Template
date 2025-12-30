@@ -13,10 +13,7 @@ public class Result
         IsSuccess = isSuccess;
         Error = error;
     }
-    public static Result Success()
-    {
-        return new Result(true, null);
-    }
+    public static Result Success => new Result(true, null);
     public static Result Failure(Error error)
     {
         return new Result(false, error);

@@ -10,10 +10,13 @@ public class User
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
     public string Email { get; private set; } = null!;
-    public string PasswordHash { get; private set; } = null!;
+    public string PasswordHash { get;  set; } = null!;
     public UserRoles Role { get; private set; }
     public bool IsActive { get; private set; }
     public DateTime CreatedAt { get; set; }
+
+    private readonly List<UserSession> _sessions = new List<UserSession>();
+    public IReadOnlyCollection<UserSession> Sessions => _sessions.AsReadOnly();
 
     private User()
     {

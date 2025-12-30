@@ -47,7 +47,7 @@ public static class Login
             if(!validPassword)
             {
                 return Result<Response>.Failure(
-                    UserErrors.InvalidCredentials());
+                    UserErrors.InvalidCredentials);
             }
             var token = _jwtProvider.GenerateToken(user);
             var refreshToken = _jwtProvider.GenerateRefreshToken();
