@@ -4,18 +4,23 @@ namespace VeterinaryApi.Common.Results;
 
 public class Result<T> : Result
 {
-    public T? Value { get; private set; }
-    private Result(bool isSuccess, T? value, Error? error)
+    private T? _value;
+    
+    private Result(bool isSuccess, T? value, Error error)
         : base(isSuccess, error)
     {
-        Value = value;
+        _value = value;
     }
-    public static Result<T> Success(T value)
+    public static new Result<T> Success(T value)
     {
-        return new Result<T>(true, value, null);
+        return new Result<T>(true, value, Error.None);
     }
     public static new Result<T> Failure(Error error)
     {
         return new Result<T>(false, default, error);
     }
+    public T Value => IsSuccess
+        ? _value!
+        : throw new InvalidOperationException(
+            "Cannot access the value of a failed result.");
 }

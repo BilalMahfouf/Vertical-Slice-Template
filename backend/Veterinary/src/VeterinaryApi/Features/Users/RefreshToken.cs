@@ -64,11 +64,14 @@ public static class RefreshToken
             app.MapPost("/auth/refresh-token", async (
                 [FromBody] RefreshTokenCommand command,
                 [FromServices] ICommandHandler<RefreshTokenCommand, Response> handler,
-                CancellationToken cancellationToken=default) =>
+                CancellationToken cancellationToken = default) =>
             {
                 var result = await handler.Handle(command, cancellationToken);
-                return Results.Ok();
-            });
+                return result.IsSuccess ? Results.Ok(new
+                {
+                    result.Value
+                }) : result.Problem();
+            }).WithTags("Authentication");
         }
     }
 }

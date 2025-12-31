@@ -60,7 +60,7 @@ public class LoginTests
         Assert.NotNull(result.Error);
         Assert.Equal("User.NotFound", result.Error.Code);
         Assert.Equal(ErrorType.NotFound, result.Error.Type);
-        Assert.Contains("test@example.com", result.Error.Message);
+        Assert.Contains("test@example.com", result.Error.Description);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class LoginTests
         Assert.NotNull(result.Error);
         Assert.Equal("User.InvalidCredentials", result.Error.Code);
         Assert.Equal(ErrorType.Unauthorized, result.Error.Type);
-        Assert.Equal("The provided credentials are invalid", result.Error.Message);
+        Assert.Equal("The provided credentials are invalid", result.Error.Description);
 
         _mockPasswordHasher.Verify(ph => ph.Verify(password, hashedPassword), Times.Once);
     }

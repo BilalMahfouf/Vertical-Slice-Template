@@ -43,7 +43,7 @@ internal class EmailService : IEmailService
         }
         catch (Exception ex)
         {
-            var error = new Error(ErrorType.InternalServerError,
+            var error = Error.Failure(
                 "Email.Exception", ex.Message);
             return Result.Failure(error);
         }

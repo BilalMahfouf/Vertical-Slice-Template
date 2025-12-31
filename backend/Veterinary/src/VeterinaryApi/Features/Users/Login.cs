@@ -34,7 +34,7 @@ public static class Login
             LoginCommand command,
             CancellationToken cancellationToken = default)
         {
-            var user = await _db.Users
+            var user = await _db.Users.AsNoTracking()
                 .FirstOrDefaultAsync(
                 e => e.Email == command.Email,
                 cancellationToken);
@@ -71,7 +71,7 @@ public static class Login
 
     }
 
-    internal class Endpoint : IEndpoint
+    public class Endpoint : IEndpoint
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
@@ -81,8 +81,11 @@ public static class Login
                 CancellationToken cancellationToken = default) =>
             {
                 var result = await handler.Handle(request, cancellationToken);
-                return Results.Ok();
-            });
+                return result.IsSuccess ? Results.Ok(new
+                {
+                    result.Value
+                }) : result.Problem();
+            }).WithTags("Authentication");
         }
     }
 }

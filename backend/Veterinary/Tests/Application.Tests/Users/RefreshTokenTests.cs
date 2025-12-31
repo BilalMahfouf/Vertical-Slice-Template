@@ -89,7 +89,7 @@ public class RefreshTokenTests
         Assert.NotNull(result.Error);
         Assert.Equal("User.ExpiredRefreshToken", result.Error.Code);
         Assert.Equal(ErrorType.BadRequest, result.Error.Type);
-        Assert.Equal("Refresh Token is expired, please login again", result.Error.Message);
+        Assert.Equal("Refresh Token is expired, please login again", result.Error.Description);
     }
 
     [Fact]

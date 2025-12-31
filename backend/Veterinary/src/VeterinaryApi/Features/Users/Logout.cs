@@ -44,11 +44,11 @@ public class Logout
             app.MapPost("/auth/logout", async (
                 LogoutCommand command,
                 ICommandHandler<LogoutCommand> handler,
-                CancellationToken cancellationToken=default) =>
+                CancellationToken cancellationToken = default) =>
             {
                 var result = await handler.Handle(command, cancellationToken);
-                return Results.Ok();
-            });
+                return result.IsSuccess ? Results.Ok() : result.Problem();
+            }).WithTags("Authentication");
         }
     }
 }

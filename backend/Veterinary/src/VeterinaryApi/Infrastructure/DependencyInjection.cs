@@ -70,10 +70,8 @@ public static class DependencyInjection
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
             (sp, options) =>
         {
-            options.UseNpgsql(connectionString)
-            .AddInterceptors(
-                sp.GetRequiredService<AuditInterceptor>());
-        });
+            options.UseNpgsql(connectionString);
+        }, ServiceLifetime.Scoped);
 
         // Email Options config 
         services.Configure<EmailOptions>(options =>

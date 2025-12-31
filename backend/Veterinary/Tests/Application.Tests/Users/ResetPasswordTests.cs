@@ -84,7 +84,7 @@ public class ResetPasswordTests
         Assert.NotNull(result.Error);
         Assert.Equal("User.NotFound", result.Error.Code);
         Assert.Equal(ErrorType.NotFound, result.Error.Type);
-        Assert.Contains("notfound@example.com", result.Error.Message);
+        Assert.Contains("notfound@example.com", result.Error.Description);
     }
 
     [Fact]

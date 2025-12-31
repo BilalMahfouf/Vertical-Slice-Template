@@ -76,8 +76,8 @@ public static class ForgetPassword
                 CancellationToken cancellationToken = default) =>
             {
                 var result = await handler.Handle(command, cancellationToken);
-                return Results.Ok();
-            });
+                return result.IsSuccess ? Results.Ok() : result.Problem();
+            }).WithTags("Authentication");
         }
     }
 }

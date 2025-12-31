@@ -56,11 +56,11 @@ public static class Register
             app.MapPost("/auth/register", async (
                 RegisterCommand command,
                 ICommandHandler<RegisterCommand> hander,
-                CancellationToken cancellationToken=default) =>
+                CancellationToken cancellationToken = default) =>
             {
-                var result = await hander.Handle(command,cancellationToken);
-                return Results.Ok();
-            });
+                var result = await hander.Handle(command, cancellationToken);
+                return result.IsSuccess ? Results.Ok() : result.Problem();
+            }).WithTags("Authentication");
         }
     }
 }
