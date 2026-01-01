@@ -5,7 +5,7 @@ import './App.css'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [email, setEmail] = useState('sarah.smith@veticloud.com')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -17,10 +17,7 @@ function App() {
     setLoading(true)
 
     try {
-        console.log("api url is ", import.meta.env.VITE_API_URL);
-        console.log('Attempting login with:', { email, password });
       const response = await authApi.login({ email, password })
-      console.log('Login successful:', response);
       setIsLoggedIn(true)
       setTokenInfo(response.value.token)
     } catch (err: any) {
@@ -50,9 +47,8 @@ function App() {
     await authApi.logout()
     setIsLoggedIn(false)
     setTokenInfo(null)
-    setEmail('sarah.smith@veticloud.com')
+    setEmail('')
     setPassword('')
-    console.log('Logged out successfully')
   }
 
   if (isLoggedIn) {
@@ -65,7 +61,7 @@ function App() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">VetiCloud Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
             <p className="text-gray-600">You are successfully logged in!</p>
           </div>
 
@@ -119,28 +115,28 @@ function App() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-500 rounded-2xl mb-4">
             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">VetiCloud</h1>
-          <p className="text-gray-600">Clinic management, redefined.</p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">Secure Portal</h1>
+          <p className="text-gray-600">Access your account securely.</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome back</h2>
-          <p className="text-gray-600 mb-6">Sign in to manage your clinic and care for your patients.</p>
+          <p className="text-gray-600 mb-6">Sign in to access your account.</p>
 
           <form onSubmit={handleLogin}>
             <div className="mb-4">
               <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
-                Work Email
+                Email
               </label>
               <input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="sarah.smith@veticloud.com"
+                placeholder="user@example.com"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
@@ -183,7 +179,7 @@ function App() {
         </div>
 
         <p className="text-center text-gray-500 text-sm mt-6">
-          © 2025 VetiCloud Inc. Built specifically for veterinary professionals.
+          © 2025 All rights reserved.
         </p>
       </div>
     </div>
