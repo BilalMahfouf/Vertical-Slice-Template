@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
@@ -10,7 +11,7 @@ namespace VeterinaryApi.Features.Users;
 
 public static class Login
 {
-    public record Response(string Token, string RefreshToken);
+    public record Response(string Token);
     public record LoginCommand(string Email, string Password)
         : ICommand<Response>;
 
@@ -19,15 +20,18 @@ public static class Login
         private readonly IApplicationDbContext _db;
         private readonly IPasswordHasher _passwordHahser;
         private readonly IJwtProvider _jwtProvider;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public LoginCommandHandler(
             IApplicationDbContext db,
             IPasswordHasher passwordHahser,
-            IJwtProvider jwtProvider)
+            IJwtProvider jwtProvider,
+            IHttpContextAccessor httpContextAccessor)
         {
             _db = db;
             _passwordHahser = passwordHahser;
             _jwtProvider = jwtProvider;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Result<Response>> Handle(
@@ -64,7 +68,18 @@ public static class Login
             _db.UserSessions.Add(userSession);
             await _db.SaveChangesAsync(cancellationToken);
 
-            var response = new Response(token, refreshToken);
+            _httpContextAccessor.HttpContext!.Response
+                            .Cookies.Append(
+                "refreshToken",
+                refreshToken,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = userSession.ExpiresAt,
+                    SameSite = SameSiteMode.None,
+                    Secure = true,
+                });
+            var response = new Response(token);
             return Result<Response>.Success(response);
         }
 

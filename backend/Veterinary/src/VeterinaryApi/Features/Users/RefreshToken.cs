@@ -15,20 +15,23 @@ public static class RefreshToken
 {
     public record RefreshTokenCommand(string RefreshToken)
         : ICommand<Response>;
-    public record Response(string Token, string RefreshToken);
+    public record Response(string Token);
 
     public sealed class RefreshTokenCommandHandler
         : ICommandHandler<RefreshTokenCommand, Response>
     {
         private readonly IApplicationDbContext _db;
         private readonly IJwtProvider _jwtProvider;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public RefreshTokenCommandHandler(
             IApplicationDbContext db,
-            IJwtProvider jwtProvider)
+            IJwtProvider jwtProvider,
+            IHttpContextAccessor httpContextAccessor)
         {
             _db = db;
             _jwtProvider = jwtProvider;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Result<Response>> Handle(
@@ -53,7 +56,15 @@ public static class RefreshToken
             _db.UserSessions.Update(session);
             await _db.SaveChangesAsync();
 
-            var response = new Response(token, refreshToken);
+            _httpContextAccessor.HttpContext!.Response
+                .Cookies.Append("refreshToken", refreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.UtcNow.AddDays(7),
+                    SameSite = SameSiteMode.None,
+                    Secure = true
+                });
+            var response = new Response(token);
             return Result<Response>.Success(response);
         }
     }
@@ -62,10 +73,14 @@ public static class RefreshToken
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/auth/refresh-token", async (
-                [FromBody] RefreshTokenCommand command,
+                HttpContext httpContext,
                 [FromServices] ICommandHandler<RefreshTokenCommand, Response> handler,
                 CancellationToken cancellationToken = default) =>
             {
+                var refreshToken = httpContext.Request
+                .Cookies["refreshToken"] ?? string.Empty;
+
+                var command = new RefreshTokenCommand(refreshToken);
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.Ok(new
                 {
