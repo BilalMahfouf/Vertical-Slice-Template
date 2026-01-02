@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainLayout from './common/layouts/MainLayout';
-import Login from './features/auth/Login';
+import Login from './features/auth/pages/Login';
 import DashboardPage from './features/dashboard/DashboardPage';
 import AnimalPage from './features/animals/AnimalPage';
 
