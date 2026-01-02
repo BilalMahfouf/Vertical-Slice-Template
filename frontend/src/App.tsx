@@ -1,6 +1,3 @@
-import { StrictMode, useState, type FormEvent } from 'react'
-import { authApi } from './lib/api/auth'
-import { tokenManager } from './lib/api/tokenManager'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainLayout from './common/layouts/MainLayout';
 import Login from './features/auth/Login';
@@ -228,10 +225,5 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  return (
-    <StrictMode>
-
-      <RouterProvider router={router} />
-    </StrictMode>
-  );
+  return <RouterProvider router={router} />;
 }
