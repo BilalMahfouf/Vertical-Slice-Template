@@ -16,11 +16,12 @@ export const authApi = {
   login: async (credentials: LoginCredentials) => {
     const response = await api.post<LoginResponse>('/auth/login', credentials);
     
-    // Store access token in memory
+    if(response.status !== 200) {
+        console.log('Login failed with status:', response.status);
+        return false;
+    }
     tokenManager.setAccessToken(response.data.value.token);
-    
-    // refreshToken is automatically stored in httpOnly cookie by backend
-    return response.data;
+    return true;
   },
 
   logout: async () => {

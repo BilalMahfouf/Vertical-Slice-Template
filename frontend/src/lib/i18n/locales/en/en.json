@@ -2,6 +2,8 @@
     "welcomMessage": "welcome to React and react-i18next",
     "signIn": "Sign In",
     "signInDescription": "Sign in to manage your clinic and care for your patients.",
+    "login": "Login",
+    "loginDescription": "Login to manage your clinic and care for your patients.",
     "email": "Email",
     "password": "Password",
     "forgotPassword": "Forgot Password?"

@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { authApi } from '@/lib/api/auth';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -18,12 +19,22 @@ export default function Login() {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === 'ar';
 
+
+  const mutation = useMutation({
+    mutationFn: (authApi.login),
+    onSuccess: () => {
+        navigate('/dashboard');
+    },
+  });
+
+
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email && password) {
-        await authApi.login({ email, password })
+      mutation.mutate({ email, password });
     } else {
-      toast.error("Please enter credentials");
+        return;
     }
   };
 
@@ -47,9 +58,9 @@ export default function Login() {
 <div className='bg-white'>
         <Card className="border-slate-200 shadow-2xl shadow-slate-200/50 overflow-hidden ">
           <CardHeader className="space-y-1 pb-6 pt-8 text-center border-b border-slate-50">
-            <CardTitle className="text-2xl font-bold">{t(i18nKeyContainer.signIn)}</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t(i18nKeyContainer.login)}</CardTitle>
             <CardDescription className="text-slate-500">
-              {t(i18nKeyContainer.signInDescription)}
+              {t(i18nKeyContainer.loginDescription)}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-8 pb-8 px-8">
