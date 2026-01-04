@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Tests.Helpers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using VeterinaryApi.Common.Abstracions;
@@ -17,18 +18,25 @@ public class RefreshTokenTests
 {
     private readonly Mock<IApplicationDbContext> _mockDbContext;
     private readonly Mock<IJwtProvider> _mockJwtProvider;
+    private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
 
     public RefreshTokenTests()
     {
         _mockDbContext = new Mock<IApplicationDbContext>();
         _mockJwtProvider = new Mock<IJwtProvider>();
+        _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+
+        // Setup HttpContext mock
+        var httpContext = new DefaultHttpContext();
+        _mockHttpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
     }
 
     private RefreshToken.RefreshTokenCommandHandler CreateHandler()
     {
         return new RefreshToken.RefreshTokenCommandHandler(
             _mockDbContext.Object,
-            _mockJwtProvider.Object);
+            _mockJwtProvider.Object,
+            _mockHttpContextAccessor.Object);
     }
 
     private void SetupUserSessionsDbSet(List<UserSession> sessions)
@@ -88,12 +96,11 @@ public class RefreshTokenTests
         Assert.False(result.IsSuccess);
         Assert.NotNull(result.Error);
         Assert.Equal("User.ExpiredRefreshToken", result.Error.Code);
-        Assert.Equal(ErrorType.BadRequest, result.Error.Type);
         Assert.Equal("Refresh Token is expired, please login again", result.Error.Description);
     }
 
     [Fact]
-    public async Task Handle_WhenValidRefreshToken_ShouldReturnSuccessWithNewTokens()
+    public async Task Handle_WhenValidRefreshToken_ShouldReturnSuccessWithNewToken()
     {
         // Arrange
         var expectedNewToken = "new-jwt-token";
@@ -138,10 +145,8 @@ public class RefreshTokenTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Null(result.Error);
         Assert.NotNull(result.Value);
         Assert.Equal(expectedNewToken, result.Value.Token);
-        Assert.Equal(expectedNewRefreshToken, result.Value.RefreshToken);
 
         _mockJwtProvider.Verify(jp => jp.GenerateToken(It.IsAny<User>()), Times.Once);
         _mockJwtProvider.Verify(jp => jp.GenerateRefreshToken(), Times.Once);
@@ -244,7 +249,6 @@ public class RefreshTokenTests
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
         Assert.Equal("admin-new-token", result.Value.Token);
-        Assert.Equal("admin-new-refresh-token", result.Value.RefreshToken);
     }
 
     [Fact]

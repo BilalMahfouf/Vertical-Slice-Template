@@ -13,7 +13,7 @@ public class Clinic : Entity
     // Required by EF Core
     private Clinic() { }
 
-    private static int _minNameLength = 3;
+    private static readonly int _minNameLength = 3;
     public static Clinic Create(
         Guid doctorId,
         string name,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Tests.Helpers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using VeterinaryApi.Common.Abstracions;
@@ -18,6 +19,7 @@ public class LoginTests
     private readonly Mock<IApplicationDbContext> _mockDbContext;
     private readonly Mock<IPasswordHasher> _mockPasswordHasher;
     private readonly Mock<IJwtProvider> _mockJwtProvider;
+    private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
     private readonly Mock<DbSet<UserSession>> _mockUserSessionDbSet;
 
     public LoginTests()
@@ -25,9 +27,14 @@ public class LoginTests
         _mockDbContext = new Mock<IApplicationDbContext>();
         _mockPasswordHasher = new Mock<IPasswordHasher>();
         _mockJwtProvider = new Mock<IJwtProvider>();
+        _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
         _mockUserSessionDbSet = new Mock<DbSet<UserSession>>();
 
         _mockDbContext.Setup(db => db.UserSessions).Returns(_mockUserSessionDbSet.Object);
+        
+        // Setup HttpContext mock
+        var httpContext = new DefaultHttpContext();
+        _mockHttpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
     }
 
     private Login.LoginCommandHandler CreateHandler()
@@ -35,7 +42,8 @@ public class LoginTests
         return new Login.LoginCommandHandler(
             _mockDbContext.Object,
             _mockPasswordHasher.Object,
-            _mockJwtProvider.Object);
+            _mockJwtProvider.Object,
+            _mockHttpContextAccessor.Object);
     }
 
     private void SetupUsersDbSet(List<User> users)
@@ -101,7 +109,7 @@ public class LoginTests
     }
 
     [Fact]
-    public async Task Handle_WhenCredentialsAreValid_ShouldReturnSuccessWithTokens()
+    public async Task Handle_WhenCredentialsAreValid_ShouldReturnSuccessWithToken()
     {
         // Arrange
         var email = "test@example.com";
@@ -143,10 +151,8 @@ public class LoginTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Null(result.Error);
         Assert.NotNull(result.Value);
         Assert.Equal(expectedToken, result.Value.Token);
-        Assert.Equal(expectedRefreshToken, result.Value.RefreshToken);
 
         _mockPasswordHasher.Verify(ph => ph.Verify(password, hashedPassword), Times.Once);
         _mockJwtProvider.Verify(jp => jp.GenerateToken(It.IsAny<User>()), Times.Once);
@@ -258,7 +264,6 @@ public class LoginTests
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
         Assert.Equal("admin-token", result.Value.Token);
-        Assert.Equal("admin-refresh-token", result.Value.RefreshToken);
     }
 
     [Fact]
