@@ -38,7 +38,7 @@ public class DeleteClinicTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -90,8 +90,8 @@ public class DeleteClinicTests
         var clinicId1 = Guid.NewGuid();
         var clinicId2 = Guid.NewGuid();
 
-        var clinic1 = Clinic.Create(Guid.NewGuid(), "Clinic 1", "111-1111", "Address 1");
-        var clinic2 = Clinic.Create(Guid.NewGuid(), "Clinic 2", "222-2222", "Address 2");
+        var clinic1 = Clinic.Create(Guid.NewGuid(), "Clinic 1", "111-1111", "Address 1", 5);
+        var clinic2 = Clinic.Create(Guid.NewGuid(), "Clinic 2", "222-2222", "Address 2", 8);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic1, clinicId1);
@@ -119,7 +119,7 @@ public class DeleteClinicTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -151,7 +151,7 @@ public class DeleteClinicTests
         var existingClinicId = Guid.NewGuid();
         var nonExistentClinicId = Guid.NewGuid();
 
-        var existingClinic = Clinic.Create(Guid.NewGuid(), "Existing Clinic", "111-1111", "Address");
+        var existingClinic = Clinic.Create(Guid.NewGuid(), "Existing Clinic", "111-1111", "Address", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(existingClinic, existingClinicId);
@@ -174,7 +174,7 @@ public class DeleteClinicTests
     public async Task Handle_WithEmptyGuid_ShouldReturnNotFound()
     {
         // Arrange
-        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St", 5);
         SetupClinicsDbSet([clinic]);
 
         var handler = CreateHandler();
@@ -193,7 +193,7 @@ public class DeleteClinicTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -221,7 +221,7 @@ public class DeleteClinicTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);

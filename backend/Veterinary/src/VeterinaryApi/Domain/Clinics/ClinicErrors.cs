@@ -10,4 +10,6 @@ public static class ClinicErrors
     public static Error ClinicNotFound(Guid clinicId)
         => Error.NotFound("Clinic.ClinicNotFound",
             $"Clinic with id '{clinicId}' was not found");
+    public static Error ClinicsNotFound
+        => Error.NotFound("Clinic.ClinicsNotFound", "Clinics not found");
 }

@@ -38,7 +38,7 @@ public class UpdateClinicTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address", 5);
         
         // Use reflection to set the Id since it's inherited from Entity
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
@@ -100,7 +100,7 @@ public class UpdateClinicTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -127,7 +127,7 @@ public class UpdateClinicTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -158,7 +158,7 @@ public class UpdateClinicTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -184,8 +184,8 @@ public class UpdateClinicTests
         var clinicId1 = Guid.NewGuid();
         var clinicId2 = Guid.NewGuid();
 
-        var clinic1 = Clinic.Create(Guid.NewGuid(), "Clinic 1", "111-1111", "Address 1");
-        var clinic2 = Clinic.Create(Guid.NewGuid(), "Clinic 2", "222-2222", "Address 2");
+        var clinic1 = Clinic.Create(Guid.NewGuid(), "Clinic 1", "111-1111", "Address 1", 5);
+        var clinic2 = Clinic.Create(Guid.NewGuid(), "Clinic 2", "222-2222", "Address 2", 8);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic1, clinicId1);
@@ -224,7 +224,7 @@ public class UpdateClinicTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -259,7 +259,7 @@ public class UpdateClinicTests
         // Arrange
         var clinicId = Guid.NewGuid();
         var doctorId = Guid.NewGuid();
-        var clinic = Clinic.Create(doctorId, "Original Name", "111-1111", "Original Address");
+        var clinic = Clinic.Create(doctorId, "Original Name", "111-1111", "Original Address", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -298,7 +298,7 @@ public class UpdateClinicTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Original Name", "111-1111", "Original Address", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);

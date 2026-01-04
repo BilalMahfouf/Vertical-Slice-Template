@@ -1,4 +1,5 @@
 ﻿using VeterinaryApi.Domain.Common;
+using VeterinaryApi.Domain.Users;
 
 namespace VeterinaryApi.Domain.Clinics;
 
@@ -9,6 +10,9 @@ public class Clinic : Entity
     public string Name { get; private set; } = null!;
     public string Phone { get; private set; } = null!;
     public string Address { get; private set; } = null!;
+    public int StaffCount { get; private set; }
+
+    public User Doctor { get; private set; } = null!;
 
     // Required by EF Core
     private Clinic() { }
@@ -18,7 +22,8 @@ public class Clinic : Entity
         Guid doctorId,
         string name,
         string phone,
-        string address)
+        string address,
+        int staffCount)
     {
         if(name.Length <_minNameLength)
         {
@@ -29,7 +34,9 @@ public class Clinic : Entity
             DoctorId = doctorId,
             Name = name,
             Phone = phone,
-            Address = address
+            Address = address,
+            StaffCount = staffCount
+
         };
         return clinic;
     }

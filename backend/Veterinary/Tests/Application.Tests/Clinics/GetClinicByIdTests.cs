@@ -43,7 +43,7 @@ public class GetClinicByIdTests
         var phone = "123-456-7890";
         var address = "123 Main St";
 
-        var clinic = Clinic.Create(doctorId, name, phone, address);
+        var clinic = Clinic.Create(doctorId, name, phone, address, 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -94,9 +94,9 @@ public class GetClinicByIdTests
         var clinicId2 = Guid.NewGuid();
         var clinicId3 = Guid.NewGuid();
 
-        var clinic1 = Clinic.Create(Guid.NewGuid(), "Clinic 1", "111-1111", "Address 1");
-        var clinic2 = Clinic.Create(Guid.NewGuid(), "Clinic 2", "222-2222", "Address 2");
-        var clinic3 = Clinic.Create(Guid.NewGuid(), "Clinic 3", "333-3333", "Address 3");
+        var clinic1 = Clinic.Create(Guid.NewGuid(), "Clinic 1", "111-1111", "Address 1", 5);
+        var clinic2 = Clinic.Create(Guid.NewGuid(), "Clinic 2", "222-2222", "Address 2", 8);
+        var clinic3 = Clinic.Create(Guid.NewGuid(), "Clinic 3", "333-3333", "Address 3", 10);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic1, clinicId1);
@@ -124,7 +124,7 @@ public class GetClinicByIdTests
     public async Task Handle_WithEmptyGuid_ShouldReturnNotFound()
     {
         // Arrange
-        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St", 5);
         SetupClinicsDbSet([clinic]);
 
         var handler = CreateHandler();
@@ -143,7 +143,7 @@ public class GetClinicByIdTests
     {
         // Arrange
         var clinicId = Guid.NewGuid();
-        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St");
+        var clinic = Clinic.Create(Guid.NewGuid(), "Test Clinic", "123-456-7890", "123 Main St", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -174,7 +174,7 @@ public class GetClinicByIdTests
         var expectedPhone = "555-123-4567";
         var expectedAddress = "789 Healthcare Blvd, Suite 100";
 
-        var clinic = Clinic.Create(doctorId, expectedName, expectedPhone, expectedAddress);
+        var clinic = Clinic.Create(doctorId, expectedName, expectedPhone, expectedAddress, 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -204,7 +204,7 @@ public class GetClinicByIdTests
         var existingClinicId = Guid.NewGuid();
         var nonExistentClinicId = Guid.NewGuid();
 
-        var existingClinic = Clinic.Create(Guid.NewGuid(), "Existing Clinic", "111-1111", "Address");
+        var existingClinic = Clinic.Create(Guid.NewGuid(), "Existing Clinic", "111-1111", "Address", 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(existingClinic, existingClinicId);
@@ -232,7 +232,7 @@ public class GetClinicByIdTests
         var phone = "+1 (555) 123-4567";
         var address = "123 Main St, Suite #100";
 
-        var clinic = Clinic.Create(Guid.NewGuid(), name, phone, address);
+        var clinic = Clinic.Create(Guid.NewGuid(), name, phone, address, 5);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic, clinicId);
@@ -259,8 +259,8 @@ public class GetClinicByIdTests
         var clinicId1 = Guid.NewGuid();
         var clinicId2 = Guid.NewGuid();
 
-        var clinic1 = Clinic.Create(Guid.NewGuid(), "First Clinic", "111-1111", "First Address");
-        var clinic2 = Clinic.Create(Guid.NewGuid(), "Second Clinic", "222-2222", "Second Address");
+        var clinic1 = Clinic.Create(Guid.NewGuid(), "First Clinic", "111-1111", "First Address", 5);
+        var clinic2 = Clinic.Create(Guid.NewGuid(), "Second Clinic", "222-2222", "Second Address", 8);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic1, clinicId1);
@@ -286,8 +286,8 @@ public class GetClinicByIdTests
         var clinicId1 = Guid.NewGuid();
         var clinicId2 = Guid.NewGuid();
 
-        var clinic1 = Clinic.Create(Guid.NewGuid(), "First Clinic", "111-1111", "First Address");
-        var clinic2 = Clinic.Create(Guid.NewGuid(), "Last Clinic", "222-2222", "Last Address");
+        var clinic1 = Clinic.Create(Guid.NewGuid(), "First Clinic", "111-1111", "First Address", 5);
+        var clinic2 = Clinic.Create(Guid.NewGuid(), "Last Clinic", "222-2222", "Last Address", 8);
 
         var idProperty = typeof(Clinic).BaseType!.GetProperty("Id");
         idProperty!.SetValue(clinic1, clinicId1);

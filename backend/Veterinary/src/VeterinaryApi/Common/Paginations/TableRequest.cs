@@ -1,4 +1,6 @@
-﻿namespace VeterinaryApi.Common.Paginations;
+﻿using VeterinaryApi.Common.CQRS;
+
+namespace VeterinaryApi.Common.Paginations;
 
 public class TableRequest
 {

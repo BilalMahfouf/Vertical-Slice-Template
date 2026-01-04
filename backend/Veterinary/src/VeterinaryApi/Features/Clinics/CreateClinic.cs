@@ -12,12 +12,13 @@ namespace VeterinaryApi.Features.Clinics;
 
 public static class CreateClinic
 {
-    public record Request(string name, string phone, string address);
+    public record Request(string name, string phone, string address,int staffCount);
     public record CreateClinicCommand(
         Guid doctorId,
         string name,
         string phone,
-        string address) : ICommand<Response>;
+        string address,
+        int staffCount) : ICommand<Response>;
     public record Response(Guid clinicId);
 
     public class CreateClinicCommandHandler : ICommandHandler<CreateClinicCommand, Response>
@@ -35,7 +36,8 @@ public static class CreateClinic
                 command.doctorId,
                 command.name,
                 command.phone,
-                command.address);
+                command.address,
+                command.staffCount);
             _db.Clinics.Add(clinic);
             await _db.SaveChangesAsync(cancellationToken);
             return Result<Response>.Success(new Response(clinic.Id));
@@ -56,7 +58,8 @@ public static class CreateClinic
                         doctorId, // In a real application, retrieve the doctorId from the authenticated user context
                         name: request.name,
                         phone: request.phone,
-                        address: request.address);
+                        address: request.address,
+                        request.staffCount);
                     var result = await handler.Handle(command, cancellationToken);
                     return result.IsSuccess ? Results.Created("/",result.Value)
                     : result.Problem();

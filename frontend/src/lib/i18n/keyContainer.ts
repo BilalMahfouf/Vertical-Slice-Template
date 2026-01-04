@@ -1,4 +1,3 @@
-
 const i18nKeyContainer = {
     welcomeMessage: 'welcomeMessage',
     signIn: 'signIn',
@@ -18,6 +17,16 @@ const i18nKeyContainer = {
     settings: 'settings',
     logout: 'logout',
     chiefVet: 'chiefVet',
-}
+    table: {
+        search: 'table.search',
+        noResults: 'table.noResults',
+        previous: 'table.previous',
+        next: 'table.next',
+        viewDetails: 'table.viewDetails',
+        edit: 'table.edit',
+        delete: 'table.delete',
+        openMenu: 'table.openMenu',
+    },
+};
 
 export default i18nKeyContainer;

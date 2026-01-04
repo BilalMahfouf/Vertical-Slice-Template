@@ -38,6 +38,7 @@ public class CreateClinicTests
         var name = "Test Clinic";
         var phone = "123-456-7890";
         var address = "123 Main St";
+        var staffCount = 5;
 
         Clinic? capturedClinic = null;
         _mockClinicDbSet
@@ -49,7 +50,7 @@ public class CreateClinicTests
             .ReturnsAsync(1);
 
         var handler = CreateHandler();
-        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address);
+        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address, staffCount);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -63,6 +64,7 @@ public class CreateClinicTests
         Assert.Equal(name, capturedClinic.Name);
         Assert.Equal(phone, capturedClinic.Phone);
         Assert.Equal(address, capturedClinic.Address);
+        Assert.Equal(staffCount, capturedClinic.StaffCount);
 
         _mockClinicDbSet.Verify(db => db.Add(It.IsAny<Clinic>()), Times.Once);
         _mockDbContext.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -76,6 +78,7 @@ public class CreateClinicTests
         var name = "Valid Clinic Name";
         var phone = "555-1234";
         var address = "456 Oak Ave";
+        var staffCount = 10;
 
         Clinic? capturedClinic = null;
         _mockClinicDbSet
@@ -87,7 +90,7 @@ public class CreateClinicTests
             .ReturnsAsync(1);
 
         var handler = CreateHandler();
-        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address);
+        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address, staffCount);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -106,9 +109,10 @@ public class CreateClinicTests
         var name = "AB"; // Less than 3 characters
         var phone = "123-456-7890";
         var address = "123 Main St";
+        var staffCount = 5;
 
         var handler = CreateHandler();
-        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address);
+        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address, staffCount);
 
         // Act & Assert
         await Assert.ThrowsAsync<VeterinaryApi.Domain.Common.DomainException>(
@@ -126,6 +130,7 @@ public class CreateClinicTests
         var name = "ABC"; // Exactly 3 characters (minimum)
         var phone = "123-456-7890";
         var address = "123 Main St";
+        var staffCount = 5;
 
         _mockClinicDbSet
             .Setup(db => db.Add(It.IsAny<Clinic>()));
@@ -135,7 +140,7 @@ public class CreateClinicTests
             .ReturnsAsync(1);
 
         var handler = CreateHandler();
-        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address);
+        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address, staffCount);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -153,9 +158,10 @@ public class CreateClinicTests
         var name = "";
         var phone = "123-456-7890";
         var address = "123 Main St";
+        var staffCount = 5;
 
         var handler = CreateHandler();
-        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address);
+        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address, staffCount);
 
         // Act & Assert
         await Assert.ThrowsAsync<VeterinaryApi.Domain.Common.DomainException>(
@@ -170,6 +176,7 @@ public class CreateClinicTests
         var name = "Test Clinic";
         var phone = "123-456-7890";
         var address = "123 Main St";
+        var staffCount = 5;
 
         using var cancellationTokenSource = new CancellationTokenSource();
         var cancellationToken = cancellationTokenSource.Token;
@@ -179,7 +186,7 @@ public class CreateClinicTests
             .ReturnsAsync(1);
 
         var handler = CreateHandler();
-        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address);
+        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address, staffCount);
 
         // Act
         var result = await handler.Handle(command, cancellationToken);
@@ -208,8 +215,8 @@ public class CreateClinicTests
         var handler = CreateHandler();
 
         // Act
-        var command1 = new CreateClinic.CreateClinicCommand(doctorId1, "Clinic 1", "111-1111", "Address 1");
-        var command2 = new CreateClinic.CreateClinicCommand(doctorId2, "Clinic 2", "222-2222", "Address 2");
+        var command1 = new CreateClinic.CreateClinicCommand(doctorId1, "Clinic 1", "111-1111", "Address 1", 5);
+        var command2 = new CreateClinic.CreateClinicCommand(doctorId2, "Clinic 2", "222-2222", "Address 2", 8);
 
         await handler.Handle(command1, CancellationToken.None);
         await handler.Handle(command2, CancellationToken.None);
@@ -228,6 +235,7 @@ public class CreateClinicTests
         var name = "This is a very long clinic name that should still be valid";
         var phone = "123-456-7890";
         var address = "123 Main St";
+        var staffCount = 5;
 
         _mockClinicDbSet
             .Setup(db => db.Add(It.IsAny<Clinic>()));
@@ -237,7 +245,7 @@ public class CreateClinicTests
             .ReturnsAsync(1);
 
         var handler = CreateHandler();
-        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address);
+        var command = new CreateClinic.CreateClinicCommand(doctorId, name, phone, address, staffCount);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
