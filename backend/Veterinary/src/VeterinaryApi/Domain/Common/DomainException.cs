@@ -1,4 +1,6 @@
-﻿namespace VeterinaryApi.Domain.Common;
+﻿using VeterinaryApi.Common.Errors;
+
+namespace VeterinaryApi.Domain.Common;
 
 public class DomainException : Exception
 {
@@ -6,7 +8,7 @@ public class DomainException : Exception
     {
     }
 
-    public DomainException(string? message) : base(message)
+    public DomainException(Error error) : base(error.Description)
     {
     }
 }
