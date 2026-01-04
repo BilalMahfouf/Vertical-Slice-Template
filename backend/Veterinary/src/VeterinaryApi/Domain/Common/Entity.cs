@@ -19,6 +19,7 @@ public class Entity : IEntity,ISoftDelete
     {
         Id = Guid.NewGuid();
         CreatedOnUtc = DateTime.UtcNow;
+        IsDeleted = false;
     }
 }
 public interface IEntity

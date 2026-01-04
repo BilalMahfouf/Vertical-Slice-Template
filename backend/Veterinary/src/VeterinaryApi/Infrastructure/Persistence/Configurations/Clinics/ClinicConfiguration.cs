@@ -37,5 +37,16 @@ public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
 
         builder.Property(c => c.CreatedOnUtc)
             .HasColumnName("created_on_utc");
+
+        builder.Property(c => c.IsDeleted)
+            .HasColumnName("is_deleted");
+
+        builder.Property(c => c.DeletedOnUtc)
+            .HasColumnName("deleted_on_utc");
+
+        builder.Property(c => c.StaffCount)
+            .HasColumnName("staff_count");
+
+        
     }
 }
