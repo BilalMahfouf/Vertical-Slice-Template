@@ -5,12 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 // import { toast } from "sonner";
-import { PawPrint, Lock, Mail, Globe } from "lucide-react";
+import { PawPrint, Lock, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { cn } from "@/lib/utils";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { authApi } from '@/lib/api/auth';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 export default function Login() {
   const [email, setEmail] = useState('');

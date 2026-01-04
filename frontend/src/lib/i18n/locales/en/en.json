@@ -6,5 +6,12 @@
     "loginDescription": "Login to manage your clinic and care for your patients.",
     "email": "Email",
     "password": "Password",
-    "forgotPassword": "Forgot Password?"
+    "forgotPassword": "Forgot Password?",
+    "dashboard": "Dashboard",
+    "animals": "Animals",
+    "clients": "Clients",
+    "appointments": "Appointments",
+    "visits": "Visits",
+    "notifications": "Notifications",
+    "settings": "Settings"
 }

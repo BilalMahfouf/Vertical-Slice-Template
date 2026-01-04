@@ -4,12 +4,17 @@ import Login from './features/auth/pages/Login';
 import DashboardPage from './features/dashboard/DashboardPage';
 import AnimalPage from './features/animals/AnimalPage';
 import {QueryClientProvider, QueryClient} from '@tanstack/react-query';
+import AppointmentPage from './features/clients/ClientPage';
+import SettingPage from './features/visits/VisitPage';
+import NotificationPage from './features/notifications/NotificationPage';
+import VisitPage from './features/visits/VisitPage';
+import ClientPage from './features/clients/ClientPage';
 
 
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/login',
     element: <Login />,
     // errorElement: <NotFoundPage />,
   },
@@ -25,22 +30,26 @@ const router = createBrowserRouter([
         path: '/animals',
         element: <AnimalPage />,
       },
-    //   {
-    //     path: '/inventory',
-    //     element: <InventoryPage />,
-    //   },
-    //   {
-    //     path: '/sales',
-    //     element: <SalesPage />,
-    //   },
-    //   {
-    //     path: '/customers',
-    //     element: <CustomersPage />,
-    //   },
-    //   {
-    //     path: '/settings',
-    //     element: <SettingsPage />,
-    //   },
+      {
+        path: '/clients',
+        element: <ClientPage />,
+      },
+      {
+        path: '/appointments',
+        element: <AppointmentPage />,
+      },
+      {
+        path: '/visits',
+        element: <VisitPage />,
+      },
+      {
+        path: '/settings',
+        element: <SettingPage />,
+      },
+      {
+        path: '/notifications',
+        element: <NotificationPage />,
+      }
     ],
   },
 ]);
