@@ -13,5 +13,15 @@
     "appointments": "Appointments",
     "visits": "Visits",
     "notifications": "Notifications",
-    "settings": "Settings"
+    "settings": "Settings",
+    "table": {
+        "search": "Search...",
+        "noResults": "No results found.",
+        "previous": "Previous",
+        "next": "Next",
+        "viewDetails": "View details",
+        "edit": "Edit",
+        "delete": "Delete",
+        "openMenu": "Open menu"
+    }
 }

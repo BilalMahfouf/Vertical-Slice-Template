@@ -8,6 +8,7 @@ public class User : Entity
     public string UserName { get; private set; } = null!;
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
+    public string FullName => $"{FirstName} {LastName}";
     public string Email { get; private set; } = null!;
     public string PasswordHash { get; set; } = null!;
     public UserRoles Role { get; private set; }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
+using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Domain.Users;
 using VeterinaryApi.Infrastructure.Persistence.Configurations.Users;
 
@@ -14,6 +15,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<UserSession> UserSessions { get; set; } = null!;
+
+    public DbSet<Clinic> Clinics { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VeterinaryApi.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using VeterinaryApi.Infrastructure.Persistence;
 namespace VeterinaryApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260104121758_ClinicInitAndAddSoftDelete")]
+    partial class ClinicInitAndAddSoftDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,16 +42,14 @@ namespace VeterinaryApi.Migrations
                         .HasColumnName("created_on_utc");
 
                     b.Property<DateTime?>("DeletedOnUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_on_utc");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("DoctorId")
                         .HasColumnType("uuid")
                         .HasColumnName("doctor_id");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -62,13 +63,7 @@ namespace VeterinaryApi.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("phone");
 
-                    b.Property<int>("StaffCount")
-                        .HasColumnType("integer")
-                        .HasColumnName("staff_count");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("DoctorId");
 
                     b.ToTable("clinics", (string)null);
                 });
@@ -187,17 +182,6 @@ namespace VeterinaryApi.Migrations
                         .HasDatabaseName("ix_user_sessions_user_id");
 
                     b.ToTable("user_sessions", (string)null);
-                });
-
-            modelBuilder.Entity("VeterinaryApi.Domain.Clinics.Clinic", b =>
-                {
-                    b.HasOne("VeterinaryApi.Domain.Users.User", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("VeterinaryApi.Domain.Users.UserSession", b =>
