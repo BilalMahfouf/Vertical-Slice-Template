@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
@@ -41,7 +42,7 @@ public static class UpdateClinic
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPut("/clinics/{id:guid}", async (
+            app.MapPut("/clinics/{id:guid}",[Authorize] async (
                 Guid id,
                 [FromBody] Request request,
                 ICommandHandler<UpdateClinicCommand> handler,

@@ -4,19 +4,31 @@ using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
-using VeterinaryApi.Domain.Clinics;
+using VeterinaryApi.Domain;
+using VeterinaryApi.Domain.Animals;
 
-namespace VeterinaryApi.Features.Clinics;
+namespace VeterinaryApi.Features.Animals;
 
-public static class GetClinicById
+public static class GetAnimalById
 {
     public record Query(Guid Id) : IQuery<Response>;
-    public record Response(Guid Id, string Name, string Phone, string Address);
+    public record Response(
+        Guid Id,
+        Guid ClinicId,
+        Guid ClientId,
+        string ClientName,
+        string Name,
+        string Species,
+        string? Breed,
+        Gender Gender,
+        DateTime? BirthDate,
+        string? Color,
+        string? MicrochipNumber);
 
-    public class GetClinicByIdQueryHandler : IQueryHandler<Query, Response>
+    public class GetAnimalByIdQueryHandler : IQueryHandler<Query, Response>
     {
         private readonly IApplicationDbContext _db;
-        public GetClinicByIdQueryHandler(IApplicationDbContext db)
+        public GetAnimalByIdQueryHandler(IApplicationDbContext db)
         {
             _db = db;
         }
@@ -24,28 +36,36 @@ public static class GetClinicById
             Query query,
             CancellationToken cancellationToken)
         {
-            var clinic = await _db.Clinics
+            var animal = await _db.Animals
                 .AsNoTracking()
                 .Where(e => e.Id == query.Id)
                 .Select(e => new Response(
                     e.Id,
+                    e.ClinicId,
+                    e.ClientId,
+                    $"{e.Client.FirstName} {e.Client.LastName}",
                     e.Name,
-                    e.Phone,
-                    e.Address))
+                    e.Species,
+                    e.Breed,
+                    e.Gender,
+                    e.BirthDate,
+                    e.Color,
+                    e.MicrochipNumber))
                 .FirstOrDefaultAsync(cancellationToken);
-            if (clinic is null)
+
+            if (animal is null)
             {
                 return Result<Response>
-                    .Failure(ClinicErrors.ClinicNotFound(query.Id));
+                    .Failure(AnimalErrors.AnimalNotFound(query.Id));
             }
-            return Result<Response>.Success(clinic);
+            return Result<Response>.Success(animal);
         }
     }
     public class Endpoint : IEndpoint
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/clinics/{id:guid}",[Authorize] async (
+            app.MapGet("/animals/{id:guid}",[Authorize] async (
                 Guid id,
                 IQueryHandler<Query, Response> handler,
                 CancellationToken cancellationToken) =>
@@ -54,7 +74,7 @@ public static class GetClinicById
                 var result = await handler.Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("clinics");
+            }).WithTags("animals");
         }
     }
 }

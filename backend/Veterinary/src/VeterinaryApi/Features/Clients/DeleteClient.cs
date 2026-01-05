@@ -4,33 +4,33 @@ using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
-using VeterinaryApi.Domain.Clinics;
+using VeterinaryApi.Domain.Clients;
 
-namespace VeterinaryApi.Features.Clinics;
+namespace VeterinaryApi.Features.Clients;
 
-public static class DeleteClinic
+public static class DeleteClient
 {
-    public record DeleteClinicCommand(Guid Id) : ICommand;
-    public class DeleteClinicCommandHandler : ICommandHandler<DeleteClinicCommand>
+    public record DeleteClientCommand(Guid Id) : ICommand;
+    public class DeleteClientCommandHandler : ICommandHandler<DeleteClientCommand>
     {
         private readonly IApplicationDbContext _db;
-        public DeleteClinicCommandHandler(IApplicationDbContext db)
+        public DeleteClientCommandHandler(IApplicationDbContext db)
         {
             _db = db;
         }
         public async Task<Result> Handle(
-            DeleteClinicCommand command,
+            DeleteClientCommand command,
             CancellationToken cancellationToken)
         {
-            var clinic = await _db.Clinics
+            var client = await _db.Clients
                 .FirstOrDefaultAsync(e => e.Id == command.Id, cancellationToken);
 
-            if (clinic is null)
+            if (client is null)
             {
-                return Result.Failure(ClinicErrors.ClinicNotFound(command.Id));
+                return Result.Failure(ClientErrors.ClientNotFound(command.Id));
             }
-            clinic.Delete();
-            _db.Clinics.Update(clinic);
+            client.Delete();
+            _db.Clients.Update(client);
             await _db.SaveChangesAsync(cancellationToken);
             return Result.Success;
         }
@@ -39,16 +39,16 @@ public static class DeleteClinic
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/clinics/{id:guid}",[Authorize] async (
+            app.MapDelete("/clients/{id:guid}", [Authorize]async (
                 Guid id,
-                ICommandHandler<DeleteClinicCommand> handler,
+                ICommandHandler<DeleteClientCommand> handler,
                 CancellationToken cancellationToken) =>
             {
-                var command = new DeleteClinicCommand(id);
+                var command = new DeleteClientCommand(id);
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.NoContent() :
                     result.Problem();
-            });
+            }).WithTags("clients");
         }
     }
 }

@@ -4,19 +4,26 @@ using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
-using VeterinaryApi.Domain.Clinics;
+using VeterinaryApi.Domain.Clients;
 
-namespace VeterinaryApi.Features.Clinics;
+namespace VeterinaryApi.Features.Clients;
 
-public static class GetClinicById
+public static class GetClientById
 {
     public record Query(Guid Id) : IQuery<Response>;
-    public record Response(Guid Id, string Name, string Phone, string Address);
+    public record Response(
+        Guid Id,
+        Guid ClinicId,
+        string ClinicName,
+        string FirstName,
+        string LastName,
+        string Phone,
+        string? Notes);
 
-    public class GetClinicByIdQueryHandler : IQueryHandler<Query, Response>
+    public class GetClientByIdQueryHandler : IQueryHandler<Query, Response>
     {
         private readonly IApplicationDbContext _db;
-        public GetClinicByIdQueryHandler(IApplicationDbContext db)
+        public GetClientByIdQueryHandler(IApplicationDbContext db)
         {
             _db = db;
         }
@@ -24,28 +31,32 @@ public static class GetClinicById
             Query query,
             CancellationToken cancellationToken)
         {
-            var clinic = await _db.Clinics
+            var client = await _db.Clients
                 .AsNoTracking()
                 .Where(e => e.Id == query.Id)
                 .Select(e => new Response(
                     e.Id,
-                    e.Name,
+                    e.ClinicId,
+                    e.Clinic.Name,
+                    e.FirstName,
+                    e.LastName,
                     e.Phone,
-                    e.Address))
+                    e.Notes))
                 .FirstOrDefaultAsync(cancellationToken);
-            if (clinic is null)
+
+            if (client is null)
             {
                 return Result<Response>
-                    .Failure(ClinicErrors.ClinicNotFound(query.Id));
+                    .Failure(ClientErrors.ClientNotFound(query.Id));
             }
-            return Result<Response>.Success(clinic);
+            return Result<Response>.Success(client);
         }
     }
     public class Endpoint : IEndpoint
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/clinics/{id:guid}",[Authorize] async (
+            app.MapGet("/clients/{id:guid}",[Authorize] async (
                 Guid id,
                 IQueryHandler<Query, Response> handler,
                 CancellationToken cancellationToken) =>
@@ -54,7 +65,7 @@ public static class GetClinicById
                 var result = await handler.Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("clinics");
+            }).WithTags("clients");
         }
     }
 }

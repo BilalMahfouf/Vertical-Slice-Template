@@ -1,36 +1,36 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
-using VeterinaryApi.Domain.Clinics;
+using VeterinaryApi.Domain.Animals;
 
-namespace VeterinaryApi.Features.Clinics;
+namespace VeterinaryApi.Features.Animals;
 
-public static class DeleteClinic
+public static class DeleteAnimal
 {
-    public record DeleteClinicCommand(Guid Id) : ICommand;
-    public class DeleteClinicCommandHandler : ICommandHandler<DeleteClinicCommand>
+    public record DeleteAnimalCommand(Guid Id) : ICommand;
+    public class DeleteAnimalCommandHandler : ICommandHandler<DeleteAnimalCommand>
     {
         private readonly IApplicationDbContext _db;
-        public DeleteClinicCommandHandler(IApplicationDbContext db)
+        public DeleteAnimalCommandHandler(IApplicationDbContext db)
         {
             _db = db;
         }
         public async Task<Result> Handle(
-            DeleteClinicCommand command,
+            DeleteAnimalCommand command,
             CancellationToken cancellationToken)
         {
-            var clinic = await _db.Clinics
+            var animal = await _db.Animals
                 .FirstOrDefaultAsync(e => e.Id == command.Id, cancellationToken);
 
-            if (clinic is null)
+            if (animal is null)
             {
-                return Result.Failure(ClinicErrors.ClinicNotFound(command.Id));
+                return Result.Failure(AnimalErrors.AnimalNotFound(command.Id));
             }
-            clinic.Delete();
-            _db.Clinics.Update(clinic);
+            animal.Delete();
+            _db.Animals.Update(animal);
             await _db.SaveChangesAsync(cancellationToken);
             return Result.Success;
         }
@@ -39,12 +39,12 @@ public static class DeleteClinic
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/clinics/{id:guid}",[Authorize] async (
+            app.MapDelete("/animals/{id:guid}", [Authorize]async (
                 Guid id,
-                ICommandHandler<DeleteClinicCommand> handler,
+                ICommandHandler<DeleteAnimalCommand> handler,
                 CancellationToken cancellationToken) =>
             {
-                var command = new DeleteClinicCommand(id);
+                var command = new DeleteAnimalCommand(id);
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.NoContent() :
                     result.Problem();
