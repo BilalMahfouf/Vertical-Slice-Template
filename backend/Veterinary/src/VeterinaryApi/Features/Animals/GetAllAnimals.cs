@@ -102,7 +102,7 @@ public static class GetAllAnimals
             animalsQuery = animalsQuery.Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize);
 
-            var data = await animalsQuery.ToListAsync(cancellationToken);
+            var data = animalsQuery.ToList();
             if (data is null)
             {
                 return Result<PagedList<Response>>

@@ -92,7 +92,7 @@ public static class GetAllClients
             clientQuery = clientQuery.Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize);
 
-            var data = await clientQuery.ToListAsync(cancellationToken);
+            var data =  clientQuery.ToList();
             if (data is null)
             {
                 return Result<PagedList<Response>>

@@ -89,7 +89,7 @@ public static class GetAllClinics
             tempQuery = tempQuery.Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize);
 
-            IEnumerable<Response> data = tempQuery.ToList();
+            var data =  tempQuery.ToList();
             if (data is null)
             {
                 return Result<PagedList<Response>>
