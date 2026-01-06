@@ -20,14 +20,16 @@ public static class GetAllAnimals
         Guid ClinicId,
         Guid ClientId,
         string ClientName,
+        string ClientPhone,
         string Name,
         string Species,
         string? Breed,
-        Gender Gender,
+        string Gender,
         DateTime? BirthDate,
         string? Color,
         string? MicrochipNumber,
-        DateTime CreatedOnUtc);
+        DateTime CreatedOnUtc,
+        string status);
 
     public class GetAllAnimalsQueryHandler
         : IQueryHandler<TableRequest<Response>, PagedList<Response>>
@@ -49,29 +51,32 @@ public static class GetAllAnimals
                 return Result<PagedList<Response>>.Failure(
                     AnimalErrors.AnimalsNotFound);
             }
-            var animals = _db.Animals.AsNoTracking()
-                .Select(e => new Response(
-                    e.Id,
-                    e.ClinicId,
-                    e.ClientId,
-                    $"{e.Client.FirstName} {e.Client.LastName}",
-                    e.Name,
-                    e.Species,
-                    e.Breed,
-                    e.Gender,
-                    e.BirthDate,
-                    e.Color,
-                    e.MicrochipNumber,
-                    e.CreatedOnUtc));
-
+            var animal = _db.Animals.AsNoTracking();
             if (!string.IsNullOrWhiteSpace(query.search))
             {
-                animals = animals.Where(e =>
+                animal = animal.Where(e =>
                     e.Name.ToLower().Contains(query.search) ||
                     e.Species.ToLower().Contains(query.search) ||
                     (e.Breed != null && e.Breed.ToLower().Contains(query.search)) ||
-                    e.ClientName.ToLower().Contains(query.search));
+                    e.Client.FullName.ToLower().Contains(query.search));
             }
+
+            var animals = animal.Select(e => new Response(
+                                            e.Id,
+                                            e.ClinicId,
+                                            e.ClientId,
+                                            e.Client.FullName,
+                                            e.Clinic.Phone,
+                                            e.Name,
+                                            e.Species,
+                                            e.Breed,
+                                            e.Gender.ToString(),
+                                            e.BirthDate,
+                                            e.Color,
+                                            e.MicrochipNumber,
+                                            e.CreatedOnUtc,
+                                            e.Status.ToString()));
+
 
             Expression<Func<Response, object>> orderSelector = query.SortColumn?
                 .ToLower() switch
@@ -117,7 +122,7 @@ public static class GetAllAnimals
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/animals", [Authorize]async (
+            app.MapGet("/animals", [Authorize] async (
                 [FromQuery] int? page,
                 [FromQuery] int? pageSize,
                 [FromQuery] string? sortColumn,

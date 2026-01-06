@@ -15,8 +15,7 @@ public static class GetClientById
         Guid Id,
         Guid ClinicId,
         string ClinicName,
-        string FirstName,
-        string LastName,
+        string FullName,
         string Phone,
         string? Notes);
 
@@ -38,8 +37,7 @@ public static class GetClientById
                     e.Id,
                     e.ClinicId,
                     e.Clinic.Name,
-                    e.FirstName,
-                    e.LastName,
+                    e.FullName,
                     e.Phone,
                     e.Notes))
                 .FirstOrDefaultAsync(cancellationToken);

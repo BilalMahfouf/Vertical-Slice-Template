@@ -20,6 +20,8 @@ public class Animal : Entity
 
     public DateTime? BirthDate { get; private set; }
 
+    public AnimalStatus Status { get; private set; }
+
     public string? Color { get; private set; } = null!;
 
     public string? MicrochipNumber { get; private set; }
@@ -43,6 +45,7 @@ public class Animal : Entity
         Gender gender,
         DateTime? birthDate,
         string? color,
+        AnimalStatus status,
         string? microchipNumber = null)
     {
         var animal = new Animal();
@@ -56,6 +59,7 @@ public class Animal : Entity
         animal.Color = string.IsNullOrWhiteSpace(color) ? null : color.Trim();
         animal.MicrochipNumber = string.IsNullOrWhiteSpace(microchipNumber)
             ? null : microchipNumber.Trim();
+        animal.Status = status;
 
         return animal;
     }
@@ -78,5 +82,9 @@ public class Animal : Entity
         MicrochipNumber = string.IsNullOrWhiteSpace(microchipNumber)
             ? null : microchipNumber.Trim();
         UpdatedOnUtc = DateTime.UtcNow;
+    }
+    public void UpdateStatus(AnimalStatus status)
+    {
+        this.Status = status;
     }
 }

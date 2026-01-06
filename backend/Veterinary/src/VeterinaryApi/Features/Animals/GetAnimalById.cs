@@ -23,7 +23,8 @@ public static class GetAnimalById
         Gender Gender,
         DateTime? BirthDate,
         string? Color,
-        string? MicrochipNumber);
+        string? MicrochipNumber,
+        string status);
 
     public class GetAnimalByIdQueryHandler : IQueryHandler<Query, Response>
     {
@@ -43,14 +44,15 @@ public static class GetAnimalById
                     e.Id,
                     e.ClinicId,
                     e.ClientId,
-                    $"{e.Client.FirstName} {e.Client.LastName}",
+                    e.Client.FullName,
                     e.Name,
                     e.Species,
                     e.Breed,
                     e.Gender,
                     e.BirthDate,
                     e.Color,
-                    e.MicrochipNumber))
+                    e.MicrochipNumber,
+                    e.Status.ToString()))
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (animal is null)

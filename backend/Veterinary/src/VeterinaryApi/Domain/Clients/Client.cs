@@ -6,8 +6,7 @@ namespace VeterinaryApi.Domain.Clients;
 public class Client : Entity
 {
     public Guid ClinicId { get; private set; }
-    public string FirstName { get; private set; } = null!;
-    public string LastName { get; private set; } = null!;
+    public string FullName { get; private set; } = null!;
     public string Phone { get; private set; } = null!;
     public string? Notes { get; private set; }
     public DateTime? UpdatedOnUtc { get; private set; }
@@ -28,8 +27,7 @@ public class Client : Entity
         var owner = new Client
         {
             ClinicId = clinicId,
-            FirstName = firstName.Trim(),
-            LastName = lastName.Trim(),
+            FullName = $"{firstName} {lastName}",
             Phone = phone.Trim(),
             Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim()
         };
@@ -42,8 +40,7 @@ public class Client : Entity
         string phone,
         string? notes = null)
     {
-        FirstName = firstName.Trim();
-        LastName = lastName.Trim();
+        FullName = $"{firstName} {lastName}";
         Phone = phone.Trim();
         Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
         UpdatedOnUtc = DateTime.UtcNow;

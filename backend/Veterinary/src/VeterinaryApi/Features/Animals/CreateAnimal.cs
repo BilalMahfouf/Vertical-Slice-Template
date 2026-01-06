@@ -21,7 +21,8 @@ public static class CreateAnimal
         Gender Gender,
         DateTime? BirthDate,
         string? Color,
-        string? MicrochipNumber);
+        string? MicrochipNumber,
+        AnimalStatus status);
 
     public record CreateAnimalCommand(
         Guid ClientId,
@@ -31,7 +32,8 @@ public static class CreateAnimal
         Gender Gender,
         DateTime? BirthDate,
         string? Color,
-        string? MicrochipNumber) : ICommand<Response>;
+        string? MicrochipNumber,
+        AnimalStatus status) : ICommand<Response>;
 
     public record Response(Guid Id);
 
@@ -68,6 +70,7 @@ public static class CreateAnimal
                 command.Gender,
                 command.BirthDate,
                 command.Color,
+                command.status,
                 command.MicrochipNumber);
 
             _db.Animals.Add(animal);
@@ -81,7 +84,7 @@ public static class CreateAnimal
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/animals", [Authorize]async (
+            app.MapPost("/animals", [Authorize] async (
                 [FromBody] Request request,
                 ICommandHandler<CreateAnimalCommand, Response> handler,
                 CancellationToken cancellationToken) =>
@@ -94,11 +97,12 @@ public static class CreateAnimal
                     request.Gender,
                     request.BirthDate,
                     request.Color,
-                    request.MicrochipNumber);
+                    request.MicrochipNumber,
+                    request.status);
 
                 var result = await handler.Handle(command, cancellationToken);
 
-                return result.IsSuccess 
+                return result.IsSuccess
                     ? Results.Created($"/animals/{result.Value.Id}", result.Value)
                     : result.Problem();
             }).WithTags("animals");

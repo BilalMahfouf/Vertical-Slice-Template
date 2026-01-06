@@ -27,15 +27,10 @@ public class OwnerConfiguration : IEntityTypeConfiguration<Client>
             .OnDelete(DeleteBehavior.Cascade)
             .HasConstraintName("FK_owners_clinics_clinic_id");
 
-        builder.Property(o => o.FirstName)
-            .HasColumnName("first_name")
-            .HasMaxLength(50)
-            .IsRequired();
-
-        builder.Property(o => o.LastName)
-                 .HasColumnName("last_name")
-                 .HasMaxLength(50)
-                 .IsRequired();
+        builder.Property(o => o.FullName)
+          .HasColumnName("full_name")
+          .HasMaxLength(50)
+          .IsRequired();
 
         builder.Property(o => o.Phone)
             .HasColumnName("phone")

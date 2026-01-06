@@ -55,6 +55,12 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             .HasMaxLength(20)
             .IsRequired();
 
+        builder.Property(a => a.Status)
+            .HasColumnName("status")
+            .HasMaxLength(10)
+            .IsRequired();
+            
+
         builder.Property(a => a.BirthDate)
             .HasColumnName("birth_date")
             .HasColumnType("date");

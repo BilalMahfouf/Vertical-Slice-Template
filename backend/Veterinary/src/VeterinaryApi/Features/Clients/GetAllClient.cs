@@ -18,8 +18,7 @@ public static class GetAllClients
         Guid Id,
         Guid ClinicId,
         string ClinicName,
-        string FirstName,
-        string LastName,
+        string FullName,
         string Phone,
         string? Notes,
         DateTime CreatedOnUtc);
@@ -49,8 +48,7 @@ public static class GetAllClients
                     e.Id,
                     e.ClinicId,
                     e.Clinic.Name,
-                    e.FirstName,
-                    e.LastName,
+                    e.FullName,
                     e.Phone,
                     e.Notes,
                     e.CreatedOnUtc));
@@ -58,8 +56,7 @@ public static class GetAllClients
             if (!string.IsNullOrWhiteSpace(query.search))
             {
                 clients = clients.Where(e =>
-                    e.FirstName.ToLower().Contains(query.search) ||
-                    e.LastName.ToLower().Contains(query.search) ||
+                    e.FullName.ToLower().Contains(query.search) ||
                     e.Phone.ToLower().Contains(query.search) ||
                     e.ClinicName.ToLower().Contains(query.search));
             }
@@ -67,8 +64,7 @@ public static class GetAllClients
             Expression<Func<Response, object>> orderSelector = query.SortColumn?
                 .ToLower() switch
             {
-                "firstname" => e => e.FirstName,
-                "lastname" => e => e.LastName,
+                "clientname" => e => e.FullName,
                 "phone" => e => e.Phone,
                 "clinicname" => e => e.ClinicName,
                 _ => e => e.Id
