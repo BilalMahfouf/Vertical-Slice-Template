@@ -41,17 +41,24 @@
         "addNewClient": "Add New Client",
         "addTitle": "Add New Client",
         "addDescription": "Enter the client's information below",
+        "viewTitle": "Client Details",
+        "viewDescription": "View complete client information",
         "firstName": "First Name",
         "lastName": "Last Name",
+        "fullName": "Full Name",
         "phoneNumber": "Phone Number",
         "notes": "Notes",
         "notesOptional": "Notes (Optional)",
         "notesPlaceholder": "Additional notes about the client...",
+        "clinic": "Clinic",
+        "registeredOn": "Registered On",
+        "close": "Close",
         "cancel": "Cancel",
         "addClient": "Add Client",
         "adding": "Adding...",
         "firstNamePlaceholder": "First Name",
         "lastNamePlaceholder": "Last Name",
-        "phonePlaceholder": "+213"
+        "phonePlaceholder": "+213",
+        "noNotes": "No notes available"
     }
 }

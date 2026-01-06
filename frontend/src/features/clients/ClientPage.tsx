@@ -4,12 +4,31 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ClientDataTable from "./client-table";
 import AddClient from "./add-client";
+import ViewClient from "./view-client";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
+import type { Client } from "./client-api";
 
 export default function ClientPage() {
     const [addClientOpen, setAddClientOpen] = useState(false);
+    const [viewClientOpen, setViewClientOpen] = useState(false);
+    const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
     const { t, i18n } = useTranslation();
     const isRtl = i18n.language === "ar";
+
+    const handleView = (client: Client) => {
+        setSelectedClientId(client.id);
+        setViewClientOpen(true);
+    };
+
+    const handleEdit = (client: Client) => {
+        console.log("Edit client:", client);
+        // TODO: Implement edit functionality
+    };
+
+    const handleDelete = (client: Client) => {
+        console.log("Delete client:", client);
+        // TODO: Implement delete functionality
+    };
 
     return (
         <div dir={isRtl ? "rtl" : "ltr"}>
@@ -31,9 +50,23 @@ export default function ClientPage() {
                 </Button>
             </div>
             <div>
-                <ClientDataTable />
+                <ClientDataTable
+                    onView={handleView}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                />
             </div>
             <AddClient open={addClientOpen} onClose={() => setAddClientOpen(false)} />
+            {selectedClientId && (
+                <ViewClient
+                    open={viewClientOpen}
+                    onClose={() => {
+                        setViewClientOpen(false);
+                        setSelectedClientId(null);
+                    }}
+                    clientId={selectedClientId}
+                />
+            )}
         </div>
     );
 }

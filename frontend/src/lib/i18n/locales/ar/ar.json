@@ -30,17 +30,24 @@
         "addNewClient": "إضافة عميل جديد",
         "addTitle": "إضافة عميل جديد",
         "addDescription": "أدخل معلومات العميل أدناه",
+        "viewTitle": "تفاصيل العميل",
+        "viewDescription": "عرض معلومات العميل الكاملة",
         "firstName": "الاسم الأول",
         "lastName": "اسم العائلة",
+        "fullName": "الاسم الكامل",
         "phoneNumber": "رقم الهاتف",
         "notes": "ملاحظات",
         "notesOptional": "ملاحظات (اختياري)",
         "notesPlaceholder": "ملاحظات إضافية حول العميل...",
+        "clinic": "العيادة",
+        "registeredOn": "تاريخ التسجيل",
+        "close": "إغلاق",
         "cancel": "إلغاء",
         "addClient": "إضافة العميل",
         "adding": "جاري الإضافة...",
         "firstNamePlaceholder": "الاسم الأول",
         "lastNamePlaceholder": "اسم العائلة",
-        "phonePlaceholder": "+213"
+        "phonePlaceholder": "+213",
+        "noNotes": "لا توجد ملاحظات متاحة"
     }
 }

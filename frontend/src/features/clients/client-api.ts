@@ -32,6 +32,13 @@ const clientApi ={
             throw new Error('Failed to add client');
          }
          return result.data;
+    },
+    getClientById: async (id:string): Promise<Client> => {
+            const result = await api.get<Client>(`/clients/${id}`);
+            if(result.status !== 200) {
+                throw new Error('Failed to fetch client');
+            }
+            return result.data;
     }
 }
 export default clientApi;

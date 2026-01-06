@@ -44,6 +44,10 @@ interface DataTableProps<TData> {
   emptyMessage?: string;
   /** Callback when row is clicked */
   onRowClick?: (row: TData) => void;
+  /** Action handlers */
+  onView?: (row: TData) => void;
+  onEdit?: (row: TData) => void;
+  onDelete?: (row: TData) => void;
   /** Additional CSS class for the table container */
   className?: string;
   /** Debounce time for search (ms) */
@@ -80,10 +84,16 @@ export function DataTable<TData>({
   enableSearch = true,
   emptyMessage,
   onRowClick,
+  // Action handlers are passed through columns, not used directly here
+  onView: _onView,
+  onEdit: _onEdit,
+  onDelete: _onDelete,
   className,
   searchDebounceMs = 300,
 }: DataTableProps<TData>) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.language === "ar";
+  
   // Local search state for immediate UI feedback
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearch = useDebounce(searchInput, searchDebounceMs);
@@ -153,7 +163,7 @@ export function DataTable<TData>({
   );
 
   return (
-    <div className={cn("space-y-4", className)} dir="auto">
+    <div className={cn("space-y-4", className)} dir={isRtl ? "rtl" : "ltr"}>
       {/* Toolbar: Search only */}
       {enableSearch && (
         <div className="flex items-center">
