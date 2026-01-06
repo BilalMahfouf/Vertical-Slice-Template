@@ -1,5 +1,19 @@
 {
     "welcomMessage": "مرحبا بك في تطبيق إدارة العيادة البيطرية",
+    "signIn": "تسجيل الدخول",
+    "signInDescription": "سجل دخولك لإدارة عيادتك ورعاية مرضاك.",
+    "login": "دخول",
+    "loginDescription": "سجل دخولك لإدارة عيادتك ورعاية مرضاك.",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "dashboard": "لوحة التحكم",
+    "animals": "الحيوانات",
+    "clients": "العملاء",
+    "appointments": "المواعيد",
+    "visits": "الزيارات",
+    "notifications": "الإشعارات",
+    "settings": "الإعدادات",
     "table": {
         "search": "بحث...",
         "noResults": "لا توجد نتائج.",
@@ -9,5 +23,24 @@
         "edit": "تعديل",
         "delete": "حذف",
         "openMenu": "فتح القائمة"
+    },
+    "client": {
+        "title": "العملاء",
+        "description": "عرض وإدارة جميع سجلات العملاء في دليل موحد.",
+        "addNewClient": "إضافة عميل جديد",
+        "addTitle": "إضافة عميل جديد",
+        "addDescription": "أدخل معلومات العميل أدناه",
+        "firstName": "الاسم الأول",
+        "lastName": "اسم العائلة",
+        "phoneNumber": "رقم الهاتف",
+        "notes": "ملاحظات",
+        "notesOptional": "ملاحظات (اختياري)",
+        "notesPlaceholder": "ملاحظات إضافية حول العميل...",
+        "cancel": "إلغاء",
+        "addClient": "إضافة العميل",
+        "adding": "جاري الإضافة...",
+        "firstNamePlaceholder": "الاسم الأول",
+        "lastNamePlaceholder": "اسم العائلة",
+        "phonePlaceholder": "+213"
     }
 }

@@ -27,6 +27,25 @@ const i18nKeyContainer = {
         delete: 'table.delete',
         openMenu: 'table.openMenu',
     },
+    client: {
+        title: 'client.title',
+        description: 'client.description',
+        addNewClient: 'client.addNewClient',
+        addTitle: 'client.addTitle',
+        addDescription: 'client.addDescription',
+        firstName: 'client.firstName',
+        lastName: 'client.lastName',
+        phoneNumber: 'client.phoneNumber',
+        notes: 'client.notes',
+        notesOptional: 'client.notesOptional',
+        notesPlaceholder: 'client.notesPlaceholder',
+        cancel: 'client.cancel',
+        addClient: 'client.addClient',
+        adding: 'client.adding',
+        firstNamePlaceholder: 'client.firstNamePlaceholder',
+        lastNamePlaceholder: 'client.lastNamePlaceholder',
+        phonePlaceholder: 'client.phonePlaceholder',
+    },
 };
 
 export default i18nKeyContainer;

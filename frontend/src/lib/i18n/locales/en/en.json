@@ -23,5 +23,35 @@
         "edit": "Edit",
         "delete": "Delete",
         "openMenu": "Open menu"
+    },
+    "animal": {
+        "title": "Animals",
+        "description": "View and manage all patient records in a unified directory.",
+        "addAnimal": "Add Animal",
+        
+        "name": "Name",
+        "species": "Species",
+        "breed": "Breed",
+        "age": "Age",
+        "owner": "Owner"
+    },
+    "client": {
+        "title": "Clients",
+        "description": "View and manage all client records in a unified directory.",
+        "addNewClient": "Add New Client",
+        "addTitle": "Add New Client",
+        "addDescription": "Enter the client's information below",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "phoneNumber": "Phone Number",
+        "notes": "Notes",
+        "notesOptional": "Notes (Optional)",
+        "notesPlaceholder": "Additional notes about the client...",
+        "cancel": "Cancel",
+        "addClient": "Add Client",
+        "adding": "Adding...",
+        "firstNamePlaceholder": "First Name",
+        "lastNamePlaceholder": "Last Name",
+        "phonePlaceholder": "+213"
     }
 }

@@ -1,3 +1,7 @@
+import AnimalDataTable from "./AnimalDataTable";
+
 export default function AnimalPage(){
-    return <div>Animal Page</div>;
+    return <>
+   <AnimalDataTable />
+    </>
 }
