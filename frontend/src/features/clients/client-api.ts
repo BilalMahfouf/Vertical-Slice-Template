@@ -17,6 +17,7 @@ export type CreateClientRequest = {
   phone: string;
   notes?: string;
 }
+
 const clientApi ={
     getAllClients: async (request: TableRequest) : Promise<PagedList<Client>> => {
        const params = getTableRequsestParams(request);
@@ -39,6 +40,14 @@ const clientApi ={
                 throw new Error('Failed to fetch client');
             }
             return result.data;
+    },
+    updateClient: async(id:string,request : CreateClientRequest) : Promise<void> => {
+        const result = await api.put<void>(`/clients/${id}`,request);
+        if(result.status !== 204) {
+            throw new Error('Failed to update client');
+        }
+        return;
     }
+
 }
 export default clientApi;

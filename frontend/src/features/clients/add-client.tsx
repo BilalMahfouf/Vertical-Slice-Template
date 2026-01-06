@@ -1,34 +1,76 @@
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { User, Phone, FileText } from "lucide-react";
+import { User, Phone, FileText, Hash } from "lucide-react";
 import clientApi, { type CreateClientRequest } from "./client-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
+
+const MODE_ADDNEW = "addnew";
+const MODE_UPDATE = "update";
 
 interface AddClientProps {
   open: boolean;
   onClose: () => void;
+  clientId?: string;
 }
 
-export default function AddClient({ open, onClose }: AddClientProps) {
+export default function AddClient({ open, onClose, clientId }: AddClientProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+  const [mode, setMode] = useState<typeof MODE_ADDNEW | typeof MODE_UPDATE>(MODE_ADDNEW);
 
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
 
+  // Set mode based on clientId
+  useEffect(() => {
+    const changeMode = () => {
+    setMode(clientId ? MODE_UPDATE : MODE_ADDNEW);
+    }
+    changeMode();
+  }, [clientId]);
+
   const queryClient = useQueryClient();
 
+  // Fetch client data in update mode
+  const { data: clientData } = useQuery({
+    queryKey: ["client", clientId],
+    queryFn: () => clientApi.getClientById(clientId!),
+    enabled: mode === MODE_UPDATE && open && !!clientId,
+  });
+
+  // Fill form when client data is loaded
+  useEffect(() => {
+  const fillForm = ()=>{
+if (clientData && mode === MODE_UPDATE) {
+      const [first, ...rest] = clientData.fullName.split(" ");
+      setFirstName(first || "");
+      setLastName(rest.join(" ") || "");
+      setPhone(clientData.phone);
+      setNotes(clientData.notes || "");
+    }
+  }  
+    fillForm();
+  }, [clientData, mode]);
+
   const mutation = useMutation({
-    mutationFn: clientApi.addClient,
+    mutationFn: (data: { id?: string; request: CreateClientRequest }) => {
+      if (mode === MODE_UPDATE && data.id) {
+         clientApi.updateClient(data.id, data.request);
+      }
+      return clientApi.addClient(data.request);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
+      if (mode === MODE_UPDATE) {
+        queryClient.invalidateQueries({ queryKey: ["client", clientId] });
+      }
       resetForm();
       onClose();
     },
@@ -44,13 +86,17 @@ export default function AddClient({ open, onClose }: AddClientProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (firstName && lastName && phone) {
-      const client: CreateClientRequest = {
+      const request: CreateClientRequest = {
         firstName,
         lastName,
         phone,
         notes: notes || undefined,
       };
-      mutation.mutate(client);
+      
+      mutation.mutate({
+        id: mode === MODE_UPDATE ? clientId : undefined,
+        request,
+      });
     }
   };
 
@@ -69,14 +115,31 @@ export default function AddClient({ open, onClose }: AddClientProps) {
               </div>
             </div>
             <h2 className="text-2xl font-bold">
-              {t(i18nKeyContainer.client.addTitle)}
+              {t(mode === MODE_UPDATE ? i18nKeyContainer.client.updateTitle : i18nKeyContainer.client.addTitle)}
             </h2>
             <p className="text-slate-500">
-              {t(i18nKeyContainer.client.addDescription)}
+              {t(mode === MODE_UPDATE ? i18nKeyContainer.client.updateDescription : i18nKeyContainer.client.addDescription)}
             </p>
           </div>
           <div className="pt-8 pb-8 px-8">
             <form onSubmit={handleSubmit} className="space-y-5">
+              {mode === MODE_UPDATE && clientId && (
+                <div className="space-y-2">
+                  <Label htmlFor="clientId">
+                    {t(i18nKeyContainer.client.clientId)}
+                  </Label>
+                  <div className="relative">
+                    <Hash className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input
+                      id="clientId"
+                      type="text"
+                      className="bg-slate-100 border-slate-200 h-11 ps-10 text-slate-500"
+                      value={clientId}
+                      readOnly
+                    />
+                  </div>
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">
@@ -161,8 +224,8 @@ export default function AddClient({ open, onClose }: AddClientProps) {
                   disabled={mutation.isPending}
                 >
                   {mutation.isPending
-                    ? t(i18nKeyContainer.client.adding)
-                    : t(i18nKeyContainer.client.addClient)}
+                    ? t(mode === MODE_UPDATE ? i18nKeyContainer.client.updating : i18nKeyContainer.client.adding)
+                    : t(mode === MODE_UPDATE ? i18nKeyContainer.client.updateClient : i18nKeyContainer.client.addClient)}
                 </Button>
               </div>
             </form>

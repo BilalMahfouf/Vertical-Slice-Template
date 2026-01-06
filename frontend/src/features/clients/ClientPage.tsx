@@ -12,6 +12,7 @@ export default function ClientPage() {
     const [addClientOpen, setAddClientOpen] = useState(false);
     const [viewClientOpen, setViewClientOpen] = useState(false);
     const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
+    const [editClientId, setEditClientId] = useState<string | null>(null);
     const { t, i18n } = useTranslation();
     const isRtl = i18n.language === "ar";
 
@@ -21,8 +22,8 @@ export default function ClientPage() {
     };
 
     const handleEdit = (client: Client) => {
-        console.log("Edit client:", client);
-        // TODO: Implement edit functionality
+        setEditClientId(client.id);
+        setAddClientOpen(true);
     };
 
     const handleDelete = (client: Client) => {
@@ -56,7 +57,14 @@ export default function ClientPage() {
                     onDelete={handleDelete}
                 />
             </div>
-            <AddClient open={addClientOpen} onClose={() => setAddClientOpen(false)} />
+            <AddClient 
+                open={addClientOpen} 
+                onClose={() => {
+                    setAddClientOpen(false);
+                    setEditClientId(null);
+                }} 
+                clientId={editClientId || undefined}
+            />
             {selectedClientId && (
                 <ViewClient
                     open={viewClientOpen}

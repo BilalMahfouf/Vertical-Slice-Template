@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { User, Phone, FileText, Building, Calendar } from "lucide-react";
+import { User, Phone, Building, Calendar } from "lucide-react";
 import clientApi from "./client-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 
@@ -123,7 +123,7 @@ export default function ViewClient({ open, onClose, clientId }: ViewClientProps)
                   </label>
                   <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 min-h-24">
                     {client.notes ? (
-                      <p className="text-slate-700 whitespace-pre-wrap break-words">
+                      <p className="text-slate-700 whitespace-pre-wrap wrap-break">
                         {client.notes}
                       </p>
                     ) : (
