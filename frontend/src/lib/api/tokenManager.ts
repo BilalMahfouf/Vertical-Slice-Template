@@ -29,14 +29,12 @@ export const tokenManager = {
   refreshAccessToken: async (): Promise<string | null> => {
     try {
       // refreshToken is sent automatically via httpOnly cookie
-      console.log("Refreshing access token...");
-      console.log("cockies:", document.cookie);
       const response = await api.post('/auth/refresh-token', {});
       const newAccessToken = response.data.value.token;
       
       tokenManager.setAccessToken(newAccessToken);
       return newAccessToken;
-    } catch (error) {
+    } catch  {
       tokenManager.clearTokens();
       // Redirect to login or emit event
       window.location.href = '/login';

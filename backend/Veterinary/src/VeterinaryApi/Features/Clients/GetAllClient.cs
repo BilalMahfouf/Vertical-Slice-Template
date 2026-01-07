@@ -43,34 +43,34 @@ public static class GetAllClients
                 return Result<PagedList<Response>>.Failure(
                     ClientErrors.ClientsNotFound);
             }
-            var clients = _db.Clients.AsNoTracking()
-                .Select(e => new Response(
-                    e.Id,
-                    e.ClinicId,
-                    e.Clinic.Name,
-                    e.FullName,
-                    e.Phone,
-                    e.Notes,
-                    e.CreatedOnUtc));
-
+            var clients = _db.Clients.AsQueryable();
             if (!string.IsNullOrWhiteSpace(query.search))
             {
                 clients = clients.Where(e =>
                     e.FullName.ToLower().Contains(query.search) ||
                     e.Phone.ToLower().Contains(query.search) ||
-                    e.ClinicName.ToLower().Contains(query.search));
+                    e.Clinic.Name.ToLower().Contains(query.search));
             }
+            var client = clients.AsNoTracking()
+                            .Select(e => new Response(
+                                e.Id,
+                                e.ClinicId,
+                                e.Clinic.Name,
+                                e.FullName,
+                                e.Phone,
+                                e.Notes,
+                                e.CreatedOnUtc));
 
             Expression<Func<Response, object>> orderSelector = query.SortColumn?
                 .ToLower() switch
             {
-                "clientname" => e => e.FullName,
+                "fullname" => e => e.FullName,
                 "phone" => e => e.Phone,
                 "clinicname" => e => e.ClinicName,
                 _ => e => e.Id
             };
-            var temp = await clients.ToListAsync(cancellationToken);
-            if(temp is null)
+            var temp = await client.ToListAsync(cancellationToken);
+            if (temp is null)
             {
                 return Result<PagedList<Response>>
                     .Failure(ClientErrors.ClientsNotFound);
@@ -88,7 +88,7 @@ public static class GetAllClients
             clientQuery = clientQuery.Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize);
 
-            var data =  clientQuery.ToList();
+            var data = clientQuery.ToList();
             if (data is null)
             {
                 return Result<PagedList<Response>>
@@ -103,7 +103,7 @@ public static class GetAllClients
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/clients",[Authorize] async (
+            app.MapGet("/clients", [Authorize] async (
                 [FromQuery] int? page,
                 [FromQuery] int? pageSize,
                 [FromQuery] string? sortColumn,
