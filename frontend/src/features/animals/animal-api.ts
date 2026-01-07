@@ -1,5 +1,6 @@
 import type { PagedList, TableRequest } from "@/components/tables";
 import api from "@/lib/api/api";
+import { getTableRequsestParams } from "@/lib/utils";
 
 export type Animal = {
   id: string;
@@ -28,6 +29,16 @@ export interface CreateAnimalRequest {
   microchipNumber?: string | null;
   status: number;
 }
+export interface UpdateAnimalRequest {
+  name: string;
+  species: string;
+  breed?: string | null;
+  gender: number;
+  birthDate?: string | null;
+  color?: string | null;
+  microchipNumber?: string | null;
+  status: number;
+}
 
 export const AnimalStatus = [
   { value: 1, label: "Active" },
@@ -43,19 +54,12 @@ export const Gender = [
 
 const animalApi = {
     getAllAnimals: async (request: TableRequest):Promise<PagedList<Animal>> => {
-        console.log("Fetching animals...");
-        const params = new URLSearchParams();
-        params.append('page', request.page.toString());
-        params.append('pageSize', request.pageSize.toString());
-        if(request.search)    params.append('search', request.search);
-        if(request.sortColumn)    params.append('sortColumn', request.sortColumn);
-        if(request.sortOrder)    params.append('sortOrder', request.sortOrder);
+        const params = getTableRequsestParams(request);
 
         const response = await api.get<PagedList<Animal>>('/animals',{params});
         if(response.status !== 200){
             throw new Error('Failed to fetch animals');
         }
-        console.log("fetched data : ",response.data);
         return response.data;
     },
     createAnimal: async(data: CreateAnimalRequest):Promise<string> => {
@@ -64,6 +68,22 @@ const animalApi = {
             throw new Error('Failed to create animal');
         }
         return response.data.id;
-    }
+    },
+    updateAnimal: async(id:string, data: UpdateAnimalRequest):Promise<void> => {
+        const response = await api.put<void>(`/animals/${id}`,data);
+        if(response.status !== 204){
+            throw new Error('Failed to update animal');
+        }
+        return;
+    },
+    getAnimalById: async(id:string):Promise<Animal> => {
+        const response = await api.get<Animal>(`/animals/${id}`);
+        if(response.status !== 200){
+            throw new Error('Failed to fetch animal');
+        }
+        return response.data;
+    },
+    
+
 }
 export default  animalApi;

@@ -2,26 +2,27 @@ import { DataTable, DataTableColumnHeader, DataTableRowActions, type DataTableCo
 import animalApi, { type Animal } from "./animal-api";
 import { PawPrint, Eye, Edit, Trash2 } from "lucide-react";
 import { Phone } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import i18nKeyContainer from "@/lib/i18n/keyContainer";
 
-export default function AnimalDataTable() {
-    return (
-        <DataTable 
-        columns={animalColumns}
-        queryFn={animalApi.getAllAnimals}
-        queryKey="animals"
-        searchPlaceholder=""
-        defaultPageSize={10}
-        enableSearch={true}
-        searchDebounceMs={1000}
-        />
-    )
+interface AnimalDataTableProps {
+  onView?: (animal: Animal) => void;
+  onEdit?: (animal: Animal) => void;
+  onDelete?: (animal: Animal) => void;
 }
 
-const animalColumns: DataTableColumn<Animal>[] = [
+export default function AnimalDataTable({
+  onView,
+  onEdit,
+  onDelete,
+}: AnimalDataTableProps) {
+    const { t } = useTranslation();
+
+    const animalColumns: DataTableColumn<Animal>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Patient" enableSorting={false} />
+      <DataTableColumnHeader column={column} title={t(i18nKeyContainer.animal.name)} enableSorting={false} />
     ),
     cell: ({ row }) => (
       <div className="flex items-start gap-3">
@@ -38,14 +39,14 @@ const animalColumns: DataTableColumn<Animal>[] = [
   {
     accessorKey: "species",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Species" enableSorting={false} />
+      <DataTableColumnHeader column={column} title={t(i18nKeyContainer.animal.species)} enableSorting={false} />
     ),
     cell: ({ row }) => <TypeBadge type={row.original.species} />,
   },
   {
     accessorKey: "clientName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Owner" enableSorting={false} />
+      <DataTableColumnHeader column={column} title={t(i18nKeyContainer.animal.owner)} enableSorting={false} />
     ),
     cell: ({ row }) => (
       <div className="space-y-1">
@@ -62,27 +63,43 @@ const animalColumns: DataTableColumn<Animal>[] = [
   {
     accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" enableSorting={false} />
+      <DataTableColumnHeader column={column} title={t(i18nKeyContainer.animal.status)} enableSorting={false} />
     ),
     cell: ({ row }) => <StatusIndicator status={row.original.status} />,
   },
   {
     accessorKey: "createdOnUtc",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Date" enableSorting={false} />
+      <DataTableColumnHeader column={column} title={t(i18nKeyContainer.animal.birthDate)} enableSorting={false} />
     ),
     cell: ({ row }) => <DateCell date={row.original.createdOnUtc} />,
   },
   {
     id: "actions",
-    header: () => <span className="text-xs font-medium uppercase tracking-wide text-slate-500">Actions</span>,
+    header: () => <span className="text-xs font-medium uppercase tracking-wide text-slate-500">{t(i18nKeyContainer.table.openMenu)}</span>,
     cell: ({ row }) => {
       const actions: RowAction<Animal>[] = [
-        { label: "View details", onClick: () => console.log("View", row.original), icon: Eye },
-        { label: "Edit", onClick: () => console.log("Edit", row.original), icon: Edit },
-        { label: "Delete", onClick: () => console.log("Delete", row.original), icon: Trash2, variant: "destructive", separator: true },
+        { label: t(i18nKeyContainer.table.viewDetails), onClick: () => onView?.(row.original), icon: Eye },
+        { label: t(i18nKeyContainer.table.edit), onClick: () => onEdit?.(row.original), icon: Edit },
+        { label: t(i18nKeyContainer.table.delete), onClick: () => onDelete?.(row.original), icon: Trash2, variant: "destructive", separator: true },
       ];
       return <DataTableRowActions row={row.original} actions={actions} />;
     },
   },
 ];
+
+    return (
+        <DataTable 
+        columns={animalColumns}
+        queryFn={animalApi.getAllAnimals}
+        queryKey="animals"
+        searchPlaceholder={t(i18nKeyContainer.table.search)}
+        defaultPageSize={10}
+        enableSearch={true}
+        searchDebounceMs={1000}
+        onView={onView}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        />
+    )
+}

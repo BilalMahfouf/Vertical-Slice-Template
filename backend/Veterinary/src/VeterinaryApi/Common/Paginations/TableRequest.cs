@@ -35,6 +35,11 @@ public class TableRequest<TResponse> : IQuery<PagedList<TResponse>>
     {
         int pageNumber = page is null || page <= 0 ? 1 : (int)page;
         int size = pageSize is null || pageSize <= 0 ? 10 : (int)pageSize;
+        search = string.IsNullOrWhiteSpace(search) ? search : search.Trim();
+        sortColumn = string.IsNullOrWhiteSpace(sortColumn)
+            ? sortColumn : sortColumn.Trim();
+        sortOrder = string.IsNullOrWhiteSpace(sortOrder)
+            ? sortOrder : sortOrder.Trim();
         return new TableRequest<TResponse>(
             size,
             pageNumber,

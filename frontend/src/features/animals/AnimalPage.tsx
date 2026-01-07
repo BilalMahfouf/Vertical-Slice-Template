@@ -1,7 +1,74 @@
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import AnimalDataTable from "./AnimalDataTable";
+import AddUpdateAnimal from "./add-update-animal";
+import i18nKeyContainer from "@/lib/i18n/keyContainer";
+import type { Animal } from "./animal-api";
 
-export default function AnimalPage(){
-    return <>
-   <AnimalDataTable />
-    </>
+export default function AnimalPage() {
+    const [addAnimalOpen, setAddAnimalOpen] = useState(false);
+    const [editAnimalId, setEditAnimalId] = useState<string | null>(null);
+    const { t, i18n } = useTranslation();
+    const isRtl = i18n.language === "ar";
+
+    const handleOpenAdd = () => {
+        setEditAnimalId(null);
+        setAddAnimalOpen(true);
+    };
+
+    const handleEdit = (animal: Animal) => {
+        setEditAnimalId(animal.id);
+        setAddAnimalOpen(true);
+    };
+
+    const handleView = (animal: Animal) => {
+        console.log("View animal:", animal);
+        // TODO: Implement view functionality
+    };
+
+    const handleDelete = (animal: Animal) => {
+        console.log("Delete animal:", animal);
+        // TODO: Implement delete functionality
+    };
+
+    const handleClose = () => {
+        setAddAnimalOpen(false);
+        setEditAnimalId(null);
+    };
+
+    return (
+        <div dir={isRtl ? "rtl" : "ltr"}>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">
+                        {t(i18nKeyContainer.animal.title)}
+                    </h1>
+                    <p className="text-slate-500">
+                        {t(i18nKeyContainer.animal.description)}
+                    </p>
+                </div>
+                <Button
+                    className="sm:ms-auto gap-2 cursor-pointer w-full sm:w-auto"
+                    onClick={handleOpenAdd}
+                >
+                    <Plus className="h-4 w-4" />
+                    {t(i18nKeyContainer.animal.addAnimal)}
+                </Button>
+            </div>
+            <div>
+                <AnimalDataTable
+                    onView={handleView}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                />
+            </div>
+            <AddUpdateAnimal
+                open={addAnimalOpen}
+                onClose={handleClose}
+                animalId={editAnimalId || undefined}
+            />
+        </div>
+    );
 }

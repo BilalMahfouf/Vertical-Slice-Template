@@ -49,7 +49,15 @@ const clientApi ={
             throw new Error('Failed to update client');
         }
         return;
-    }
-
+    },
+    getClientBySearch: async (search:string): Promise<PagedList<Client>> => {
+        const params = new URLSearchParams();
+        params.append('search', search);
+        const result = await api.get<PagedList<Client>>('/clients',{params});
+        if(result.status !== 200) {
+            throw new Error('Failed to fetch clients');
+        }
+        return result.data;
+    },
 }
 export default clientApi;
