@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design.Internal;
 using System.Linq.Expressions;
@@ -14,7 +15,6 @@ namespace VeterinaryApi.Features.Clinics;
 public static class GetAllClinics
 {
 
-    public class Request : TableRequest, IQuery<PagedList<Response>>;
 
     public record Response(
         Guid Id,
@@ -26,7 +26,7 @@ public static class GetAllClinics
         int StaffCount,
         DateTime CreatedOnUtc);
     public class GetAllClinicsQueryHandler
-        : IQueryHandler<Request, PagedList<Response>>
+        : IQueryHandler<TableRequest<Response>, PagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
 
@@ -36,7 +36,7 @@ public static class GetAllClinics
         }
 
         public async Task<Result<PagedList<Response>>> Handle(
-            Request query,
+            TableRequest<Response> query,
             CancellationToken cancellationToken = default)
         {
             var count = await _db.Clinics.CountAsync(cancellationToken);
@@ -61,6 +61,13 @@ public static class GetAllClinics
                 || e.Phone.ToLower().Contains(query.search)
                 || e.DoctorName.ToLower().Contains(query.search));
             }
+            var temp = await clinics.ToListAsync(cancellationToken);
+            if (temp is null)
+            {
+                return Result<PagedList<Response>>.Failure(ClinicErrors
+                    .ClinicsNotFound);
+            }
+            var tempQuery = temp.AsQueryable();
             Expression<Func<Response, object>> orderSelector = query.SortColumn?
                 .ToLower() switch
             {
@@ -73,16 +80,16 @@ public static class GetAllClinics
             };
             if (query.SortOrder is "desc")
             {
-                clinics = clinics.OrderByDescending(orderSelector);
+                tempQuery = tempQuery.OrderByDescending(orderSelector);
             }
             else
             {
-                clinics = clinics.OrderBy(orderSelector);
+                tempQuery = tempQuery.OrderBy(orderSelector);
             }
-            clinics = clinics.Skip((query.Page - 1) * query.PageSize)
+            tempQuery = tempQuery.Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize);
 
-            var data = await clinics.ToListAsync(cancellationToken);
+            var data =  tempQuery.ToList();
             if (data is null)
             {
                 return Result<PagedList<Response>>
@@ -97,18 +104,20 @@ public static class GetAllClinics
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/clinics", async (
+            app.MapGet("/clinics",[Authorize] async (
                 [FromQuery] int? page,
                 [FromQuery] int? pageSize,
                 [FromQuery] string? sortColumn,
                 [FromQuery] string? sortOrder,
                 [FromQuery] string? search,
-                [FromServices] IQueryHandler<Request, PagedList<Response>> handler,
+                [FromServices] IQueryHandler<TableRequest<Response>, PagedList<Response>> handler,
                 CancellationToken cancellationToken) =>
             {
-                var query = (Request)TableRequest
+                TableRequest<Response> query = TableRequest<Response>
                 .Create(pageSize, page, search, sortColumn, sortOrder);
                 var result = await handler.Handle(query, cancellationToken);
+                return result.IsSuccess ? Results.Ok(result.Value)
+                : result.Problem();
 
             }).WithTags("clinics");
         }

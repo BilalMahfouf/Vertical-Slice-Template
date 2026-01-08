@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
@@ -38,7 +39,7 @@ public static class DeleteClinic
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/clinics/{id:guid}", async (
+            app.MapDelete("/clinics/{id:guid}",[Authorize] async (
                 Guid id,
                 ICommandHandler<DeleteClinicCommand> handler,
                 CancellationToken cancellationToken) =>

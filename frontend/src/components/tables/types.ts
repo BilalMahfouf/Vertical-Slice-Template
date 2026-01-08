@@ -100,6 +100,10 @@ export interface DataTableProps<TData> {
   onRowClick?: (row: TData) => void;
   /** Row action menu renderer */
   renderRowActions?: (row: TData) => React.ReactNode;
+  /** Action handlers */
+  onView?: (row: TData) => void;
+  onEdit?: (row: TData) => void;
+  onDelete?: (row: TData) => void;
   /** Additional CSS class for the table container */
   className?: string;
 }

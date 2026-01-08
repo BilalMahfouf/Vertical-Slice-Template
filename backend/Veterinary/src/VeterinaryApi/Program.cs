@@ -51,6 +51,8 @@ builder.Services.AddCors(options =>
     );
 });
 
+builder.Services.AddAuthorization();
+
 
 
 var app = builder.Build();
@@ -64,8 +66,12 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 app.UseCors("AllowFrontend");
+
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
+
+app.UseAuthorization();
 
 var api = app.MapGroup("/api/v1");
 api.MapCarter();

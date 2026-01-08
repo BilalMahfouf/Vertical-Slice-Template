@@ -1,18 +1,32 @@
 import api from './api';
+import i18n from '../i18n';
+import i18nKeyContainer from '../i18n/keyContainer';
 
 let accessToken: string | null = null;
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+let refreshSubscribers: Array<{
+  resolve: (token: string) => void;
+  reject: (error: any) => void;
+}> = [];
 
 // Notify all queued requests with the new token
 const onRefreshed = (token: string) => {
-  refreshSubscribers.forEach((callback) => callback(token));
+  refreshSubscribers.forEach((subscriber) => subscriber.resolve(token));
+  refreshSubscribers = [];
+};
+
+// Notify all queued requests that refresh failed
+const onRefreshFailed = (error: any) => {
+  refreshSubscribers.forEach((subscriber) => subscriber.reject(error));
   refreshSubscribers = [];
 };
 
 // Add request to queue
-const addRefreshSubscriber = (callback: (token: string) => void) => {
-  refreshSubscribers.push(callback);
+const addRefreshSubscriber = (
+  resolve: (token: string) => void,
+  reject: (error: any) => void
+) => {
+  refreshSubscribers.push({ resolve, reject });
 };
 
 export const tokenManager = {
@@ -29,18 +43,22 @@ export const tokenManager = {
   refreshAccessToken: async (): Promise<string | null> => {
     try {
       // refreshToken is sent automatically via httpOnly cookie
-      console.log("Refreshing access token...");
-      console.log("cockies:", document.cookie);
-      const response = await api.post('/auth/refresh-token', {});
+      console.log('Refreshing access token...');
+      const response = await api.post('/auth/refresh-token', {}, {
+        skipAuthRefresh: true
+      } as any);
+      console.log('Refresh token response status:', response.status);   
+      if(response.status !== 200) {
+        return null;
+      }
       const newAccessToken = response.data.value.token;
+      console.log('Access token refreshed.');
       
       tokenManager.setAccessToken(newAccessToken);
       return newAccessToken;
-    } catch (error) {
+    } catch(error)  {
       tokenManager.clearTokens();
-      // Redirect to login or emit event
-      window.location.href = '/login';
-      return null;
+      throw error;
     }
   },
 };
@@ -59,41 +77,73 @@ api.interceptors.request.use(
 
 // Response interceptor - handle 401 with token refresh
 api.interceptors.response.use(
-  (response) => response,
+  (response) => response, 
   async (error) => {
+    console.log('Response received:', error.response);
     const originalRequest = error.config;
+
+    // If refresh token endpoint itself fails with 401, redirect immediately
+    if (error.response?.status === 401 && originalRequest.skipAuthRefresh) {
+      tokenManager.clearTokens();
+      const message = i18n.t(i18nKeyContainer.sessionExpiredMessage);
+      window.confirm(message);
+      window.location.href = '/login';
+      return Promise.reject(error);
+    }
 
     // If 401 and not already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log('401 Unauthorized - attempting token refresh');
+      originalRequest._retry = true;
+      
       if (isRefreshing) {
+        console.log('Token refresh already in progress, queuing request');
         // Queue this request until refresh completes
-        return new Promise((resolve) => {
-          addRefreshSubscriber((token: string) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            resolve(api(originalRequest));
-          });
+        return new Promise((resolve, reject) => {
+          addRefreshSubscriber(
+            (token: string) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(api(originalRequest));
+            },
+            (err: any) => {
+              reject(err);
+            }
+          );
         });
       }
 
-      originalRequest._retry = true;
+      console.log('Refreshing token for 401 response');
       isRefreshing = true;
 
       try {
         const newToken = await tokenManager.refreshAccessToken();
         
         if (newToken) {
-          isRefreshing = false;
           onRefreshed(newToken);
-          
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return api(originalRequest);
+        } else {
+          // Token refresh failed - notify subscribers and redirect to login
+          tokenManager.clearTokens();
+          onRefreshFailed(error);
+          const message = i18n.t(i18nKeyContainer.sessionExpiredMessage);
+          window.confirm(message);
+          window.location.href = '/login';
+          return Promise.reject(error);
         }
       } catch (refreshError) {
-        isRefreshing = false;
+        // Clear tokens, notify subscribers on error and redirect to login
+        tokenManager.clearTokens();
+        onRefreshFailed(refreshError);
+        const message = i18n.t(i18nKeyContainer.sessionExpiredMessage);
+        window.confirm(message);
+        window.location.href = '/login';
         return Promise.reject(refreshError);
+      } finally {
+        // Always reset the flag
+        isRefreshing = false;
       }
     }
-
     return Promise.reject(error);
   }
 );

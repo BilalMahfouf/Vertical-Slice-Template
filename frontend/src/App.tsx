@@ -9,6 +9,7 @@ import SettingPage from './features/visits/VisitPage';
 import NotificationPage from './features/notifications/NotificationPage';
 import VisitPage from './features/visits/VisitPage';
 import ClientPage from './features/clients/ClientPage';
+import { Toaster } from './components/ui/sonner';
 
 
 
@@ -59,6 +60,7 @@ export default function App() {
     return (
         <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
+        <Toaster />
         </QueryClientProvider>
     )
 }

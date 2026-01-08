@@ -2,7 +2,7 @@
 
 namespace VeterinaryApi.Common.Paginations;
 
-public class TableRequest
+public class TableRequest<TResponse> : IQuery<PagedList<TResponse>>
 {
     public int PageSize { get; private set; }
     public int Page { get; private set; }
@@ -26,7 +26,7 @@ public class TableRequest
         SortColumn = sortColumn;
         SortOrder = sortOrder;
     }
-    public static TableRequest Create(
+    public static TableRequest<TResponse> Create(
         int? pageSize,
         int? page,
         string? search = null,
@@ -35,7 +35,12 @@ public class TableRequest
     {
         int pageNumber = page is null || page <= 0 ? 1 : (int)page;
         int size = pageSize is null || pageSize <= 0 ? 10 : (int)pageSize;
-        return new TableRequest(
+        search = string.IsNullOrWhiteSpace(search) ? search : search.Trim();
+        sortColumn = string.IsNullOrWhiteSpace(sortColumn)
+            ? sortColumn : sortColumn.Trim();
+        sortOrder = string.IsNullOrWhiteSpace(sortOrder)
+            ? sortOrder : sortOrder.Trim();
+        return new TableRequest<TResponse>(
             size,
             pageNumber,
             search,
