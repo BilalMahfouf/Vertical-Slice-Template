@@ -107,5 +107,86 @@
         "lastNamePlaceholder": "Last Name",
         "phonePlaceholder": "+213",
         "noNotes": "No notes available"
+    },
+    "toast": {
+        "client": {
+            "added": "Client Added",
+            "addedDesc": "The client has been added successfully.",
+            "updated": "Client Updated",
+            "updatedDesc": "The client information has been updated successfully.",
+            "deleted": "Client Deleted",
+            "deletedDesc": "The client has been deleted successfully."
+        },
+        "animal": {
+            "added": "Animal Added",
+            "addedDesc": "The animal has been added successfully.",
+            "updated": "Animal Updated",
+            "updatedDesc": "The animal information has been updated successfully.",
+            "deleted": "Animal Deleted",
+            "deletedDesc": "The animal has been deleted successfully."
+        },
+        "clientAdded": "Client Added",
+        "clientAddedDesc": "The client has been added successfully.",
+        "clientUpdated": "Client Updated",
+        "clientUpdatedDesc": "The client information has been updated successfully.",
+        "clientDeleted": "Client Deleted",
+        "clientDeletedDesc": "The client has been deleted successfully.",
+        "clientErrorDesc": "Failed to process client operation. Please try again.",
+        "animalAdded": "Animal Added",
+        "animalAddedDesc": "The animal has been added successfully.",
+        "animalUpdated": "Animal Updated",
+        "animalUpdatedDesc": "The animal information has been updated successfully.",
+        "animalDeleted": "Animal Deleted",
+        "animalDeletedDesc": "The animal has been deleted successfully.",
+        "animalErrorDesc": "Failed to process animal operation. Please try again.",
+        "errorOccurred": "Error Occurred",
+        "genericErrorDesc": "Something went wrong. Please try again later.",
+        "success": "Success",
+        "warning": "Warning",
+        "info": "Information"
+    },
+    "errors": {
+        "client": {
+            "notFound": "Client Not Found",
+            "notFoundDesc": "The requested client could not be found in our records.",
+            "listNotFound": "No Clients Found",
+            "listNotFoundDesc": "No clients were found matching your criteria.",
+            "operationFailed": "Client Operation Failed",
+            "operationFailedDesc": "Unable to complete the client operation. Please try again."
+        },
+        "animal": {
+            "notFound": "Animal Not Found",
+            "notFoundDesc": "The requested animal could not be found in our records.",
+            "listNotFound": "No Animals Found",
+            "listNotFoundDesc": "No animals were found matching your criteria.",
+            "ownerNotFound": "Owner Not Found",
+            "ownerNotFoundDesc": "The animal's owner could not be found. Please verify the client exists.",
+            "operationFailed": "Animal Operation Failed",
+            "operationFailedDesc": "Unable to complete the animal operation. Please try again."
+        },
+        "clinic": {
+            "notFound": "Clinic Not Found",
+            "notFoundDesc": "The requested clinic could not be found.",
+            "listNotFound": "No Clinics Found",
+            "listNotFoundDesc": "No clinics were found.",
+            "invalidName": "Invalid Clinic Name",
+            "invalidNameDesc": "The clinic name is invalid. Please check and try again."
+        },
+        "user": {
+            "notFound": "User Not Found",
+            "notFoundDesc": "The user account could not be found.",
+            "invalidCredentials": "Invalid Credentials",
+            "invalidCredentialsDesc": "The email or password you entered is incorrect.",
+            "expiredToken": "Session Expired",
+            "expiredTokenDesc": "Your session has expired. Please log in again."
+        },
+        "validation": "Validation Error",
+        "validationDesc": "Please check your input and try again.",
+        "network": "Connection Error",
+        "networkDesc": "Unable to connect to the server. Please check your internet connection.",
+        "server": "Server Error",
+        "serverDesc": "An unexpected server error occurred. Please try again later.",
+        "unknown": "Unknown Error",
+        "unknownDesc": "An unexpected error occurred. Please try again."
     }
 }

@@ -83,7 +83,12 @@ const animalApi = {
         }
         return response.data;
     },
-    
-
+    deleteAnimalById: async(id:string):Promise<void> => {
+        const response = await api.delete<void>(`/animals/${id}`);
+        if(response.status !== 204){
+            throw new Error('Failed to delete animal');
+        }
+        return;
+    }, 
 }
 export default  animalApi;

@@ -1,0 +1,174 @@
+/**
+ * API Error Types and Utilities
+ * Maps backend ProblemDetails errors to frontend-friendly structures
+ */
+
+/**
+ * Backend ProblemDetails structure (RFC 7807)
+ */
+export interface ProblemDetails {
+  type: string;
+  title: string; // This contains the error code (e.g., "Client.ClientNotFound")
+  status: number;
+  errors?: [string, string]; // [errorCode, errorDescription]
+}
+
+/**
+ * Axios error response structure
+ */
+export interface ApiErrorResponse {
+  response?: {
+    data?: ProblemDetails;
+    status?: number;
+  };
+  message?: string;
+}
+
+/**
+ * Error types based on HTTP status codes
+ */
+export type ErrorType = 
+  | "validation"    // 400
+  | "unauthorized"  // 401
+  | "notFound"      // 404
+  | "conflict"      // 409
+  | "server";       // 500+
+
+/**
+ * Parsed error structure for frontend use
+ */
+export interface ParsedApiError {
+  type: ErrorType;
+  code: string;
+  status: number;
+  description: string;
+}
+
+/**
+ * Backend error codes - mapped from EntityErrors
+ */
+export const ErrorCodes = {
+  // Client errors
+  CLIENT_NOT_FOUND: "Client.ClientNotFound",
+  CLIENTS_NOT_FOUND: "Client.ClientsNotFound",
+  
+  // Animal errors
+  ANIMAL_NOT_FOUND: "Animal.AnimalNotFound",
+  ANIMALS_NOT_FOUND: "Animal.AnimalsNotFound",
+  
+  // Clinic errors
+  CLINIC_NOT_FOUND: "Clinic.ClinicNotFound",
+  CLINICS_NOT_FOUND: "Clinic.ClinicsNotFound",
+  CLINIC_INVALID_NAME: "Clinic.InvalidClinicName",
+  
+  // User/Auth errors
+  USER_NOT_FOUND: "User.NotFound",
+  USER_INVALID_CREDENTIALS: "User.InvalidCredentials",
+  USER_EXPIRED_REFRESH_TOKEN: "User.ExpiredRefreshToken",
+  
+  // Generic errors
+  VALIDATION_ERROR: "Validation.Error",
+  SERVER_ERROR: "Server.Error",
+  NETWORK_ERROR: "Network.Error",
+  UNKNOWN_ERROR: "Unknown.Error",
+} as const;
+
+export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];
+
+/**
+ * Maps HTTP status code to ErrorType
+ */
+function getErrorType(status: number): ErrorType {
+  switch (status) {
+    case 400:
+      return "validation";
+    case 401:
+      return "unauthorized";
+    case 404:
+      return "notFound";
+    case 409:
+      return "conflict";
+    default:
+      return "server";
+  }
+}
+
+/**
+ * Parses an API error response into a structured format
+ */
+export function parseApiError(error: unknown): ParsedApiError {
+  const apiError = error as ApiErrorResponse;
+  
+  // Check if it's an Axios error with response data
+  if (apiError?.response?.data) {
+    const problemDetails = apiError.response.data;
+    const status = problemDetails.status || apiError.response.status || 500;
+    
+    return {
+      type: getErrorType(status),
+      code: problemDetails.title || ErrorCodes.UNKNOWN_ERROR,
+      status,
+      description: problemDetails.errors?.[1] || problemDetails.title || "An error occurred",
+    };
+  }
+  
+  // Check if it's a network error
+  if (apiError?.message === "Network Error" || !apiError?.response) {
+    return {
+      type: "server",
+      code: ErrorCodes.NETWORK_ERROR,
+      status: 0,
+      description: "Network error - please check your connection",
+    };
+  }
+  
+  // Fallback for unknown error structures
+  return {
+    type: "server",
+    code: ErrorCodes.UNKNOWN_ERROR,
+    status: 500,
+    description: "An unexpected error occurred",
+  };
+}
+
+/**
+ * Check if error is a specific error code
+ */
+export function isErrorCode(error: ParsedApiError, code: ErrorCode): boolean {
+  return error.code === code;
+}
+
+/**
+ * Get the i18n key for an error code
+ * Maps backend error codes to frontend i18n keys
+ */
+export function getErrorI18nKey(errorCode: string): string {
+  // Map error codes to i18n keys
+  const errorKeyMap: Record<string, string> = {
+    // Client errors
+    [ErrorCodes.CLIENT_NOT_FOUND]: "errors.client.notFound",
+    [ErrorCodes.CLIENTS_NOT_FOUND]: "errors.client.listNotFound",
+    
+    // Animal errors
+    [ErrorCodes.ANIMAL_NOT_FOUND]: "errors.animal.notFound",
+    [ErrorCodes.ANIMALS_NOT_FOUND]: "errors.animal.listNotFound",
+    
+    // Clinic errors
+    [ErrorCodes.CLINIC_NOT_FOUND]: "errors.clinic.notFound",
+    [ErrorCodes.CLINICS_NOT_FOUND]: "errors.clinic.listNotFound",
+    [ErrorCodes.CLINIC_INVALID_NAME]: "errors.clinic.invalidName",
+    
+    // User/Auth errors
+    [ErrorCodes.USER_NOT_FOUND]: "errors.user.notFound",
+    [ErrorCodes.USER_INVALID_CREDENTIALS]: "errors.user.invalidCredentials",
+    [ErrorCodes.USER_EXPIRED_REFRESH_TOKEN]: "errors.user.expiredToken",
+    
+    // Generic errors
+    [ErrorCodes.VALIDATION_ERROR]: "errors.validation",
+    [ErrorCodes.SERVER_ERROR]: "errors.server",
+    [ErrorCodes.NETWORK_ERROR]: "errors.network",
+    [ErrorCodes.UNKNOWN_ERROR]: "errors.unknown",
+  };
+  
+  return errorKeyMap[errorCode] || "errors.unknown";
+}

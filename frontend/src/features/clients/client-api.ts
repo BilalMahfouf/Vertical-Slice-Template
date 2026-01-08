@@ -59,5 +59,12 @@ const clientApi ={
         }
         return result.data;
     },
+    deleteClientById: async (id:string): Promise<void> => {
+        const result = await api.delete<void>(`/clients/${id}`);
+        if(result.status !== 204) {
+            throw new Error('Failed to delete client');
+        }
+        return;
+    },
 }
 export default clientApi;

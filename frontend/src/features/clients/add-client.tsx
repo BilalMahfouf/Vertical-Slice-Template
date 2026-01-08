@@ -8,6 +8,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { User, Phone, FileText, Hash } from "lucide-react";
 import clientApi, { type CreateClientRequest } from "./client-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
+import { useClientToast } from "./use-client-toast";
 
 const MODE_ADDNEW = "addnew";
 const MODE_UPDATE = "update";
@@ -27,6 +28,7 @@ export default function AddClient({ open, onClose, clientId }: AddClientProps) {
 
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
+  const clientToast = useClientToast();
 
   // Set mode based on clientId
   useEffect(() => {
@@ -70,9 +72,15 @@ if (clientData && mode === MODE_UPDATE) {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       if (mode === MODE_UPDATE) {
         queryClient.invalidateQueries({ queryKey: ["client", clientId] });
+        clientToast.updated();
+      } else {
+        clientToast.added();
       }
       resetForm();
       onClose();
+    },
+    onError: (error) => {
+      clientToast.error(error);
     },
   });
 

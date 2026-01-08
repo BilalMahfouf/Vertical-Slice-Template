@@ -35,6 +35,7 @@ import animalApi, {
 } from "./animal-api";
 import clientApi, { type Client } from "../clients/client-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
+import { useAnimalToast } from "./use-animal-toast";
 
 const MODE_ADDNEW = "addnew";
 const MODE_UPDATE = "update";
@@ -78,6 +79,7 @@ export default function AddUpdateAnimal({
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
   const queryClient = useQueryClient();
+  const animalToast = useAnimalToast();
 
   // Set mode based on animalId
   useEffect(() => {
@@ -175,8 +177,12 @@ export default function AddUpdateAnimal({
     mutationFn: (data: CreateAnimalRequest) => animalApi.createAnimal(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["animals"] });
+      animalToast.added();
       resetForm();
       onClose();
+    },
+    onError: (error) => {
+      animalToast.error(error);
     },
   });
 
@@ -187,8 +193,12 @@ export default function AddUpdateAnimal({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["animals"] });
       queryClient.invalidateQueries({ queryKey: ["animal", animalId] });
+      animalToast.updated();
       resetForm();
       onClose();
+    },
+    onError: (error) => {
+      animalToast.error(error);
     },
   });
 
