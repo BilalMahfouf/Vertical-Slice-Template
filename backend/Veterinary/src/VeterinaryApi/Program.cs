@@ -4,6 +4,8 @@ using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Infrastructure;
 using DotNetEnv;
 using Scalar.AspNetCore;
+using VeterinaryApi.Common.Exceptions;
+using FluentValidation;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,14 @@ builder.Configuration.AddEnvironmentVariables();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddValidatorsFromAssemblyContaining
+    <VeterinaryApi.Features.Animals.CreateAnimal.Validator>(ServiceLifetime.Singleton);
+
+builder.Services.AddProblemDetails();
+
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 
 
@@ -69,12 +79,15 @@ app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
+app.UseExceptionHandler();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 var api = app.MapGroup("/api/v1");
 api.MapCarter();
+
 
 
 app.Run();
