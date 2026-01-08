@@ -14,6 +14,8 @@
     "visits": "Visits",
     "notifications": "Notifications",
     "settings": "Settings",
+    "sessionExpired": "Session Expired",
+    "sessionExpiredMessage": "Your session has ended. Please login again to continue.",
     "table": {
         "search": "Search...",
         "noResults": "No results found.",

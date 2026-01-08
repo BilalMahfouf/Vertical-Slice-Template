@@ -17,6 +17,8 @@ const i18nKeyContainer = {
     settings: 'settings',
     logout: 'logout',
     chiefVet: 'chiefVet',
+    sessionExpired: 'sessionExpired',
+    sessionExpiredMessage: 'sessionExpiredMessage',
     table: {
         search: 'table.search',
         noResults: 'table.noResults',

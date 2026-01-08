@@ -14,6 +14,8 @@
     "visits": "الزيارات",
     "notifications": "الإشعارات",
     "settings": "الإعدادات",
+    "sessionExpired": "انتهت الجلسة",
+    "sessionExpiredMessage": "لقد انتهت جلستك. يرجى تسجيل الدخول مرة أخرى للمتابعة.",
     "table": {
         "search": "بحث...",
         "noResults": "لا توجد نتائج.",
