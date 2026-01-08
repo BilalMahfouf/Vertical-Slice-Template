@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -35,21 +36,42 @@ public static class CreateAnimal
         string? MicrochipNumber,
         AnimalStatus status) : ICommand<Response>;
 
+    public class Validator : AbstractValidator<CreateAnimalCommand>
+    {
+        public Validator()
+        {
+            RuleFor(e => e.ClientId).NotEmpty();
+
+            RuleFor(e => e.Name).NotEmpty();
+
+            RuleFor(e => e.status).NotNull();
+
+            RuleFor(e => e.Species).NotEmpty();
+
+            RuleFor(e => e.Gender).NotNull();
+
+        }
+    }
     public record Response(Guid Id);
 
     public class CreateAnimalCommandHandler : ICommandHandler<CreateAnimalCommand, Response>
     {
         private readonly IApplicationDbContext _db;
+        private readonly IValidator<CreateAnimalCommand> _validator;
 
-        public CreateAnimalCommandHandler(IApplicationDbContext db)
+        public CreateAnimalCommandHandler(
+            IApplicationDbContext db,
+            IValidator<CreateAnimalCommand> validator)
         {
             _db = db;
+            _validator = validator;
         }
 
         public async Task<Result<Response>> Handle(
             CreateAnimalCommand command,
             CancellationToken cancellationToken)
         {
+            await _validator.ValidateAndThrowAsync(command, cancellationToken);
             var client = await _db.Clients
                 .Where(c => c.Id == command.ClientId)
                 .Select(c => new { c.Id, c.ClinicId })
