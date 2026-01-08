@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import ClientDataTable from "./client-table";
 import AddClient from "./add-client";
 import ViewClient from "./view-client";
+import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
+import { useDeleteClient } from "./use-delete-client";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import type { Client } from "./client-api";
 
@@ -13,8 +15,12 @@ export default function ClientPage() {
     const [viewClientOpen, setViewClientOpen] = useState(false);
     const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
     const [editClientId, setEditClientId] = useState<string | null>(null);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+    
     const { t, i18n } = useTranslation();
     const isRtl = i18n.language === "ar";
+    const { deleteClient, isDeleting } = useDeleteClient();
 
     const handleView = (client: Client) => {
         setSelectedClientId(client.id);
@@ -27,8 +33,27 @@ export default function ClientPage() {
     };
 
     const handleDelete = (client: Client) => {
-        console.log("Delete client:", client);
-        // TODO: Implement delete functionality
+        setClientToDelete(client);
+        setDeleteDialogOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (clientToDelete) {
+            deleteClient(clientToDelete.id, {
+                onSuccess: () => {
+                    setDeleteDialogOpen(false);
+                    setClientToDelete(null);
+                },
+                onError: () => {
+                    // Keep dialog open on error so user can retry or cancel
+                },
+            });
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setDeleteDialogOpen(false);
+        setClientToDelete(null);
     };
 
     return (
@@ -75,6 +100,15 @@ export default function ClientPage() {
                     clientId={selectedClientId}
                 />
             )}
+            <ConfirmDeleteDialog
+                open={deleteDialogOpen}
+                onClose={handleCancelDelete}
+                onConfirm={handleConfirmDelete}
+                title={t(i18nKeyContainer.deleteDialog.client.title)}
+                description={t(i18nKeyContainer.deleteDialog.client.description)}
+                itemName={clientToDelete?.fullName}
+                isLoading={isDeleting}
+            />
         </div>
     );
 }

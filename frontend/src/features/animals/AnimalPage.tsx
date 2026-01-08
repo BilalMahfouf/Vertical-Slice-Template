@@ -4,14 +4,20 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimalDataTable from "./AnimalDataTable";
 import AddUpdateAnimal from "./add-update-animal";
+import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
+import { useDeleteAnimal } from "./use-delete-animal";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import type { Animal } from "./animal-api";
 
 export default function AnimalPage() {
     const [addAnimalOpen, setAddAnimalOpen] = useState(false);
     const [editAnimalId, setEditAnimalId] = useState<string | null>(null);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [animalToDelete, setAnimalToDelete] = useState<Animal | null>(null);
+    
     const { t, i18n } = useTranslation();
     const isRtl = i18n.language === "ar";
+    const { deleteAnimal, isDeleting } = useDeleteAnimal();
 
     const handleOpenAdd = () => {
         setEditAnimalId(null);
@@ -29,8 +35,27 @@ export default function AnimalPage() {
     };
 
     const handleDelete = (animal: Animal) => {
-        console.log("Delete animal:", animal);
-        // TODO: Implement delete functionality
+        setAnimalToDelete(animal);
+        setDeleteDialogOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (animalToDelete) {
+            deleteAnimal(animalToDelete.id, {
+                onSuccess: () => {
+                    setDeleteDialogOpen(false);
+                    setAnimalToDelete(null);
+                },
+                onError: () => {
+                    // Keep dialog open on error so user can retry or cancel
+                },
+            });
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setDeleteDialogOpen(false);
+        setAnimalToDelete(null);
     };
 
     const handleClose = () => {
@@ -68,6 +93,15 @@ export default function AnimalPage() {
                 open={addAnimalOpen}
                 onClose={handleClose}
                 animalId={editAnimalId || undefined}
+            />
+            <ConfirmDeleteDialog
+                open={deleteDialogOpen}
+                onClose={handleCancelDelete}
+                onConfirm={handleConfirmDelete}
+                title={t(i18nKeyContainer.deleteDialog.animal.title)}
+                description={t(i18nKeyContainer.deleteDialog.animal.description)}
+                itemName={animalToDelete?.name}
+                isLoading={isDeleting}
             />
         </div>
     );

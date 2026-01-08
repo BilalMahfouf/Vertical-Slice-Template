@@ -16,6 +16,25 @@
     "settings": "Paramètres",
     "sessionExpired": "Session expirée",
     "sessionExpiredMessage": "Votre session a expiré. Veuillez vous reconnecter pour continuer.",
+    "common": {
+        "cancel": "Annuler",
+        "confirm": "Confirmer",
+        "confirmDelete": "Supprimer",
+        "deleting": "Suppression...",
+        "close": "Fermer",
+        "save": "Enregistrer",
+        "saving": "Enregistrement..."
+    },
+    "deleteDialog": {
+        "client": {
+            "title": "Supprimer le client",
+            "description": "Êtes-vous sûr de vouloir supprimer ce client ? Cette action est irréversible et supprimera définitivement toutes les données associées."
+        },
+        "animal": {
+            "title": "Supprimer l'animal",
+            "description": "Êtes-vous sûr de vouloir supprimer cet animal ? Cette action est irréversible et supprimera définitivement tous les dossiers associés."
+        }
+    },
     "table": {
         "search": "Rechercher...",
         "noResults": "Aucun résultat trouvé.",

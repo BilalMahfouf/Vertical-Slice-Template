@@ -19,6 +19,25 @@ const i18nKeyContainer = {
     chiefVet: 'chiefVet',
     sessionExpired: 'sessionExpired',
     sessionExpiredMessage: 'sessionExpiredMessage',
+    common: {
+        cancel: 'common.cancel',
+        confirm: 'common.confirm',
+        confirmDelete: 'common.confirmDelete',
+        deleting: 'common.deleting',
+        close: 'common.close',
+        save: 'common.save',
+        saving: 'common.saving',
+    },
+    deleteDialog: {
+        client: {
+            title: 'deleteDialog.client.title',
+            description: 'deleteDialog.client.description',
+        },
+        animal: {
+            title: 'deleteDialog.animal.title',
+            description: 'deleteDialog.animal.description',
+        },
+    },
     table: {
         search: 'table.search',
         noResults: 'table.noResults',

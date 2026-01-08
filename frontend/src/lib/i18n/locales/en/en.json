@@ -16,6 +16,25 @@
     "settings": "Settings",
     "sessionExpired": "Session Expired",
     "sessionExpiredMessage": "Your session has ended. Please login again to continue.",
+    "common": {
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "confirmDelete": "Delete",
+        "deleting": "Deleting...",
+        "close": "Close",
+        "save": "Save",
+        "saving": "Saving..."
+    },
+    "deleteDialog": {
+        "client": {
+            "title": "Delete Client",
+            "description": "Are you sure you want to delete this client? This action cannot be undone and will permanently remove all associated data."
+        },
+        "animal": {
+            "title": "Delete Animal",
+            "description": "Are you sure you want to delete this animal? This action cannot be undone and will permanently remove all associated records."
+        }
+    },
     "table": {
         "search": "Search...",
         "noResults": "No results found.",
