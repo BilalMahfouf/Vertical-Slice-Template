@@ -9,6 +9,9 @@ public class OwnerConfiguration : IEntityTypeConfiguration<Client>
 {
     public void Configure(EntityTypeBuilder<Client> builder)
     {
+
+        builder.HasQueryFilter(o => !o.IsDeleted);
+
         builder.ToTable("owners");
 
         builder.HasKey(o => o.Id);
