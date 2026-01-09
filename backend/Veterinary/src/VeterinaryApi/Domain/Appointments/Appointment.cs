@@ -65,7 +65,7 @@ public sealed class Appointment : Entity
         UpdateStatus(AppointmentStatus.Completed);
     }
     
-    public void Cancel()
+    public void Cancel(string?notes=null)
     {
         if(this.Status is not AppointmentStatus.Confirmed ||
             this.Status is not AppointmentStatus.Rescheduled)
@@ -73,6 +73,7 @@ public sealed class Appointment : Entity
             throw new DomainException(AppointmentErrors.CancelProblem);
         }
         UpdateStatus(AppointmentStatus.Cancelled);
+        notes = string.IsNullOrWhiteSpace(notes) ? null : notes;
     }
 
 }

@@ -16,5 +16,9 @@ public static class AppointmentErrors
     public static Error CancelProblem
         => Error.Conflict($"Appointment.${nameof(CancelProblem)}",
             "Only confirmed or rescheduled  appointmemts can be cancelled");
+    public static Error NotFound(Guid id)
+        => Error.NotFound($"Appointment.{nameof(NotFound)}",
+            $"The appointment with the specified id: {id} was not found");
+
 
 }
