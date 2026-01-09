@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Domain.Animals;
+using VeterinaryApi.Domain.Appointments;
 using VeterinaryApi.Domain.Clients;
 using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Domain.Users;
@@ -20,6 +21,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Clinic> Clinics { get; set; } = null!;
     public DbSet<Client> Clients { get; set; } = null!;
     public DbSet<Animal> Animals { get; set; } = null!;
+    public DbSet<Appointment> Appointments { get; set; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

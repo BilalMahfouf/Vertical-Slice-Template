@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Domain.Animals;
+using VeterinaryApi.Domain.Appointments;
 using VeterinaryApi.Domain.Clients;
 using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Domain.Users;
@@ -13,8 +14,7 @@ public interface IApplicationDbContext
     public DbSet<Clinic> Clinics { get; }
     public DbSet<Client> Clients { get; }
     public DbSet<Animal> Animals { get; }
-
-
+    public DbSet<Appointment> Appointments { get; }
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
