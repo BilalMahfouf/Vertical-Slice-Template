@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
@@ -44,7 +45,7 @@ public static class RescheduleAppointment
         {
             _validator.ValidateAndThrow(command);
             var appointment = await _db.Appointments
-                .FindAsync(command.id, cancellationToken);
+                .FirstOrDefaultAsync(e => e.Id == command.id, cancellationToken);
             if (appointment is null)
             {
                 return Result.Failure(AppointmentErrors.NotFound(command.id));

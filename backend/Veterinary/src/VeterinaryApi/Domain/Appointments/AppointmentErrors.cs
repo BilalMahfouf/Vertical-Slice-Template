@@ -19,6 +19,9 @@ public static class AppointmentErrors
     public static Error NotFound(Guid id)
         => Error.NotFound($"Appointment.{nameof(NotFound)}",
             $"The appointment with the specified id: {id} was not found");
-
-
+    public static Error AppointmentNotFound(Guid appointmentId)
+        => Error.NotFound("Appointment.AppointmentNotFound",
+            $"Appointment with id '{appointmentId}' was not found");
+    public static Error AppointmentsNotFound
+        => Error.NotFound("Appointment.AppointmentsNotFound", "Appointments not found");
 }

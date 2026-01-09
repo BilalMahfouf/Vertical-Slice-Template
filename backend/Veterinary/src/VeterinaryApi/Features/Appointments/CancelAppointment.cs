@@ -44,7 +44,7 @@ public static  class CancelAppointment
             _validator.ValidateAndThrow(command);
 
             var appointment = await _db.Appointments
-                .FindAsync(command.id, cancellationToken);
+                .FirstOrDefaultAsync(e => e.Id == command.id, cancellationToken);
             if( appointment is null)
             {
                 return Result.Failure(AppointmentErrors.NotFound(command.id));

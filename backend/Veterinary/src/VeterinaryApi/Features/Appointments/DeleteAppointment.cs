@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
@@ -26,7 +27,8 @@ public static class DeleteAppointment
             DeleteAppointmentCommand command,
             CancellationToken cancellationToken = default)
         {
-            var appointment = await _db.Appointments.FindAsync(command.id);
+            var appointment = await _db.Appointments
+                .FirstOrDefaultAsync(e => e.Id == command.id, cancellationToken);
             if (appointment is null)
             {
                 return Result.Failure(
