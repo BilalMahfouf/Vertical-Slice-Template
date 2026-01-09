@@ -28,7 +28,7 @@ public static class DeleteAppointment
             CancellationToken cancellationToken = default)
         {
             var appointment = await _db.Appointments
-                .FirstOrDefaultAsync(e => e.Id == command.id, cancellationToken);
+                .FirstOrDefaultAsync(e=>e.Id==command.id);
             if (appointment is null)
             {
                 return Result.Failure(
