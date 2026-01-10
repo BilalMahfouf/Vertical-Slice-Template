@@ -56,6 +56,10 @@ export const ErrorCodes = {
   ANIMAL_NOT_FOUND: "Animal.AnimalNotFound",
   ANIMALS_NOT_FOUND: "Animal.AnimalsNotFound",
   
+  // Appointment errors
+  APPOINTMENT_NOT_FOUND: "Appointment.AppointmentNotFound",
+  APPOINTMENTS_NOT_FOUND: "Appointment.AppointmentsNotFound",
+  
   // Clinic errors
   CLINIC_NOT_FOUND: "Clinic.ClinicNotFound",
   CLINICS_NOT_FOUND: "Clinic.ClinicsNotFound",

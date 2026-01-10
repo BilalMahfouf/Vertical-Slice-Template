@@ -89,6 +89,16 @@ const animalApi = {
             throw new Error('Failed to delete animal');
         }
         return;
-    }, 
+    },
+    getAnimalsByClientId: async(clientId: string): Promise<Animal[]> => {
+        const params = new URLSearchParams();
+        params.append('search', clientId);
+        params.append('pageSize', '100');
+        const response = await api.get<PagedList<Animal>>('/animals', { params });
+        if(response.status !== 200){
+            throw new Error('Failed to fetch client animals');
+        }
+        return response.data.item;
+    },
 }
 export default  animalApi;

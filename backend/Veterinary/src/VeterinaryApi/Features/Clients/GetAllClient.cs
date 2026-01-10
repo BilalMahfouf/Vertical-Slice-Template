@@ -21,7 +21,8 @@ public static class GetAllClients
         string FullName,
         string Phone,
         string? Notes,
-        DateTime CreatedOnUtc);
+        DateTime CreatedOnUtc,
+        int NumberOfAnimals);
 
     public class GetAllClientsQueryHandler
         : IQueryHandler<TableRequest<Response>, PagedList<Response>>
@@ -59,7 +60,8 @@ public static class GetAllClients
                                 e.FullName,
                                 e.Phone,
                                 e.Notes,
-                                e.CreatedOnUtc));
+                                e.CreatedOnUtc,
+                                e.Animals.Count));
 
             Expression<Func<Response, object>> orderSelector = query.SortColumn?
                 .ToLower() switch

@@ -8,6 +8,7 @@ using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
+using VeterinaryApi.Domain.Animals;
 using VeterinaryApi.Domain.Appointments;
 using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Infrastructure.Persistence;
@@ -72,6 +73,14 @@ public static class CreateAppointment
                 return Result<Response>.Failure(
                     ClinicErrors.ClinicsNotFound);
             }
+            var isAnimalExist = await _db.Animals.AsNoTracking()
+                .AnyAsync(e => e.Id == command.animalId);
+            if (!isAnimalExist)
+            {
+                return Result<Response>.Failure(
+                    AnimalErrors.AnimalNotFound(command.animalId));
+            }
+
             var appointment = Appointment.Create(
                 command.animalId,
                 clinicId,

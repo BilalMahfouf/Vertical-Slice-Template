@@ -31,7 +31,7 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             .IsRequired();
 
         builder.HasOne(a => a.Client)
-            .WithMany() // add navigation collection on Client/Owner if desired
+            .WithMany(a => a.Animals) // add navigation collection on Client/Owner if desired
             .HasForeignKey(a => a.ClientId)
             .OnDelete(DeleteBehavior.Cascade)
             .HasConstraintName("FK_animals_owners_client_id");
@@ -59,7 +59,7 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             .HasColumnName("status")
             .HasMaxLength(10)
             .IsRequired();
-            
+
 
         builder.Property(a => a.BirthDate)
             .HasColumnName("birth_date")
