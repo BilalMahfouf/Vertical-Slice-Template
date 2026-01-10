@@ -153,16 +153,9 @@ export default function AddUpdateAnimal({
         const client = await clientApi.getClientById(searchQuery.trim());
         setSelectedClient(client);
       } else {
-        // Search by name using dedicated search endpoint
-        const result = await clientApi.getClientBySearch(searchQuery.trim());
-
-        if (result.item.length > 0) {
-          // Take the first matching client
-          setSelectedClient(result.item[0]);
-        } else {
-          setSearchError(t(i18nKeyContainer.animal.clientNotFound));
-          setSelectedClient(null);
-        }
+        // Search by name using dedicated endpoint
+        const client = await clientApi.getClientByName(searchQuery.trim());
+        setSelectedClient(client);
       }
     } catch {
       setSearchError(t(i18nKeyContainer.animal.clientNotFound));

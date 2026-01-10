@@ -14,18 +14,9 @@ namespace VeterinaryApi.Features.Clients;
 public static class GetAllClients
 {
 
-    public record Response(
-        Guid Id,
-        Guid ClinicId,
-        string ClinicName,
-        string FullName,
-        string Phone,
-        string? Notes,
-        DateTime CreatedOnUtc,
-        int NumberOfAnimals);
 
     public class GetAllClientsQueryHandler
-        : IQueryHandler<TableRequest<Response>, PagedList<Response>>
+        : IQueryHandler<TableRequest<ClientReadResponse>, PagedList<ClientReadResponse>>
     {
         private readonly IApplicationDbContext _db;
 
@@ -34,14 +25,14 @@ public static class GetAllClients
             _db = db;
         }
 
-        public async Task<Result<PagedList<Response>>> Handle(
-            TableRequest<Response> query,
+        public async Task<Result<PagedList<ClientReadResponse>>> Handle(
+            TableRequest<ClientReadResponse> query,
             CancellationToken cancellationToken = default)
         {
             var count = await _db.Clients.CountAsync(cancellationToken);
             if (count <= 0)
             {
-                return Result<PagedList<Response>>.Failure(
+                return Result<PagedList<ClientReadResponse>>.Failure(
                     ClientErrors.ClientsNotFound);
             }
             var clients = _db.Clients.AsQueryable();
@@ -53,7 +44,7 @@ public static class GetAllClients
                     e.Clinic.Name.ToLower().Contains(query.search));
             }
             var client = clients.AsNoTracking()
-                            .Select(e => new Response(
+                            .Select(e => new ClientReadResponse(
                                 e.Id,
                                 e.ClinicId,
                                 e.Clinic.Name,
@@ -63,18 +54,19 @@ public static class GetAllClients
                                 e.CreatedOnUtc,
                                 e.Animals.Count));
 
-            Expression<Func<Response, object>> orderSelector = query.SortColumn?
+            Expression<Func<ClientReadResponse, object>> orderSelector = query.SortColumn?
                 .ToLower() switch
             {
                 "fullname" => e => e.FullName,
                 "phone" => e => e.Phone,
                 "clinicname" => e => e.ClinicName,
+                "numberofanimals" => e => e.NumberOfAnimals,
                 _ => e => e.Id
             };
             var temp = await client.ToListAsync(cancellationToken);
             if (temp is null)
             {
-                return Result<PagedList<Response>>
+                return Result<PagedList<ClientReadResponse>>
                     .Failure(ClientErrors.ClientsNotFound);
             }
             var clientQuery = temp.AsQueryable();
@@ -93,12 +85,12 @@ public static class GetAllClients
             var data = clientQuery.ToList();
             if (data is null)
             {
-                return Result<PagedList<Response>>
+                return Result<PagedList<ClientReadResponse>>
                     .Failure(ClientErrors.ClientsNotFound);
             }
-            var result = PagedList<Response>
+            var result = PagedList<ClientReadResponse>
                 .Create(data, count, query.Page, query.PageSize);
-            return Result<PagedList<Response>>.Success(result);
+            return Result<PagedList<ClientReadResponse>>.Success(result);
         }
     }
     public class Endpoint : IEndpoint
@@ -111,11 +103,11 @@ public static class GetAllClients
                 [FromQuery] string? sortColumn,
                 [FromQuery] string? sortOrder,
                 [FromQuery] string? search,
-                [FromServices] IQueryHandler<TableRequest<Response>
-                , PagedList<Response>> handler,
+                [FromServices] IQueryHandler<TableRequest<ClientReadResponse>
+                , PagedList<ClientReadResponse>> handler,
                 CancellationToken cancellationToken) =>
             {
-                var request = TableRequest<Response>
+                var request = TableRequest<ClientReadResponse>
                     .Create(pageSize, page, search, sortColumn, sortOrder);
 
                 var result = await handler.Handle(request, cancellationToken);

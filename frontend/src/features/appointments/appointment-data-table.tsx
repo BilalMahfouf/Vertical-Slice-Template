@@ -69,7 +69,8 @@ export default function AppointmentDataTable({
   onReschedule,
   onCancel,
 }: AppointmentDataTableProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.language === "ar";
 
   // Check if appointment can be rescheduled (only confirmed appointments)
   const canReschedule = (appointment: Appointment): boolean => {
@@ -128,9 +129,9 @@ export default function AppointmentDataTable({
         />
       ),
       cell: ({ row }) => (
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100">
-            <User className="h-4 w-4 text-slate-600" />
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+            <User className="h-5 w-5 text-primary" />
           </div>
           <div className="space-y-0.5">
             <div className="font-medium text-slate-900">
@@ -206,15 +207,17 @@ export default function AppointmentDataTable({
   ];
 
   return (
-    <DataTable
-      columns={appointmentColumns}
-      queryFn={appointmentApi.getAllAppointments}
-      queryKey="appointments"
-      searchPlaceholder={t(i18nKeyContainer.appointment.searchPlaceholder)}
-      defaultPageSize={10}
-      enableSearch={true}
-      emptyMessage={t(i18nKeyContainer.appointment.noAppointments)}
-      searchDebounceMs={500}
-    />
+    <div dir={isRtl ? "rtl" : "ltr"}>
+      <DataTable
+        columns={appointmentColumns}
+        queryFn={appointmentApi.getAllAppointments}
+        queryKey="appointments"
+        searchPlaceholder={t(i18nKeyContainer.appointment.searchPlaceholder)}
+        defaultPageSize={10}
+        enableSearch={true}
+        emptyMessage={t(i18nKeyContainer.appointment.noAppointments)}
+        searchDebounceMs={500}
+      />
+    </div>
   );
 }

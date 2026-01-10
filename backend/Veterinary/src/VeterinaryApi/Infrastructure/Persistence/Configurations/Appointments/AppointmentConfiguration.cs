@@ -8,6 +8,8 @@ public class AppointmentConfiguration : IEntityTypeConfiguration<Appointment>
 {
     public void Configure(EntityTypeBuilder<Appointment> builder)
     {
+        builder.HasQueryFilter(a => !a.IsDeleted);
+
         builder.ToTable("appointments");
 
         builder.HasKey(a => a.Id);
@@ -38,12 +40,8 @@ public class AppointmentConfiguration : IEntityTypeConfiguration<Appointment>
 
         builder.Property(a => a.AppointmentDate)
             .HasColumnName("appointment_date")
-            .HasColumnType("date")
             .IsRequired();
 
-        builder.Property(a => a.AppointmentTime)
-            .HasColumnName("appointment_time")
-            .IsRequired();
 
         builder.Property(a => a.Location)
             .HasColumnName("location")

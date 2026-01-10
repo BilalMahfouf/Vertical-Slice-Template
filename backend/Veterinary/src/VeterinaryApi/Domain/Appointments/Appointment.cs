@@ -10,7 +10,6 @@ public sealed class Appointment : Entity
     public Guid ClinicId { get; private set; }
     public Guid AnimalId { get; private set; }
     public DateTime AppointmentDate { get; private set; }
-    public TimeSpan? AppointmentTime { get; private set; }
     public string? Location { get; private set; } = null!;
     public AppointmentStatus Status { get; private set; }
     public DateTime? StatusUpdatedOnUtc { get; private set; }
@@ -23,15 +22,13 @@ public sealed class Appointment : Entity
         Guid animalId,
         Guid clinicId,
         DateTime appointmentDate,
-        TimeSpan? appointmentTime,
         string? location,
         string? notes)
     {
         var appointment = new Appointment();
         appointment.AnimalId = animalId;
         appointment.ClinicId = clinicId;
-        appointment.AppointmentDate = appointmentDate;
-        appointment.AppointmentTime = appointmentTime;
+        appointment.AppointmentDate = appointmentDate.ToUniversalTime();
         appointment.Location = location;
         appointment.Notes = string.IsNullOrWhiteSpace(notes) ? null : notes;
         appointment.Status = AppointmentStatus.Confirmed;
@@ -52,7 +49,7 @@ public sealed class Appointment : Entity
         {
             throw new DomainException(AppointmentErrors.RescheduleProblem);
         }
-        this.AppointmentDate = newAppointmentDate;
+        this.AppointmentDate = newAppointmentDate.ToUniversalTime();
         UpdateStatus(AppointmentStatus.Rescheduled);
     }
     public void Complete()

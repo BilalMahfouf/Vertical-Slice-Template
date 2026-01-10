@@ -175,7 +175,14 @@
         "firstNamePlaceholder": "First Name",
         "lastNamePlaceholder": "Last Name",
         "phonePlaceholder": "+213",
-        "noNotes": "No notes available"
+        "noNotes": "No notes available",
+        "tableClient": "Client",
+        "tableClinic": "Clinic",
+        "tableAnimals": "Animals",
+        "tableNotes": "Notes",
+        "tableRegistered": "Registered",
+        "searchPlaceholder": "Search clients...",
+        "noClients": "No clients found."
     },
     "toast": {
         "client": {
@@ -228,6 +235,10 @@
             "notFoundDesc": "The requested client could not be found in our records.",
             "listNotFound": "No Clients Found",
             "listNotFoundDesc": "No clients were found matching your criteria.",
+            "duplicate": "Client Already Exists",
+            "duplicateDesc": "A client with the same name and phone number already exists. Please use different information or update the existing client.",
+            "sameNameExists": "Client Name Already Exists",
+            "sameNameExistsDesc": "A client with this name already exists. Please use a different name or verify if this is the correct client.",
             "operationFailed": "Client Operation Failed",
             "operationFailedDesc": "Unable to complete the client operation. Please try again."
         },

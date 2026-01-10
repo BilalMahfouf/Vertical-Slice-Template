@@ -44,6 +44,16 @@ export function useClientToast() {
         titleKey = i18nKeyContainer.errors.client.listNotFound;
         descKey = i18nKeyContainer.errors.client.listNotFoundDesc;
         break;
+      case ErrorCodes.CLIENT_DUPLICATE:
+        titleKey = i18nKeyContainer.errors.client.duplicate;
+        descKey = i18nKeyContainer.errors.client.duplicateDesc;
+        toast.warning(t(titleKey), { description: t(descKey) });
+        return parsedError;
+      case ErrorCodes.CLIENT_SAME_NAME_EXISTS:
+        titleKey = i18nKeyContainer.errors.client.sameNameExists;
+        descKey = i18nKeyContainer.errors.client.sameNameExistsDesc;
+        toast.warning(t(titleKey), { description: t(descKey) });
+        return parsedError;
       case ErrorCodes.VALIDATION_ERROR:
         titleKey = i18nKeyContainer.errors.validation;
         descKey = i18nKeyContainer.errors.validationDesc;

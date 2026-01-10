@@ -9,6 +9,7 @@ export type Client = {
   fullName: string;     // string
   phone: string;        // string
   notes?: string;       // string | null
+  numberOfAnimals: number; // number of animals for this client
   createdOnUtc: string; // ISO Date string 
 }
 export type CreateClientRequest = {
@@ -66,5 +67,12 @@ const clientApi ={
         }
         return;
     },
+    getClientByName: async (name:string): Promise<Client> => {
+        const result = await api.get<Client>(`/clients/by-name/${name}`);
+        if(result.status !== 200) {
+            throw new Error('Failed to fetch client by name');
+        }
+        return result.data;
+    }
 }
 export default clientApi;

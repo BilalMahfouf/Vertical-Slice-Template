@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { CalendarClock, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import appointmentApi, { type Appointment } from "./appointment-api";
 import { type Client } from "@/features/clients/client-api";
-import { type Animal } from "@/features/animals/animal-api";
+import { type ClientAnimal } from "@/features/animals/animal-api";
 import {
   ClientAnimalStep,
   AppointmentDetailsStep,
@@ -45,7 +45,7 @@ export default function AddUpdateAppointment({
 
   // Selection state (Step 1)
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
+  const [selectedAnimal, setSelectedAnimal] = useState<ClientAnimal | null>(null);
 
   // Form data (Step 2)
   const [formData, setFormData] = useState<AppointmentFormData>({
@@ -127,9 +127,8 @@ export default function AddUpdateAppointment({
   const createMutation = useMutation({
     mutationFn: () =>
       appointmentApi.createAppointment({
-        animalId: selectedAnimal!.id,
-        appointmentDate: formData.date,
-        appointmentTime: formData.time,
+        animalId: selectedAnimal!.animalId,
+        appointmentDate: `${formData.date}T${formData.time}:00Z`,
         location: formData.location,
         notes: formData.notes || null,
       }),
@@ -251,7 +250,7 @@ export default function AddUpdateAppointment({
               <ClientAnimalStep
                 onSelect={handleClientAnimalSelect}
                 initialClient={selectedClient}
-                initialAnimalId={selectedAnimal?.id}
+                initialAnimalId={selectedAnimal?.animalId}
                 isRtl={isRtl}
               />
             )}

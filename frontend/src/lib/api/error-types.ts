@@ -51,6 +51,8 @@ export const ErrorCodes = {
   // Client errors
   CLIENT_NOT_FOUND: "Client.ClientNotFound",
   CLIENTS_NOT_FOUND: "Client.ClientsNotFound",
+  CLIENT_DUPLICATE: "Client.DuplicateClient",
+  CLIENT_SAME_NAME_EXISTS: "Client.ClientWithSameNameExists",
   
   // Animal errors
   ANIMAL_NOT_FOUND: "Animal.AnimalNotFound",
@@ -152,6 +154,8 @@ export function getErrorI18nKey(errorCode: string): string {
     // Client errors
     [ErrorCodes.CLIENT_NOT_FOUND]: "errors.client.notFound",
     [ErrorCodes.CLIENTS_NOT_FOUND]: "errors.client.listNotFound",
+    [ErrorCodes.CLIENT_DUPLICATE]: "errors.client.duplicate",
+    [ErrorCodes.CLIENT_SAME_NAME_EXISTS]: "errors.client.sameNameExists",
     
     // Animal errors
     [ErrorCodes.ANIMAL_NOT_FOUND]: "errors.animal.notFound",

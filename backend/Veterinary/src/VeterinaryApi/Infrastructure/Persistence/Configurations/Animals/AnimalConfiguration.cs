@@ -8,6 +8,8 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 {
     public void Configure(EntityTypeBuilder<Animal> builder)
     {
+
+        builder.HasQueryFilter(a => !a.IsDeleted);
         builder.ToTable("animals");
 
         builder.HasKey(a => a.Id);

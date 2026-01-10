@@ -18,6 +18,13 @@ export type Animal = {
   createdOnUtc: string;
   status: string;
 }
+
+// Simplified animal type for GetAnimalsByClientId endpoint
+export type ClientAnimal = {
+  animalId: string;
+  name: string;
+  species: string;
+}
 export interface CreateAnimalRequest {
   clientId: string;
   name: string;
@@ -90,14 +97,13 @@ const animalApi = {
         }
         return;
     },
-    getAnimalsByClientId: async(clientId: string): Promise<Animal[]> => {
-        const params = new URLSearchParams();
-        params.append('search', clientId);
-        params.append('pageSize', '100');
-        const response = await api.get<PagedList<Animal>>('/animals', { params });
+    getAnimalsByClientId: async(clientId: string): Promise<ClientAnimal[]> => {
+        console.log("Fetching animals for clientId:", clientId);
+        const response = await api.get<PagedList<ClientAnimal>>(`/animals/by-client/${clientId}`);
         if(response.status !== 200){
             throw new Error('Failed to fetch client animals');
         }
+        console.log("Fetched animals:", response.data.item);
         return response.data.item;
     },
 }

@@ -175,7 +175,14 @@
         "firstNamePlaceholder": "الاسم الأول",
         "lastNamePlaceholder": "اسم العائلة",
         "phonePlaceholder": "+213",
-        "noNotes": "لا توجد ملاحظات متاحة"
+        "noNotes": "لا توجد ملاحظات متاحة",
+        "tableClient": "العميل",
+        "tableClinic": "العيادة",
+        "tableAnimals": "الحيوانات",
+        "tableNotes": "ملاحظات",
+        "tableRegistered": "تاريخ التسجيل",
+        "searchPlaceholder": "البحث عن العملاء...",
+        "noClients": "لم يتم العثور على عملاء."
     },
     "toast": {
         "client": {
@@ -228,6 +235,10 @@
             "notFoundDesc": "لم يتم العثور على العميل المطلوب في سجلاتنا.",
             "listNotFound": "لا يوجد عملاء",
             "listNotFoundDesc": "لم يتم العثور على عملاء مطابقين لمعاييرك.",
+            "duplicate": "العميل موجود مسبقاً",
+            "duplicateDesc": "يوجد عميل بنفس الاسم ورقم الهاتف. يرجى استخدام معلومات مختلفة أو تحديث العميل الحالي.",
+            "sameNameExists": "اسم العميل موجود مسبقاً",
+            "sameNameExistsDesc": "يوجد عميل بهذا الاسم. يرجى استخدام اسم مختلف أو التحقق مما إذا كان هذا هو العميل الصحيح.",
             "operationFailed": "فشلت عملية العميل",
             "operationFailedDesc": "تعذر إكمال عملية العميل. يرجى المحاولة مرة أخرى."
         },

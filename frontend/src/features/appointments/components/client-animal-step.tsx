@@ -20,13 +20,13 @@ import {
   Loader2,
 } from "lucide-react";
 import clientApi, { type Client } from "@/features/clients/client-api";
-import { type Animal } from "@/features/animals/animal-api";
+import { type ClientAnimal } from "@/features/animals/animal-api";
 import { useClientAnimals } from "../hooks/use-client-animals";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 
 export interface ClientAnimalSelection {
   client: Client;
-  animal: Animal;
+  animal: ClientAnimal;
 }
 
 interface ClientAnimalStepProps {
@@ -83,15 +83,9 @@ export default function ClientAnimalStep({
         setSelectedAnimalId(""); // Reset animal selection
       } else {
         // Search by name
-        const result = await clientApi.getClientBySearch(searchQuery.trim());
-
-        if (result.item.length > 0) {
-          setSelectedClient(result.item[0]);
-          setSelectedAnimalId(""); // Reset animal selection
-        } else {
-          setSearchError(t(i18nKeyContainer.appointment.clientNotFound));
-          setSelectedClient(null);
-        }
+        const client = await clientApi.getClientByName(searchQuery.trim());
+        setSelectedClient(client);
+        setSelectedAnimalId(""); // Reset animal selection
       }
     } catch {
       setSearchError(t(i18nKeyContainer.appointment.clientNotFound));
@@ -112,7 +106,7 @@ export default function ClientAnimalStep({
   // Handle animal selection
   const handleAnimalSelect = (animalId: string) => {
     setSelectedAnimalId(animalId);
-    const selectedAnimal = clientAnimals.find((a) => a.id === animalId);
+    const selectedAnimal = clientAnimals.find((a) => a.animalId === animalId);
     
     if (selectedClient && selectedAnimal) {
       onSelect({ client: selectedClient, animal: selectedAnimal });
@@ -247,8 +241,8 @@ export default function ClientAnimalStep({
                 <SelectContent className="bg-white border-0 shadow-lg">
                   {clientAnimals.map((animal) => (
                     <SelectItem 
-                      key={animal.id} 
-                      value={animal.id}
+                      key={animal.animalId} 
+                      value={animal.animalId}
                       className="cursor-pointer hover:bg-slate-100 focus:bg-slate-100"
                     >
                       <div className="flex items-center gap-2">
@@ -268,7 +262,7 @@ export default function ClientAnimalStep({
           {selectedAnimalId && (
             <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
               {(() => {
-                const animal = clientAnimals.find((a) => a.id === selectedAnimalId);
+                const animal = clientAnimals.find((a) => a.animalId === selectedAnimalId);
                 if (!animal) return null;
                 return (
                   <div className="flex items-center gap-3">
@@ -279,7 +273,6 @@ export default function ClientAnimalStep({
                       <p className="font-medium text-slate-900">{animal.name}</p>
                       <p className="text-sm text-slate-500">
                         {animal.species}
-                        {animal.breed && ` • ${animal.breed}`}
                       </p>
                     </div>
                   </div>

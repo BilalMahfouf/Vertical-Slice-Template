@@ -92,7 +92,7 @@ export default function AppointmentPage() {
       </div>
 
       {/* Data Table */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div>
         <AppointmentDataTable
           onReschedule={handleReschedule}
           onCancel={handleCancel}

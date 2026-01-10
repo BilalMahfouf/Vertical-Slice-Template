@@ -20,7 +20,6 @@ public static class CreateAppointment
     public sealed record CreateAppointmentCommand(
         Guid animalId,
         DateTime AppointmentDate,
-        TimeSpan? appointmentTime,
         string? location,
         string? notes) : ICommand<Response>;
 
@@ -35,8 +34,6 @@ public static class CreateAppointment
             RuleFor(e => e.AppointmentDate).NotEmpty()
                 .GreaterThan(DateTime.UtcNow);
 
-            RuleFor(e => e.appointmentTime).NotEmpty()
-                .GreaterThan(TimeSpan.Zero);
 
             RuleFor(e => e.location).NotEmpty();
         }
@@ -69,7 +66,6 @@ public static class CreateAppointment
                 .FirstOrDefaultAsync(cancellationToken);
             if (clinicId == Guid.Empty)
             {
-
                 return Result<Response>.Failure(
                     ClinicErrors.ClinicsNotFound);
             }
@@ -85,7 +81,6 @@ public static class CreateAppointment
                 command.animalId,
                 clinicId,
                 command.AppointmentDate,
-                command.appointmentTime,
                 command.location,
                 command.notes);
 

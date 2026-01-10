@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar, Clock, MapPin, FileText, User, PawPrint } from "lucide-react";
 import { type Client } from "@/features/clients/client-api";
-import { type Animal } from "@/features/animals/animal-api";
+import { type ClientAnimal } from "@/features/animals/animal-api";
 import { type Appointment } from "../appointment-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 
@@ -22,7 +22,7 @@ interface AppointmentDetailsStepProps {
   /** Selected client info (for display) */
   client: Client | null;
   /** Selected animal info (for display) */
-  animal: Animal | null;
+  animal: ClientAnimal | null;
   /** Existing appointment (for reschedule mode) */
   existingAppointment?: Appointment | null;
   /** Whether in reschedule mode */

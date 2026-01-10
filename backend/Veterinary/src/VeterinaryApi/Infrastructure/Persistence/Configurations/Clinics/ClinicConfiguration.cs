@@ -8,6 +8,8 @@ public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
 {
     public void Configure(EntityTypeBuilder<Clinic> builder)
     {
+        builder.HasQueryFilter(c => !c.IsDeleted);
+
         builder.ToTable("clinics");
 
         builder.HasKey(c => c.Id);
@@ -47,6 +49,6 @@ public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
         builder.Property(c => c.StaffCount)
             .HasColumnName("staff_count");
 
-        
+
     }
 }

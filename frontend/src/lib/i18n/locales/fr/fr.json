@@ -175,7 +175,14 @@
         "firstNamePlaceholder": "Prénom",
         "lastNamePlaceholder": "Nom",
         "phonePlaceholder": "+213",
-        "noNotes": "Aucune note disponible"
+        "noNotes": "Aucune note disponible",
+        "tableClient": "Client",
+        "tableClinic": "Clinique",
+        "tableAnimals": "Animaux",
+        "tableNotes": "Notes",
+        "tableRegistered": "Inscrit",
+        "searchPlaceholder": "Rechercher des clients...",
+        "noClients": "Aucun client trouvé."
     },
     "toast": {
         "client": {
@@ -228,6 +235,10 @@
             "notFoundDesc": "Le client demandé n'a pas été trouvé dans nos dossiers.",
             "listNotFound": "Aucun client trouvé",
             "listNotFoundDesc": "Aucun client correspondant à vos critères n'a été trouvé.",
+            "duplicate": "Client déjà existant",
+            "duplicateDesc": "Un client avec le même nom et numéro de téléphone existe déjà. Veuillez utiliser des informations différentes ou mettre à jour le client existant.",
+            "sameNameExists": "Nom de client déjà existant",
+            "sameNameExistsDesc": "Un client avec ce nom existe déjà. Veuillez utiliser un nom différent ou vérifier s'il s'agit du bon client.",
             "operationFailed": "Échec de l'opération client",
             "operationFailedDesc": "Impossible de terminer l'opération client. Veuillez réessayer."
         },
