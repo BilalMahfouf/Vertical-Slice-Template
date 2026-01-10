@@ -124,6 +124,11 @@
         "noAppointments": "Aucun rendez-vous trouvé.",
         "cancelDialogTitle": "Annuler le rendez-vous",
         "cancelDialogDescription": "Êtes-vous sûr de vouloir annuler ce rendez-vous ? Cette action est irréversible.",
+        "confirmCancel": "Annuler le rendez-vous",
+        "canceling": "Annulation en cours...",
+        "delete": "Supprimer",
+        "deleteDialogTitle": "Supprimer le rendez-vous",
+        "deleteDialogDescription": "Êtes-vous sûr de vouloir supprimer définitivement ce rendez-vous ? Cette action est irréversible.",
         "step1Title": "Sélectionner Client et Animal",
         "step1Description": "Recherchez un client et sélectionnez un animal",
         "step2Title": "Détails du Rendez-vous",
@@ -207,7 +212,9 @@
             "rescheduled": "Rendez-vous reprogrammé",
             "rescheduledDesc": "Le rendez-vous a été reprogrammé avec succès.",
             "canceled": "Rendez-vous annulé",
-            "canceledDesc": "Le rendez-vous a été annulé avec succès."
+            "canceledDesc": "Le rendez-vous a été annulé avec succès.",
+            "deleted": "Rendez-vous supprimé",
+            "deletedDesc": "Le rendez-vous a été définitivement supprimé."
         },
         "clientAdded": "Client ajouté",
         "clientAddedDesc": "Le client a été ajouté avec succès.",

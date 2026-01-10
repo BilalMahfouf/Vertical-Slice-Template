@@ -19,7 +19,8 @@ public static class UpdateAnimal
         Gender Gender,
         DateTime? BirthDate,
         string? Color,
-        string? MicrochipNumber);
+        string? MicrochipNumber,
+        AnimalStatus status);
 
     public record UpdateAnimalCommand(
         Guid Id,
@@ -29,7 +30,8 @@ public static class UpdateAnimal
         Gender Gender,
         DateTime? BirthDate,
         string? Color,
-        string? MicrochipNumber) : ICommand;
+        string? MicrochipNumber,
+        AnimalStatus status) : ICommand;
 
     public class UpdateAnimalCommandHandler : ICommandHandler<UpdateAnimalCommand>
     {
@@ -57,6 +59,7 @@ public static class UpdateAnimal
                 command.Gender,
                 command.BirthDate,
                 command.Color,
+                command.status,
                 command.MicrochipNumber);
 
             _db.Animals.Update(animal);
@@ -82,7 +85,8 @@ public static class UpdateAnimal
                     request.Gender,
                     request.BirthDate,
                     request.Color,
-                    request.MicrochipNumber);
+                    request.MicrochipNumber,
+                    request.status);
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.NoContent() :
                     result.Problem();

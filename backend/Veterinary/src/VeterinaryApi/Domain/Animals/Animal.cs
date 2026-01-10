@@ -36,6 +36,21 @@ public class Animal : Entity
     {
     }
 
+    private void ValidateGenderEnum(Gender gender)
+    {
+        if (!Enum.IsDefined(typeof(Gender), gender))
+        {
+            throw new DomainException(AnimalErrors.InvalidGenderEnum);
+        }
+    }
+    private void ValidateAnimalStatusEnum(AnimalStatus status)
+    {
+        if (!Enum.IsDefined(typeof(AnimalStatus), status))
+        {
+            throw new DomainException(AnimalErrors.InvalidAnimalStatus);
+        }
+    }
+
     public static Animal Create(
         Guid clinicId,
         Guid clientId,
@@ -49,6 +64,10 @@ public class Animal : Entity
         string? microchipNumber = null)
     {
         var animal = new Animal();
+
+        animal.ValidateGenderEnum(gender);
+        animal.ValidateAnimalStatusEnum(status);
+
         animal.ClinicId = clinicId;
         animal.ClientId = clientId;
         animal.Name = name.Trim();
@@ -71,8 +90,10 @@ public class Animal : Entity
         Gender gender,
         DateTime? birthDate,
         string? color,
+        AnimalStatus status,
         string? microchipNumber = null)
     {
+        ValidateGenderEnum(gender);
         Name = name.Trim();
         Species = species.Trim();
         Breed = string.IsNullOrWhiteSpace(breed) ? null : breed.Trim();
@@ -81,10 +102,12 @@ public class Animal : Entity
         Color = string.IsNullOrWhiteSpace(color) ? null : color.Trim();
         MicrochipNumber = string.IsNullOrWhiteSpace(microchipNumber)
             ? null : microchipNumber.Trim();
-        UpdatedOnUtc = DateTime.UtcNow;
+        UpdateStatus(status);
     }
-    public void UpdateStatus(AnimalStatus status)
+    private void UpdateStatus(AnimalStatus status)
     {
+        ValidateAnimalStatusEnum(status);
         this.Status = status;
+        this.UpdatedOnUtc = DateTime.UtcNow;
     }
 }

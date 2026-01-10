@@ -25,6 +25,7 @@ public sealed class Appointment : Entity
         string? location,
         string? notes)
     {
+        
         var appointment = new Appointment();
         appointment.AnimalId = animalId;
         appointment.ClinicId = clinicId;
@@ -38,14 +39,15 @@ public sealed class Appointment : Entity
 
     private void UpdateStatus(AppointmentStatus status)
     {
-        this.Status = AppointmentStatus.Rescheduled;
+        ValidateStatusEnum(status);
+        this.Status = status;
         this.StatusUpdatedOnUtc = DateTime.UtcNow;
 
     }
     public void Reschedule(DateTime newAppointmentDate)
     {
-        if (this.Status is AppointmentStatus.Cancelled ||
-            this.Status is AppointmentStatus.Completed)
+        if (this.Status is AppointmentStatus.Cancelled or
+            AppointmentStatus.Completed)
         {
             throw new DomainException(AppointmentErrors.RescheduleProblem);
         }
@@ -54,23 +56,30 @@ public sealed class Appointment : Entity
     }
     public void Complete()
     {
-        if (this.Status is not AppointmentStatus.Confirmed ||
-            this.Status is not AppointmentStatus.Rescheduled)
+        if (this.Status is not AppointmentStatus.Confirmed or
+             AppointmentStatus.Rescheduled)
         {
             throw new DomainException(AppointmentErrors.CompleteProblem);
         }
         UpdateStatus(AppointmentStatus.Completed);
     }
-    
-    public void Cancel(string?notes=null)
+
+    public void Cancel(string? notes = null)
     {
-        if(this.Status is not AppointmentStatus.Confirmed ||
-            this.Status is not AppointmentStatus.Rescheduled)
+        if (this.Status is not
+            (AppointmentStatus.Confirmed or AppointmentStatus.Rescheduled))
         {
             throw new DomainException(AppointmentErrors.CancelProblem);
         }
         UpdateStatus(AppointmentStatus.Cancelled);
         notes = string.IsNullOrWhiteSpace(notes) ? null : notes;
+    }
+    private void ValidateStatusEnum(AppointmentStatus status)
+    {
+        if (!Enum.IsDefined(typeof(AppointmentStatus), status))
+        {
+            throw new DomainException(AppointmentErrors.InvalidAppointmentStatus);
+        }
     }
 
 }

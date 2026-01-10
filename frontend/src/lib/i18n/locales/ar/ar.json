@@ -124,6 +124,11 @@
         "noAppointments": "لم يتم العثور على مواعيد.",
         "cancelDialogTitle": "إلغاء الموعد",
         "cancelDialogDescription": "هل أنت متأكد أنك تريد إلغاء هذا الموعد؟ لا يمكن التراجع عن هذا الإجراء.",
+        "confirmCancel": "إلغاء الموعد",
+        "canceling": "جاري الإلغاء...",
+        "delete": "حذف",
+        "deleteDialogTitle": "حذف الموعد",
+        "deleteDialogDescription": "هل أنت متأكد أنك تريد حذف هذا الموعد نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
         "step1Title": "اختيار العميل والحيوان",
         "step1Description": "ابحث عن عميل واختر حيوانًا",
         "step2Title": "تفاصيل الموعد",
@@ -207,7 +212,9 @@
             "rescheduled": "تمت إعادة جدولة الموعد",
             "rescheduledDesc": "تمت إعادة جدولة الموعد بنجاح.",
             "canceled": "تم إلغاء الموعد",
-            "canceledDesc": "تم إلغاء الموعد بنجاح."
+            "canceledDesc": "تم إلغاء الموعد بنجاح.",
+            "deleted": "تم حذف الموعد",
+            "deletedDesc": "تم حذف الموعد نهائياً."
         },
         "clientAdded": "تمت إضافة العميل",
         "clientAddedDesc": "تمت إضافة العميل بنجاح.",

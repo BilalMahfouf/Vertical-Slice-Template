@@ -19,6 +19,10 @@ interface ConfirmDeleteDialogProps {
   description: string;
   itemName?: string;
   isLoading?: boolean;
+  /** Custom text for confirm button (defaults to "Delete") */
+  confirmAction?: string;
+  /** Custom text for loading state (defaults to "Deleting...") */
+  actionInProgress?: string;
 }
 
 /**
@@ -33,6 +37,8 @@ export default function ConfirmDeleteDialog({
   description,
   itemName,
   isLoading = false,
+  confirmAction,
+  actionInProgress,
 }: ConfirmDeleteDialogProps) {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
@@ -93,8 +99,8 @@ export default function ConfirmDeleteDialog({
               disabled={isLoading}
             >
               {isLoading
-                ? t(i18nKeyContainer.common.deleting)
-                : t(i18nKeyContainer.common.confirmDelete)}
+                ? (actionInProgress ?? t(i18nKeyContainer.common.deleting))
+                : (confirmAction ?? t(i18nKeyContainer.common.confirmDelete))}
             </Button>
           </DialogFooter>
         </div>

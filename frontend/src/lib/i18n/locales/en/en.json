@@ -124,6 +124,11 @@
         "noAppointments": "No appointments found.",
         "cancelDialogTitle": "Cancel Appointment",
         "cancelDialogDescription": "Are you sure you want to cancel this appointment? This action cannot be undone.",
+        "confirmCancel": "Cancel Appointment",
+        "canceling": "Canceling...",
+        "delete": "Delete",
+        "deleteDialogTitle": "Delete Appointment",
+        "deleteDialogDescription": "Are you sure you want to permanently delete this appointment? This action cannot be undone.",
         "step1Title": "Select Client & Animal",
         "step1Description": "Search for a client and select an animal",
         "step2Title": "Appointment Details",
@@ -207,7 +212,9 @@
             "rescheduled": "Appointment Rescheduled",
             "rescheduledDesc": "The appointment has been rescheduled successfully.",
             "canceled": "Appointment Canceled",
-            "canceledDesc": "The appointment has been canceled successfully."
+            "canceledDesc": "The appointment has been canceled successfully.",
+            "deleted": "Appointment Deleted",
+            "deletedDesc": "The appointment has been permanently deleted."
         },
         "clientAdded": "Client Added",
         "clientAddedDesc": "The client has been added successfully.",

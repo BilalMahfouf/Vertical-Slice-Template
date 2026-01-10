@@ -7,7 +7,7 @@ import {
   type RowAction,
 } from "@/components/tables";
 import appointmentApi, { type Appointment } from "./appointment-api";
-import { Calendar, User, PawPrint, CalendarClock, XCircle } from "lucide-react";
+import { Calendar, User, PawPrint, CalendarClock, XCircle, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 interface AppointmentDataTableProps {
   onReschedule?: (appointment: Appointment) => void;
   onCancel?: (appointment: Appointment) => void;
+  onDelete?: (appointment: Appointment) => void;
 }
 
 // Status badge component for appointments
@@ -68,6 +69,7 @@ function AppointmentStatusBadge({ status }: { status: string }) {
 export default function AppointmentDataTable({
   onReschedule,
   onCancel,
+  onDelete,
 }: AppointmentDataTableProps) {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
@@ -196,6 +198,15 @@ export default function AppointmentDataTable({
             separator: actions.length > 0,
           });
         }
+
+        // Delete action - always available
+        actions.push({
+          label: t(i18nKeyContainer.appointment.delete),
+          onClick: () => onDelete?.(row.original),
+          icon: Trash2,
+          variant: "destructive",
+          separator: actions.length > 0,
+        });
 
         if (actions.length === 0) {
           return <span className="text-sm text-slate-400">—</span>;

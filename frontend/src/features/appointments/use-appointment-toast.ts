@@ -38,6 +38,15 @@ export function useAppointmentToast() {
   };
 
   /**
+   * Show success toast for appointment deleted
+   */
+  const deleted = () => {
+    toast.success(t(i18nKeyContainer.toast.appointment.deleted), {
+      description: t(i18nKeyContainer.toast.appointment.deletedDesc),
+    });
+  };
+
+  /**
    * Show error toast with domain-specific message
    * Maps backend error codes to localized appointment error messages
    */
@@ -87,6 +96,7 @@ export function useAppointmentToast() {
     created,
     rescheduled,
     canceled,
+    deleted,
     error,
   };
 }

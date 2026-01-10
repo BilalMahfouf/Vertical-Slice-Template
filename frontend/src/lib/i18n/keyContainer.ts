@@ -115,6 +115,11 @@ const i18nKeyContainer = {
         noAppointments: 'appointment.noAppointments',
         cancelDialogTitle: 'appointment.cancelDialogTitle',
         cancelDialogDescription: 'appointment.cancelDialogDescription',
+        confirmCancel: 'appointment.confirmCancel',
+        canceling: 'appointment.canceling',
+        delete: 'appointment.delete',
+        deleteDialogTitle: 'appointment.deleteDialogTitle',
+        deleteDialogDescription: 'appointment.deleteDialogDescription',
         // Step-based form keys
         step1Title: 'appointment.step1Title',
         step1Description: 'appointment.step1Description',
@@ -205,6 +210,8 @@ const i18nKeyContainer = {
             rescheduledDesc: 'toast.appointment.rescheduledDesc',
             canceled: 'toast.appointment.canceled',
             canceledDesc: 'toast.appointment.canceledDesc',
+            deleted: 'toast.appointment.deleted',
+            deletedDesc: 'toast.appointment.deletedDesc',
         },
         animal: {
             added: 'toast.animal.added',

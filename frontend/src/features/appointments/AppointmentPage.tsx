@@ -6,6 +6,7 @@ import AppointmentDataTable from "./appointment-data-table";
 import AddUpdateAppointment from "./add-update-appointment";
 import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
 import { useCancelAppointment } from "./use-cancel-appointment";
+import { useDeleteAppointment } from "./use-delete-appointment";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import type { Appointment } from "./appointment-api";
 
@@ -15,10 +16,13 @@ export default function AppointmentPage() {
   const [rescheduleAppointment, setRescheduleAppointment] = useState<Appointment | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [appointmentToCancel, setAppointmentToCancel] = useState<Appointment | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<Appointment | null>(null);
 
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
   const { cancelAppointment, isCanceling } = useCancelAppointment();
+  const { deleteAppointment, isDeleting } = useDeleteAppointment();
 
   // Handlers
   const handleOpenAdd = () => {
@@ -60,6 +64,32 @@ export default function AppointmentPage() {
     }
   };
 
+  const handleDelete = (appointment: Appointment) => {
+    setAppointmentToDelete(appointment);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (appointmentToDelete) {
+      deleteAppointment(appointmentToDelete.id, {
+        onSuccess: () => {
+          setDeleteDialogOpen(false);
+          setAppointmentToDelete(null);
+        },
+        onError: () => {
+          // Keep dialog open on error so user can retry or cancel
+        },
+      });
+    }
+  };
+
+  const handleDeleteDialogClose = () => {
+    if (!isDeleting) {
+      setDeleteDialogOpen(false);
+      setAppointmentToDelete(null);
+    }
+  };
+
   const handleCloseAddUpdate = () => {
     setAddAppointmentOpen(false);
     setRescheduleAppointment(null);
@@ -96,6 +126,7 @@ export default function AppointmentPage() {
         <AppointmentDataTable
           onReschedule={handleReschedule}
           onCancel={handleCancel}
+          onDelete={handleDelete}
         />
       </div>
 
@@ -121,6 +152,25 @@ export default function AppointmentPage() {
             : undefined
         }
         isLoading={isCanceling}
+        confirmAction={t(i18nKeyContainer.appointment.confirmCancel)}
+        actionInProgress={t(i18nKeyContainer.appointment.canceling)}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteDialogClose}
+        onConfirm={handleConfirmDelete}
+        title={t(i18nKeyContainer.appointment.deleteDialogTitle)}
+        description={t(i18nKeyContainer.appointment.deleteDialogDescription)}
+        itemName={
+          appointmentToDelete
+            ? `${appointmentToDelete.clientName} - ${new Date(
+                appointmentToDelete.appointmentDate
+              ).toLocaleDateString()}`
+            : undefined
+        }
+        isLoading={isDeleting}
       />
     </div>
   );

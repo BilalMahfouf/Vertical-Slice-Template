@@ -24,4 +24,8 @@ public static class AppointmentErrors
             $"Appointment with id '{appointmentId}' was not found");
     public static Error AppointmentsNotFound
         => Error.NotFound("Appointment.AppointmentsNotFound", "Appointments not found");
+
+    public static Error InvalidAppointmentStatus =>
+                Error.Validation("Appointment.InvalidAppointmentStatus",
+            "The appointment status is invalid for this operation");
 }
