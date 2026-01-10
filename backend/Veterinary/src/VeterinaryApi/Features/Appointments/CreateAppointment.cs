@@ -19,8 +19,8 @@ public static class CreateAppointment
     public sealed record CreateAppointmentCommand(
         Guid animalId,
         DateTime AppointmentDate,
-        TimeSpan appointmentTime,
-        string location,
+        TimeSpan? appointmentTime,
+        string? location,
         string? notes) : ICommand<Response>;
 
     public sealed record Response(Guid Id);
@@ -90,13 +90,16 @@ public static class CreateAppointment
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("appointments", [Authorize] async (
-                [FromBody] CreateAppointmentCommand command,
+                 CreateAppointmentCommand command,
                 ICommandHandler<CreateAppointmentCommand, Response> handler,
                 CancellationToken cancellationToken = default) =>
             {
                 var result = await handler.Handle(command, cancellationToken);
-                return result.IsSuccess ? Results.CreatedAtRoute(
-                    $"/appointments/{result.Value.Id}", result.Value.Id)
+                return result.IsSuccess ? Results.Created(
+                    $"/appointments/{result.Value.Id}", new
+                    {
+                        id=result.Value.Id,
+                    })
                 : result.Problem();
             }).WithTags("appointments");
         }
