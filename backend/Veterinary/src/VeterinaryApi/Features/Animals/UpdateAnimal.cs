@@ -71,7 +71,7 @@ public static class UpdateAnimal
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPut("/animals/{id:guid}", [Authorize]async (
+            app.MapPut("/animals/{id:guid}", [Authorize] async (
                 Guid id,
                 [FromBody] Request request,
                 ICommandHandler<UpdateAnimalCommand> handler,
