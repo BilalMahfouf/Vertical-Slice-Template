@@ -62,6 +62,10 @@ export const ErrorCodes = {
   APPOINTMENT_NOT_FOUND: "Appointment.AppointmentNotFound",
   APPOINTMENTS_NOT_FOUND: "Appointment.AppointmentsNotFound",
   
+  // Visit errors
+  VISIT_NOT_FOUND: "Visit.VisitNotFound",
+  VISITS_NOT_FOUND: "Visit.VisitsNotFound",
+  
   // Clinic errors
   CLINIC_NOT_FOUND: "Clinic.ClinicNotFound",
   CLINICS_NOT_FOUND: "Clinic.ClinicsNotFound",

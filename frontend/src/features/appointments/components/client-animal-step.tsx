@@ -126,7 +126,7 @@ export default function ClientAnimalStep({
       {/* Client Search Section */}
       {!selectedClient ? (
         <div className="space-y-4">
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label className="text-sm font-medium text-slate-700">
               <div className="flex items-center gap-2">
                 <Search className="h-4 w-4 text-slate-400" />
@@ -208,7 +208,7 @@ export default function ClientAnimalStep({
           </div>
 
           {/* Animal Selection */}
-          <div className="space-y-2">
+          <div className="space-y-3 flex flex-col gap-0.5">
             <Label className="text-sm font-medium text-slate-700">
               <div className="flex items-center gap-2">
                 <PawPrint className="h-4 w-4 text-slate-400" />
