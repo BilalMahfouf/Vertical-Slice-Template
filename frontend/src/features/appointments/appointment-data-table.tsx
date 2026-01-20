@@ -7,12 +7,13 @@ import {
   type RowAction,
 } from "@/components/tables";
 import appointmentApi, { type Appointment } from "./appointment-api";
-import { Calendar, User, PawPrint, CalendarClock, XCircle, Trash2 } from "lucide-react";
+import { Calendar, User, PawPrint, CalendarClock, XCircle, Trash2, Eye } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { cn } from "@/lib/utils";
 
 interface AppointmentDataTableProps {
+  onView?: (appointment: Appointment) => void;
   onReschedule?: (appointment: Appointment) => void;
   onCancel?: (appointment: Appointment) => void;
   onDelete?: (appointment: Appointment) => void;
@@ -67,6 +68,7 @@ function AppointmentStatusBadge({ status }: { status: string }) {
 }
 
 export default function AppointmentDataTable({
+  onView,
   onReschedule,
   onCancel,
   onDelete,
@@ -180,6 +182,15 @@ export default function AppointmentDataTable({
       ),
       cell: ({ row }) => {
         const actions: RowAction<Appointment>[] = [];
+
+        // View action - always available
+        if (onView) {
+          actions.push({
+            label: t(i18nKeyContainer.table.viewDetails),
+            onClick: () => onView(row.original),
+            icon: Eye,
+          });
+        }
 
         if (canReschedule(row.original)) {
           actions.push({

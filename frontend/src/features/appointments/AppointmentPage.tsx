@@ -4,6 +4,7 @@ import { Plus, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppointmentDataTable from "./appointment-data-table";
 import AddUpdateAppointment from "./add-update-appointment";
+import ViewAppointment from "./view-appointment";
 import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
 import { useCancelAppointment } from "./use-cancel-appointment";
 import { useDeleteAppointment } from "./use-delete-appointment";
@@ -14,6 +15,8 @@ export default function AppointmentPage() {
   // Modal states
   const [addAppointmentOpen, setAddAppointmentOpen] = useState(false);
   const [rescheduleAppointment, setRescheduleAppointment] = useState<Appointment | null>(null);
+  const [viewAppointmentOpen, setViewAppointmentOpen] = useState(false);
+  const [appointmentToView, setAppointmentToView] = useState<Appointment | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [appointmentToCancel, setAppointmentToCancel] = useState<Appointment | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -33,6 +36,11 @@ export default function AppointmentPage() {
   const handleReschedule = (appointment: Appointment) => {
     setRescheduleAppointment(appointment);
     setAddAppointmentOpen(true);
+  };
+
+  const handleView = (appointment: Appointment) => {
+    setAppointmentToView(appointment);
+    setViewAppointmentOpen(true);
   };
 
   const handleCancel = (appointment: Appointment) => {
@@ -124,6 +132,7 @@ export default function AppointmentPage() {
       {/* Data Table */}
       <div>
         <AppointmentDataTable
+          onView={handleView}
           onReschedule={handleReschedule}
           onCancel={handleCancel}
           onDelete={handleDelete}
@@ -137,7 +146,19 @@ export default function AppointmentPage() {
         appointment={rescheduleAppointment}
       />
 
-      {/* Cancel Confirmation Dialog */}
+      {/* View Appointment Modal */}
+      {appointmentToView && (
+        <ViewAppointment
+          open={viewAppointmentOpen}
+          onClose={() => {
+            setViewAppointmentOpen(false);
+            setAppointmentToView(null);
+          }}
+          appointmentId={appointmentToView.id}
+        />
+      )}
+
+      {/* Cancel Confirmation Dialog */
       <ConfirmDeleteDialog
         open={cancelDialogOpen}
         onClose={handleCancelDialogClose}
@@ -156,7 +177,7 @@ export default function AppointmentPage() {
         actionInProgress={t(i18nKeyContainer.appointment.canceling)}
       />
 
-      {/* Delete Confirmation Dialog */}
+      /* Delete Confirmation Dialog */}
       <ConfirmDeleteDialog
         open={deleteDialogOpen}
         onClose={handleDeleteDialogClose}
