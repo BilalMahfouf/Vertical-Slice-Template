@@ -48,29 +48,29 @@ public class VisitConfiguration : IEntityTypeConfiguration<Visit>
             .OnDelete(DeleteBehavior.SetNull)
             .HasConstraintName("FK_visits_appointments_appointment_id");
 
-        builder.Property(v => v.VisitDate)
-            .HasColumnName("visit_date")
+        builder.Property(v => v.VisitType)
+            .HasColumnName("visit_type")
+            .HasConversion<byte>()
             .IsRequired();
 
         builder.Property(v => v.Symptoms)
             .HasColumnName("symptoms")
-            .HasColumnType("text");
+            .HasColumnType("text[]");
 
         builder.Property(v => v.Diagnosis)
             .HasColumnName("diagnosis")
-            .HasColumnType("text");
+            .HasColumnType("text[]");
 
         builder.Property(v => v.Treatment)
             .HasColumnName("treatment")
-            .HasColumnType("text");
+            .HasColumnType("text[]");
 
         builder.Property(v => v.Notes)
             .HasColumnName("notes")
             .HasColumnType("text");
 
-
         builder.Property(v => v.CreatedOnUtc)
-            .HasColumnName("created_at")
+            .HasColumnName("created_on_utc")
             .IsRequired();
 
         builder.Property(v => v.IsDeleted)

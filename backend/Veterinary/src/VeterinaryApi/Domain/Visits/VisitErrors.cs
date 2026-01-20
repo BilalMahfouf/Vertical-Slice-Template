@@ -4,9 +4,16 @@ namespace VeterinaryApi.Domain.Visits;
 
 public static class VisitErrors
 {
-    public static Error VisitNotFound = Error.NotFound(
+    public static Error VisitNotFound()
+        => Error.NotFound(
         "Visit.VisitNotFound",
         "Visit not found.");
+    public static Error VisitNotFound(Guid id)
+        => Error.NotFound(
+        "Visit.VisitNotFound",
+        $"Visit with id {id} was not found.");
+
+
 
     public static Error VisitsNotFound = Error.NotFound(
         "Visit.VisitsNotFound",

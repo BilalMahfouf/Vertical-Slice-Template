@@ -12,21 +12,13 @@ public class Visit : Entity
     public Guid OwnerId { get; private set; }
 
     public Guid? AppointmentId { get; private set; }
-
-    public DateTime VisitDate { get; private set; }
-
-    public string? Symptoms { get; private set; }
-
-    public string? Diagnosis { get; private set; }
-
-    public string? Treatment { get; private set; }
-
+    public VisitType VisitType { get; private set; }
+    public List<string>? Symptoms { get; private set; }
+    public List<string>? Diagnosis { get; private set; }
+    public List<string>? Treatment { get; private set; }
     public string? Notes { get; private set; }
-
     public Animal Animal { get; private set; } = null!;
-
     public Client Owner { get; private set; } = null!;
-
     public Appointment? Appointment { get; private set; }
 
     private Visit()
@@ -37,10 +29,10 @@ public class Visit : Entity
         Guid animalId,
         Guid ownerId,
         Guid? appointmentId,
-        DateTime visitDate,
-        string? symptoms,
-        string? diagnosis,
-        string? treatment,
+        VisitType visitType,
+        List<string>? symptoms,
+        List<string>? diagnosis,
+        List<string>? treatment,
         string? followUpNotes
         )
     {
@@ -49,24 +41,33 @@ public class Visit : Entity
         visit.AnimalId = animalId;
         visit.OwnerId = ownerId;
         visit.AppointmentId = appointmentId;
-        visit.VisitDate = visitDate.ToUniversalTime();
-        visit.Symptoms = string.IsNullOrWhiteSpace(symptoms) ? null : symptoms.Trim();
-        visit.Diagnosis = string.IsNullOrWhiteSpace(diagnosis) ? null : diagnosis.Trim();
-        visit.Treatment = string.IsNullOrWhiteSpace(treatment) ? null : treatment.Trim();
+        visit.VisitType = visitType;
+
+        visit.Symptoms = visit.GetStrings(symptoms);
+        visit.Diagnosis = visit.GetStrings(diagnosis);
+        visit.Treatment = visit.GetStrings(treatment);
+
         visit.Notes = string.IsNullOrWhiteSpace(followUpNotes) ? null : followUpNotes.Trim();
 
         return visit;
     }
+    private List<string>? GetStrings(List<string>? strList)
+    {
+        return strList?
+                .Where(t => !string.IsNullOrWhiteSpace(t))
+                .Select(t => t.Trim())
+                .ToList();
+    }
 
     public void UpdateDetails(
-        string? symptoms,
-        string? diagnosis,
-        string? treatment,
+        List<string>? symptoms,
+        List<string>? diagnosis,
+        List<string>? treatment,
         string? followUpNotes)
     {
-        Symptoms = string.IsNullOrWhiteSpace(symptoms) ? null : symptoms.Trim();
-        Diagnosis = string.IsNullOrWhiteSpace(diagnosis) ? null : diagnosis.Trim();
-        Treatment = string.IsNullOrWhiteSpace(treatment) ? null : treatment.Trim();
+        Symptoms = GetStrings(symptoms);
+        Diagnosis = GetStrings(diagnosis);
+        Treatment = GetStrings(treatment);
         Notes = string.IsNullOrWhiteSpace(followUpNotes) ? null : followUpNotes.Trim();
     }
 
