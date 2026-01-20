@@ -1,8 +1,10 @@
-export default function SettingPage() {
+import VisitDataTable from "./visit-data-table";
+
+export default function VisitPage() {
     return (
         <>
         <div>
-                Settings Page
+               <VisitDataTable /> 
         </div>
         </>
     )

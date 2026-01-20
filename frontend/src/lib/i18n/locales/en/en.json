@@ -189,6 +189,23 @@
         "searchPlaceholder": "Search clients...",
         "noClients": "No clients found."
     },
+    "visit": {
+        "title": "Visits",
+        "description": "View and manage all patient visit records.",
+        "visitDate": "Visit Date",
+        "visitType": "Visit Type",
+        "animal": "Animal",
+        "owner": "Owner",
+        "symptoms": "Symptoms",
+        "diagnosis": "Diagnosis",
+        "treatment": "Treatment",
+        "notes": "Notes",
+        "clinic": "Clinic",
+        "field": "Field",
+        "emergency": "Emergency",
+        "searchPlaceholder": "Search visits...",
+        "noVisits": "No visits found."
+    },
     "toast": {
         "client": {
             "added": "Client Added",

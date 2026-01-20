@@ -189,6 +189,23 @@
         "searchPlaceholder": "Rechercher des clients...",
         "noClients": "Aucun client trouvé."
     },
+    "visit": {
+        "title": "Visites",
+        "description": "Consultez et gérez tous les dossiers de visites des patients.",
+        "visitDate": "Date de visite",
+        "visitType": "Type de visite",
+        "animal": "Animal",
+        "owner": "Propriétaire",
+        "symptoms": "Symptômes",
+        "diagnosis": "Diagnostic",
+        "treatment": "Traitement",
+        "notes": "Notes",
+        "clinic": "Clinique",
+        "field": "Terrain",
+        "emergency": "Urgence",
+        "searchPlaceholder": "Rechercher des visites...",
+        "noVisits": "Aucune visite trouvée."
+    },
     "toast": {
         "client": {
             "added": "Client ajouté",

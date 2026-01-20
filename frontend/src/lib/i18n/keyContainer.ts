@@ -194,6 +194,25 @@ const i18nKeyContainer = {
         clientInfo: 'animal.clientInfo',
         animalInfo: 'animal.animalInfo',
     },
+    visit: {
+        title: 'visit.title',
+        description: 'visit.description',
+        visitDate: 'visit.visitDate',
+        visitType: 'visit.visitType',
+        animal: 'visit.animal',
+        owner: 'visit.owner',
+        symptoms: 'visit.symptoms',
+        diagnosis: 'visit.diagnosis',
+        treatment: 'visit.treatment',
+        notes: 'visit.notes',
+        // Visit types
+        clinic: 'visit.clinic',
+        field: 'visit.field',
+        emergency: 'visit.emergency',
+        // Table columns
+        searchPlaceholder: 'visit.searchPlaceholder',
+        noVisits: 'visit.noVisits',
+    },
     toast: {
         client: {
             added: 'toast.client.added',

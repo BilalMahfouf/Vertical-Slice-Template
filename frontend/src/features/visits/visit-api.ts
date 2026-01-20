@@ -1,0 +1,100 @@
+import type { PagedList, TableRequest } from "@/components/tables";
+import api from "@/lib/api/api";
+import { getTableRequsestParams } from "@/lib/utils";
+
+export type VisitTableResponse = {
+  id: string;
+  visitType: string;
+  animalId: string;
+  animalName: string;
+  animalSpecies: string;
+  ownerId: string;
+  ownerName: string;
+  visitDate: string; // ISO 8601 datetime string
+}
+
+
+export type VisitResponse = {
+  id: string;
+  animalId: string;
+  animalName: string;
+  animalSpecies: string;
+  animalBreed: string | null;
+  clientId: string;
+  clientFullName: string;
+  clientPhone: string;
+  appointmentId: string | null;
+  appointmentDate: string | null; // ISO 8601 datetime string
+  appointmentStatus: string | null;
+  visitType: string;
+  symptoms: string[] | null;
+  diagnosis: string[] | null;
+  treatment: string[] | null;
+  notes: string | null;
+  createdOnUtc: string; // ISO 8601 datetime string
+  updatedOnUtc: string | null; // ISO 8601 datetime string
+}
+
+export interface CreateVisitRequest {
+  animalId: string;
+  clientId: string;
+  appointmentId?: string | null;
+  visitType: number; // Enum value: 1=Clinic, 2=Field, 3=Emergency
+  symptoms?: string[] | null;
+  diagnosis?: string[] | null;
+  treatment?: string[] | null;
+  notes?: string | null;
+}
+
+
+export const VisitType = {
+  Clinic: 1,
+  Field: 2,
+  Emergency: 3,
+} as const;
+
+const visitApi = {
+  /**
+   * Fetches paginated list of visits with optional search and sorting
+   * @param request - Table request with pagination, sorting, and search parameters
+   * @returns PagedList of VisitTableResponse objects
+   */
+  getAllVisits: async (request: TableRequest): Promise<PagedList<VisitTableResponse>> => {
+    const params = getTableRequsestParams(request);
+
+    const response = await api.get<PagedList<VisitTableResponse>>('/visits', { params });
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch visits');
+    }
+    return response.data;
+  },
+
+  /**
+   * Fetches detailed information for a specific visit by ID
+   * @param id - Visit ID (GUID)
+   * @returns VisitResponse object with complete visit information
+   */
+  getVisitById: async (id: string): Promise<VisitResponse> => {
+    const response = await api.get<VisitResponse>(`/visits/${id}`);
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch visit');
+    }
+    return response.data;
+  },
+
+  /**
+   * Creates a new visit record
+   * @param data - CreateVisitRequest payload
+   * @returns Created visit ID (GUID)
+   */
+  createVisit: async (data: CreateVisitRequest): Promise<string> => {
+    console.log("Creating visit with data:", data);
+    const response = await api.post<{ id: string }>('/visits', data);
+    if (response.status !== 201) {
+      throw new Error('Failed to create visit');
+    }
+    return response.data.id;
+  },
+}
+
+export default visitApi;

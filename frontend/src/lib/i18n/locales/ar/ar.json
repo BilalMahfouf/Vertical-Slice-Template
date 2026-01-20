@@ -189,6 +189,23 @@
         "searchPlaceholder": "البحث عن العملاء...",
         "noClients": "لم يتم العثور على عملاء."
     },
+    "visit": {
+        "title": "الزيارات",
+        "description": "عرض وإدارة جميع سجلات زيارات المرضى.",
+        "visitDate": "تاريخ الزيارة",
+        "visitType": "نوع الزيارة",
+        "animal": "الحيوان",
+        "owner": "المالك",
+        "symptoms": "الأعراض",
+        "diagnosis": "التشخيص",
+        "treatment": "العلاج",
+        "notes": "ملاحظات",
+        "clinic": "العيادة",
+        "field": "ميداني",
+        "emergency": "طوارئ",
+        "searchPlaceholder": "البحث في الزيارات...",
+        "noVisits": "لم يتم العثور على زيارات."
+    },
     "toast": {
         "client": {
             "added": "تمت إضافة العميل",

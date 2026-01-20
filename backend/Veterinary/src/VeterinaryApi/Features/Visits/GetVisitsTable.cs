@@ -19,6 +19,7 @@ public class GetVisitsTable
     string VisitType,
     Guid AnimalId,
     string AnimalName,
+    string AnimalSpecies,
     Guid OwnerId,
     string OwnerName,
     DateTime VisitDate);
@@ -59,6 +60,7 @@ public class GetVisitsTable
                                 e.VisitType.ToString(),
                                 e.AnimalId,
                                 e.Animal.Name,
+                                e.Animal.Species,
                                 e.OwnerId,
                                 e.Owner.FullName,
                                 e.CreatedOnUtc));
@@ -106,7 +108,7 @@ public class GetVisitsTable
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/clinics/{clinicId:guid}/visits", [Authorize] async (
+            app.MapGet("/visits", [Authorize] async (
                 [FromQuery] int? page,
                 [FromQuery] int? pageSize,
                 [FromQuery] string? sortColumn,

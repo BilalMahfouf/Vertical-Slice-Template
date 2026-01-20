@@ -6,7 +6,7 @@ import AnimalPage from './features/animals/AnimalPage';
 import {QueryClientProvider, QueryClient} from '@tanstack/react-query';
 import SettingPage from './features/visits/VisitPage';
 import NotificationPage from './features/notifications/NotificationPage';
-import VisitPage from './features/settings/SettingPage';
+import VisitPage from './features/visits/VisitPage';
 import ClientPage from './features/clients/ClientPage';
 import { Toaster } from './components/ui/sonner';
 import AppointmentPage from './features/appointments/AppointmentPage';

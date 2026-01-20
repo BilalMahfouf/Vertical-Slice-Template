@@ -14,7 +14,7 @@ const navigationItems = [
   { pathname: "/animals", key: i18nKeyContainer.animals, icon: Stethoscope },
   { pathname: "/clients", key: i18nKeyContainer.clients, icon: Users },
   { pathname: "/appointments", key: i18nKeyContainer.appointments, icon: Calendar },
-  { pathname: "/visits", key: i18nKeyContainer.visitsLog, icon: Clock, rightIcon: ChevronRight },
+  { pathname: "/visits", key: i18nKeyContainer.visits, icon: Clock },
   { pathname: "/notifications", key: i18nKeyContainer.notifications, icon: Bell },
   { pathname: "/settings", key: i18nKeyContainer.settings, icon: Settings },
 ];
