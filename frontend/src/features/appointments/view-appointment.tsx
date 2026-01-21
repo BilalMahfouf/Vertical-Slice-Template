@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CalendarClock, User, PawPrint, Calendar, Clock, FileText } from "lucide-react";
+import { CalendarClock, User, PawPrint, Calendar, Clock, FileText, Hash } from "lucide-react";
 import appointmentApi from "./appointment-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { cn } from "@/lib/utils";
@@ -149,6 +149,17 @@ export default function ViewAppointment({
               </div>
             ) : appointment ? (
               <div className="space-y-5">
+                {/* Appointment ID */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-slate-700">
+                    {t(i18nKeyContainer.appointment.appointmentId)}
+                  </label>
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                    <Hash className="h-4 w-4 text-slate-400" />
+                    <span className="text-slate-900 font-mono text-sm">{appointment.id}</span>
+                  </div>
+                </div>
+
                 {/* Status Badge */}
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-slate-700">

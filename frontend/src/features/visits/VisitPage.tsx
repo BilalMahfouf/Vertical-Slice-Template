@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
 import VisitDataTable from "./visit-data-table";
 import AddUpdateVisit from "./add-update-visit";
+import ViewVisit from "./view-visit";
 import { useDeleteVisit } from "./use-delete-visit";
 import { type VisitTableResponse } from "./visit-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
@@ -12,9 +13,10 @@ import i18nKeyContainer from "@/lib/i18n/keyContainer";
 export default function VisitPage() {
   // Dialog states
   const [addUpdateOpen, setAddUpdateOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   
-  // Selected visit for edit/delete
+  // Selected visit for view/edit/delete
   const [selectedVisitId, setSelectedVisitId] = useState<string | null>(null);
   const [visitToDelete, setVisitToDelete] = useState<VisitTableResponse | null>(null);
   
@@ -35,6 +37,17 @@ export default function VisitPage() {
 
   const handleCloseAddUpdate = () => {
     setAddUpdateOpen(false);
+    setSelectedVisitId(null);
+  };
+
+  // Handlers for View dialog
+  const handleOpenView = (visit: VisitTableResponse) => {
+    setSelectedVisitId(visit.id);
+    setViewOpen(true);
+  };
+
+  const handleCloseView = () => {
+    setViewOpen(false);
     setSelectedVisitId(null);
   };
 
@@ -90,10 +103,20 @@ export default function VisitPage() {
       {/* Data Table */}
       <div>
         <VisitDataTable
+          onView={handleOpenView}
           onEdit={handleOpenEdit}
           onDelete={handleOpenDelete}
         />
       </div>
+
+      {/* View Visit Modal */}
+      {selectedVisitId && viewOpen && (
+        <ViewVisit
+          open={viewOpen}
+          onClose={handleCloseView}
+          visitId={selectedVisitId}
+        />
+      )}
 
       {/* Add/Update Visit Modal */}
       <AddUpdateVisit

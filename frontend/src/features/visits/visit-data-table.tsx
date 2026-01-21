@@ -6,12 +6,13 @@ import {
   type RowAction,
 } from "@/components/tables";
 import visitApi, { type VisitTableResponse } from "./visit-api";
-import { Calendar, User, PawPrint, Pencil, Trash2 } from "lucide-react";
+import { Calendar, User, PawPrint, Eye, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { cn } from "@/lib/utils";
 
 interface VisitDataTableProps {
+  onView?: (visit: VisitTableResponse) => void;
   onEdit?: (visit: VisitTableResponse) => void;
   onDelete?: (visit: VisitTableResponse) => void;
 }
@@ -78,13 +79,15 @@ function VisitTypeBadge({ visitType }: { visitType: string }) {
  * - Color-coded visit type badges
  * - Date formatting with locale support
  * - Animal and owner information display
- * - Edit and Delete actions
+ * - View, Edit and Delete actions
  * 
+ * @param onView - Callback function when view action is triggered
  * @param onEdit - Callback function when edit action is triggered
  * @param onDelete - Callback function when delete action is triggered
  * @returns A data table component for displaying visit records
  */
 export default function VisitDataTable({
+  onView,
   onEdit,
   onDelete,
 }: VisitDataTableProps) {
@@ -200,6 +203,15 @@ export default function VisitDataTable({
       ),
       cell: ({ row }) => {
         const actions: RowAction<VisitTableResponse>[] = [];
+
+        // View action
+        if (onView) {
+          actions.push({
+            label: t(i18nKeyContainer.table.viewDetails),
+            onClick: () => onView(row.original),
+            icon: Eye,
+          });
+        }
 
         // Edit action
         if (onEdit) {
