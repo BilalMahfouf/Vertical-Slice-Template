@@ -30,7 +30,7 @@ public static class GetVisitById
         List<string>? Treatment,
         string? Notes,
         DateTime CreatedOnUtc,
-        DateTime? UpdatedOnUtc=null);
+        DateTime? UpdatedOnUtc = null);
 
     public class GetVisitByIdQueryHandler : IQueryHandler<Query, Response>
     {
@@ -48,6 +48,7 @@ public static class GetVisitById
             var visit = await _db.Visits
                 .AsNoTracking()
                 .Where(e => e.Id == query.Id)
+                .Include(e => e.Appointment)
                 .Select(e => new Response(
                     e.Id,
                     e.Animal.Id,
@@ -57,9 +58,9 @@ public static class GetVisitById
                     e.Owner.Id,
                     e.Owner.FullName,
                     e.Owner.Phone,
-                    e.Appointment != null ? e.Appointment.Id : null,
-                    e.Appointment != null ? e.Appointment.AppointmentDate : null,
-                    e.Appointment != null ? e.Appointment.Status.ToString() : null,
+                    e.AppointmentId == null ? null : e.AppointmentId,
+                    e.AppointmentId == null ? null : e.Appointment!.AppointmentDate,
+                    e.AppointmentId == null ? null : e.Appointment!.Status.ToString(),
                     e.VisitType.ToString(),
                     e.Symptoms,
                     e.Diagnosis,

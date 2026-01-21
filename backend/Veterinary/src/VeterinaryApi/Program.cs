@@ -27,6 +27,7 @@ builder.Services.AddValidatorsFromAssemblyContaining
 builder.Services.AddProblemDetails();
 
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddExceptionHandler<DomainExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 
