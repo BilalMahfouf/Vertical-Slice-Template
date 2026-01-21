@@ -1,13 +1,20 @@
 import {
   DataTable,
   DataTableColumnHeader,
+  DataTableRowActions,
   type DataTableColumn,
+  type RowAction,
 } from "@/components/tables";
 import visitApi, { type VisitTableResponse } from "./visit-api";
-import { Calendar, User, PawPrint } from "lucide-react";
+import { Calendar, User, PawPrint, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { cn } from "@/lib/utils";
+
+interface VisitDataTableProps {
+  onEdit?: (visit: VisitTableResponse) => void;
+  onDelete?: (visit: VisitTableResponse) => void;
+}
 
 /**
  * Visit Type Badge Component
@@ -71,10 +78,16 @@ function VisitTypeBadge({ visitType }: { visitType: string }) {
  * - Color-coded visit type badges
  * - Date formatting with locale support
  * - Animal and owner information display
+ * - Edit and Delete actions
  * 
+ * @param onEdit - Callback function when edit action is triggered
+ * @param onDelete - Callback function when delete action is triggered
  * @returns A data table component for displaying visit records
  */
-export default function VisitDataTable() {
+export default function VisitDataTable({
+  onEdit,
+  onDelete,
+}: VisitDataTableProps) {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
 
@@ -176,6 +189,44 @@ export default function VisitDataTable() {
           </div>
         </div>
       ),
+    },
+    {
+      // Actions Column - Edit and Delete actions
+      id: "actions",
+      header: () => (
+        <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
+          {t(i18nKeyContainer.table.openMenu)}
+        </span>
+      ),
+      cell: ({ row }) => {
+        const actions: RowAction<VisitTableResponse>[] = [];
+
+        // Edit action
+        if (onEdit) {
+          actions.push({
+            label: t(i18nKeyContainer.table.edit),
+            onClick: () => onEdit(row.original),
+            icon: Pencil,
+          });
+        }
+
+        // Delete action
+        if (onDelete) {
+          actions.push({
+            label: t(i18nKeyContainer.table.delete),
+            onClick: () => onDelete(row.original),
+            icon: Trash2,
+            variant: "destructive",
+            separator: actions.length > 0,
+          });
+        }
+
+        if (actions.length === 0) {
+          return <span className="text-sm text-slate-400">—</span>;
+        }
+
+        return <DataTableRowActions row={row.original} actions={actions} />;
+      },
     },
   ];
 

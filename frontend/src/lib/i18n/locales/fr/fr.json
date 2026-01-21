@@ -33,6 +33,10 @@
         "animal": {
             "title": "Supprimer l'animal",
             "description": "Êtes-vous sûr de vouloir supprimer cet animal ? Cette action est irréversible et supprimera définitivement tous les dossiers associés."
+        },
+        "visit": {
+            "title": "Supprimer la visite",
+            "description": "Êtes-vous sûr de vouloir supprimer cette visite ? Cette action est irréversible et supprimera définitivement le dossier de visite."
         }
     },
     "table": {
@@ -201,6 +205,13 @@
         "addVisit": "Ajouter une visite",
         "addTitle": "Nouvelle visite",
         "addDescription": "Enregistrer une nouvelle visite pour un patient.",
+        "updateTitle": "Modifier la visite",
+        "updateDescription": "Mettez à jour les informations de la visite ci-dessous.",
+        "update": "Modifier la visite",
+        "updating": "Mise à jour en cours...",
+        "delete": "Supprimer",
+        "deleteDialogTitle": "Supprimer la visite",
+        "deleteDialogDescription": "Êtes-vous sûr de vouloir supprimer définitivement cette visite ? Cette action est irréversible.",
         "visitDate": "Date de visite",
         "visitType": "Type de visite",
         "selectVisitType": "Sélectionner le type de visite",

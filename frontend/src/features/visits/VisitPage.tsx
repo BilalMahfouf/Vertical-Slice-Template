@@ -2,21 +2,63 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
 import VisitDataTable from "./visit-data-table";
-import AddVisit from "./add-visit";
+import AddUpdateVisit from "./add-update-visit";
+import { useDeleteVisit } from "./use-delete-visit";
+import { type VisitTableResponse } from "./visit-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 
 export default function VisitPage() {
-  const [addVisitOpen, setAddVisitOpen] = useState(false);
+  // Dialog states
+  const [addUpdateOpen, setAddUpdateOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  
+  // Selected visit for edit/delete
+  const [selectedVisitId, setSelectedVisitId] = useState<string | null>(null);
+  const [visitToDelete, setVisitToDelete] = useState<VisitTableResponse | null>(null);
+  
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
+  const { deleteVisit, isDeleting } = useDeleteVisit();
 
+  // Handlers for Add/Update dialog
   const handleOpenAdd = () => {
-    setAddVisitOpen(true);
+    setSelectedVisitId(null);
+    setAddUpdateOpen(true);
   };
 
-  const handleCloseAdd = () => {
-    setAddVisitOpen(false);
+  const handleOpenEdit = (visit: VisitTableResponse) => {
+    setSelectedVisitId(visit.id);
+    setAddUpdateOpen(true);
+  };
+
+  const handleCloseAddUpdate = () => {
+    setAddUpdateOpen(false);
+    setSelectedVisitId(null);
+  };
+
+  // Handlers for Delete dialog
+  const handleOpenDelete = (visit: VisitTableResponse) => {
+    setVisitToDelete(visit);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleCloseDelete = () => {
+    if (!isDeleting) {
+      setDeleteDialogOpen(false);
+      setVisitToDelete(null);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    if (visitToDelete) {
+      deleteVisit(visitToDelete.id, {
+        onSuccess: () => {
+          handleCloseDelete();
+        },
+      });
+    }
   };
 
   return (
@@ -47,11 +89,29 @@ export default function VisitPage() {
 
       {/* Data Table */}
       <div>
-        <VisitDataTable />
+        <VisitDataTable
+          onEdit={handleOpenEdit}
+          onDelete={handleOpenDelete}
+        />
       </div>
 
-      {/* Add Visit Modal */}
-      <AddVisit open={addVisitOpen} onClose={handleCloseAdd} />
+      {/* Add/Update Visit Modal */}
+      <AddUpdateVisit
+        open={addUpdateOpen}
+        onClose={handleCloseAddUpdate}
+        visitId={selectedVisitId}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onClose={handleCloseDelete}
+        onConfirm={handleConfirmDelete}
+        title={t(i18nKeyContainer.deleteDialog.visit.title)}
+        description={t(i18nKeyContainer.deleteDialog.visit.description)}
+        itemName={visitToDelete?.animalName}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

@@ -46,6 +46,14 @@ export interface CreateVisitRequest {
   notes?: string | null;
 }
 
+export interface UpdateVisitRequest {
+  visitType: number; // Enum value: 1=Clinic, 2=Field, 3=Emergency
+  symptoms?: string[] | null;
+  diagnosis?: string[] | null;
+  treatment?: string[] | null;
+  notes?: string | null;
+}
+
 
 export const VisitType = {
   Clinic: 1,
@@ -94,6 +102,31 @@ const visitApi = {
       throw new Error('Failed to create visit');
     }
     return response.data.id;
+  },
+
+  /**
+   * Updates an existing visit record
+   * @param id - Visit ID (GUID)
+   * @param data - UpdateVisitRequest payload
+   * @returns void
+   */
+  updateVisit: async (id: string, data: UpdateVisitRequest): Promise<void> => {
+    const response = await api.put(`/visits/${id}`, data);
+    if (response.status !== 200 && response.status !== 204) {
+      throw new Error('Failed to update visit');
+    }
+  },
+
+  /**
+   * Deletes a visit record by ID
+   * @param id - Visit ID (GUID)
+   * @returns void
+   */
+  deleteVisit: async (id: string): Promise<void> => {
+    const response = await api.delete(`/visits/${id}`);
+    if (response.status !== 200 && response.status !== 204) {
+      throw new Error('Failed to delete visit');
+    }
   },
 }
 
