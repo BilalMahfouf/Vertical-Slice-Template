@@ -60,11 +60,13 @@ public class Visit : Entity
     }
 
     public void UpdateDetails(
+        VisitType visitType,
         List<string>? symptoms,
         List<string>? diagnosis,
         List<string>? treatment,
         string? followUpNotes)
     {
+        VisitType = visitType;
         Symptoms = GetStrings(symptoms);
         Diagnosis = GetStrings(diagnosis);
         Treatment = GetStrings(treatment);
