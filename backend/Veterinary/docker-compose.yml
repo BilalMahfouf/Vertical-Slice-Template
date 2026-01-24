@@ -1,0 +1,43 @@
+name: veterinary-api
+services:
+  veterinaryapi:
+    image: veterinary-api:latest
+    container_name: veterinary.api
+    build:
+      context: ../..
+      dockerfile: backend/Veterinary/src/VeterinaryApi/Dockerfile
+    env_file: src/VeterinaryApi/.env
+    
+    ports:
+      - "8080"
+      - "7256:7256"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: "https://+:7256;http://+:8080"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: ./certificates/aspnetapp.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "2501"
+    volumes:
+      - ${HOME}/.aspnet/https:/https/:ro
+
+  veterinary.database:
+    image: postgres:latest
+    container_name: veterinary.database
+    environment:
+    - POSTGRES_DB=veterinary_db
+    - POSTGRES_USER=veterinary_user
+    - POSTGRES_PASSWORD=securepassword
+    volumes:
+      - ./.containers/veterinary-db:/var/lib/postgresql 
+    ports:
+      - "5432:5432"
+ 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8081:80"
+    depends_on:
+      - veterinary.database
