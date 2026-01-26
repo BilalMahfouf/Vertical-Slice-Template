@@ -1,0 +1,19 @@
+# Dev stage (for local development with hot reload)
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS dev
+WORKDIR /app
+
+# Copy everything so dotnet watch can see all files
+COPY . .
+
+# Copy certificate
+COPY ./certificates/aspnetapp.pfx ./certificates/aspnetapp.pfx
+
+# Expose the same ports
+EXPOSE 8080
+EXPOSE 7256
+
+# Fix file watching for WSL
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1
+
+# Command to run in dev mode with hot reload
+CMD ["dotnet", "watch", "run", "--urls", "https://+:7256;http://+:8080"]

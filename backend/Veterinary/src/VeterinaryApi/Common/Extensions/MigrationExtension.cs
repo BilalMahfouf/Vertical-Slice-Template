@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Common.Extensions;
@@ -13,5 +14,8 @@ public static class MigrationExtension
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         dbContext.Database.Migrate();
+        
+        
     }
+    
 }

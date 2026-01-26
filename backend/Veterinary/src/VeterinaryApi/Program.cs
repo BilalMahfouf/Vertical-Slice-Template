@@ -6,6 +6,7 @@ using DotNetEnv;
 using Scalar.AspNetCore;
 using VeterinaryApi.Common.Exceptions;
 using FluentValidation;
+using VeterinaryApi.Common.Extensions;
 
 
 Env.Load();
@@ -73,6 +74,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.ApplyMigrations();
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
