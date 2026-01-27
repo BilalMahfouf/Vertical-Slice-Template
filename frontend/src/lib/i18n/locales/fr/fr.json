@@ -253,7 +253,17 @@
         "creating": "Création en cours...",
         "searchPlaceholder": "Rechercher des visites...",
         "noVisits": "Aucune visite trouvée.",
-        "visitId": "ID de la visite"
+        "visitId": "ID de la visite",
+        "modeAppointment": "À partir d'un rendez-vous",
+        "modeClient": "Sélectionner un client",
+        "searchAppointments": "Rechercher un rendez-vous par ID",
+        "appointmentSearchPlaceholder": "Entrez l'ID du rendez-vous...",
+        "appointmentSelected": "Rendez-vous sélectionné",
+        "noAppointmentsFound": "Aucun rendez-vous disponible",
+        "noAppointmentsHint": "Entrez un ID de rendez-vous valide pour créer une visite à partir d'un rendez-vous existant.",
+        "switchToClientMode": "Sélectionner un client manuellement",
+        "appointmentNotFound": "Rendez-vous introuvable",
+        "appointmentInvalidStatus": "Ce rendez-vous n'est pas disponible pour les visites (doit être confirmé ou reprogrammé)"
     },
     "toast": {
         "client": {

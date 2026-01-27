@@ -262,6 +262,18 @@ const i18nKeyContainer = {
         searchPlaceholder: 'visit.searchPlaceholder',
         noVisits: 'visit.noVisits',
         visitId: 'visit.visitId',
+        // Mode selector
+        modeAppointment: 'visit.modeAppointment',
+        modeClient: 'visit.modeClient',
+        // Appointment selection
+        searchAppointments: 'visit.searchAppointments',
+        appointmentSearchPlaceholder: 'visit.appointmentSearchPlaceholder',
+        appointmentSelected: 'visit.appointmentSelected',
+        noAppointmentsFound: 'visit.noAppointmentsFound',
+        noAppointmentsHint: 'visit.noAppointmentsHint',
+        switchToClientMode: 'visit.switchToClientMode',
+        appointmentNotFound: 'visit.appointmentNotFound',
+        appointmentInvalidStatus: 'visit.appointmentInvalidStatus',
     },
     toast: {
         client: {

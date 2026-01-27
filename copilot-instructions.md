@@ -4,6 +4,7 @@
 
 ---
 
+<!--
 ## Table of Contents
 
 1. [General Development Rules](#general-development-rules)
@@ -18,7 +19,7 @@
 10. [System Flow](#system-flow)
 11. [Communication Rules](#communication-rules)
 
----
+--- -->
 
 ## General Development Rules
 

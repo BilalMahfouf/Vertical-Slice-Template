@@ -253,7 +253,17 @@
         "creating": "جاري الإنشاء...",
         "searchPlaceholder": "البحث في الزيارات...",
         "noVisits": "لم يتم العثور على زيارات.",
-        "visitId": "معرّف الزيارة"
+        "visitId": "معرّف الزيارة",
+        "modeAppointment": "من موعد",
+        "modeClient": "اختيار عميل",
+        "searchAppointments": "البحث عن موعد بالمعرف",
+        "appointmentSearchPlaceholder": "أدخل معرف الموعد...",
+        "appointmentSelected": "تم اختيار الموعد",
+        "noAppointmentsFound": "لا توجد مواعيد متاحة",
+        "noAppointmentsHint": "أدخل معرف موعد صالح لإنشاء زيارة من موعد موجود.",
+        "switchToClientMode": "اختر العميل يدوياً بدلاً من ذلك",
+        "appointmentNotFound": "لم يتم العثور على الموعد",
+        "appointmentInvalidStatus": "هذا الموعد غير متاح للزيارات (يجب أن يكون مؤكداً أو معاد جدولته)"
     },
     "toast": {
         "client": {

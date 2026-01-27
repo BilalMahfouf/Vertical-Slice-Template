@@ -253,7 +253,17 @@
         "creating": "Creating...",
         "searchPlaceholder": "Search visits...",
         "noVisits": "No visits found.",
-        "visitId": "Visit ID"
+        "visitId": "Visit ID",
+        "modeAppointment": "From Appointment",
+        "modeClient": "Select Client",
+        "searchAppointments": "Search Appointment by ID",
+        "appointmentSearchPlaceholder": "Enter Appointment ID...",
+        "appointmentSelected": "Appointment Selected",
+        "noAppointmentsFound": "No appointments available",
+        "noAppointmentsHint": "Enter a valid appointment ID to create a visit from an existing appointment.",
+        "switchToClientMode": "Select client manually instead",
+        "appointmentNotFound": "Appointment not found",
+        "appointmentInvalidStatus": "This appointment is not available for visits (must be Confirmed or Rescheduled)"
     },
     "toast": {
         "client": {

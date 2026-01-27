@@ -9,7 +9,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Stethoscope, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Stethoscope, ArrowLeft, ArrowRight, Loader2, Calendar, User } from "lucide-react";
 import visitApi, {
   VisitType,
   type CreateVisitRequest,
@@ -17,14 +18,22 @@ import visitApi, {
 } from "./visit-api";
 import { type Client } from "@/features/clients/client-api";
 import { type ClientAnimal } from "@/features/animals/animal-api";
+import { type Appointment } from "@/features/appointments/appointment-api";
 import {
   ClientAnimalStep,
   StepIndicator,
   type ClientAnimalSelection,
 } from "@/features/appointments/components";
-import { VisitDetailsStep, type VisitFormData } from "./components";
+import {
+  VisitDetailsStep,
+  AppointmentSelectionStep,
+  type VisitFormData,
+  type AppointmentSelection,
+} from "./components";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { useVisitToast } from "./use-visit-toast";
+
+type VisitMode = "appointment" | "client";
 
 const MODE_CREATE = "create";
 const MODE_UPDATE = "update";
@@ -77,16 +86,22 @@ export default function AddUpdateVisit({
   const mode = visitId ? MODE_UPDATE : MODE_CREATE;
   const isUpdateMode = mode === MODE_UPDATE;
 
+  // Visit mode state (appointment vs client) - default to appointment
+  const [visitMode, setVisitMode] = useState<VisitMode>("appointment");
+
   // Step state
   const [currentStep, setCurrentStep] = useState(
     isUpdateMode ? STEP_DETAILS : STEP_CLIENT_ANIMAL
   );
 
-  // Selection state (Step 1)
+  // Selection state (Step 1 - Client mode)
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [selectedAnimal, setSelectedAnimal] = useState<ClientAnimal | null>(
     null
   );
+
+  // Selection state (Step 1 - Appointment mode)
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
   // Form data (Step 2)
   const [formData, setFormData] = useState<VisitFormData>({
@@ -126,6 +141,8 @@ export default function AddUpdateVisit({
   const resetForm = () => {
     setSelectedClient(null);
     setSelectedAnimal(null);
+    setSelectedAppointment(null);
+    setVisitMode("appointment");
     setFormData({
       visitType: VisitType.Clinic,
       symptoms: "",
@@ -173,6 +190,23 @@ export default function AddUpdateVisit({
     []
   );
 
+  // Handle appointment selection from Step 1 (Appointment mode)
+  const handleAppointmentSelect = useCallback(
+    (selection: AppointmentSelection) => {
+      setSelectedAppointment(selection.appointment);
+    },
+    []
+  );
+
+  // Handle mode switch
+  const handleModeChange = useCallback((newMode: string) => {
+    setVisitMode(newMode as VisitMode);
+    // Reset selections when switching modes
+    setSelectedClient(null);
+    setSelectedAnimal(null);
+    setSelectedAppointment(null);
+  }, []);
+
   // Update form data
   const handleFormDataChange = useCallback((data: Partial<VisitFormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
@@ -181,19 +215,34 @@ export default function AddUpdateVisit({
   // Create mutation
   const createMutation = useMutation({
     mutationFn: () => {
-      const request: CreateVisitRequest = {
-        animalId: selectedAnimal!.animalId,
-        clientId: selectedClient!.id,
-        visitType: formData.visitType,
-        symptoms: parseStringToArray(formData.symptoms),
-        diagnosis: parseStringToArray(formData.diagnosis),
-        treatment: parseStringToArray(formData.treatment),
-        notes: formData.notes.trim() || null,
-      };
+      // Build request based on mode
+      const request: CreateVisitRequest = visitMode === "appointment"
+        ? {
+            // Appointment mode: use appointmentId, backend will resolve client/animal
+            animalId: "", // Backend will get from appointment
+            clientId: "", // Backend will get from appointment
+            appointmentId: selectedAppointment!.id,
+            visitType: formData.visitType,
+            symptoms: parseStringToArray(formData.symptoms),
+            diagnosis: parseStringToArray(formData.diagnosis),
+            treatment: parseStringToArray(formData.treatment),
+            notes: formData.notes.trim() || null,
+          }
+        : {
+            // Client mode: use selected client/animal
+            animalId: selectedAnimal!.animalId,
+            clientId: selectedClient!.id,
+            visitType: formData.visitType,
+            symptoms: parseStringToArray(formData.symptoms),
+            diagnosis: parseStringToArray(formData.diagnosis),
+            treatment: parseStringToArray(formData.treatment),
+            notes: formData.notes.trim() || null,
+          };
       return visitApi.createVisit(request);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["visits"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
       visitToast.created();
       resetForm();
       onClose();
@@ -251,7 +300,9 @@ export default function AddUpdateVisit({
   };
 
   // Validation
-  const isStep1Valid = selectedClient !== null && selectedAnimal !== null;
+  const isStep1ValidClient = selectedClient !== null && selectedAnimal !== null;
+  const isStep1ValidAppointment = selectedAppointment !== null;
+  const isStep1Valid = visitMode === "appointment" ? isStep1ValidAppointment : isStep1ValidClient;
   const isStep2Valid = formData.visitType > 0;
   const canProceedToStep2 = isStep1Valid;
   const canSubmit = isUpdateMode
@@ -272,12 +323,18 @@ export default function AddUpdateVisit({
   const BackIcon = isRtl ? ArrowRight : ArrowLeft;
   const NextIcon = isRtl ? ArrowLeft : ArrowRight;
 
-  // Create a mock client/animal object for display in update mode
+  // Create a mock client/animal object for display in update mode or appointment mode
   const displayClient = isUpdateMode && existingVisit
     ? {
         id: existingVisit.clientId,
         fullName: existingVisit.clientFullName,
         phone: existingVisit.clientPhone,
+      } as Client
+    : visitMode === "appointment" && selectedAppointment
+    ? {
+        id: selectedAppointment.clientId,
+        fullName: selectedAppointment.clientName,
+        phone: "",
       } as Client
     : selectedClient;
 
@@ -287,6 +344,13 @@ export default function AddUpdateVisit({
         name: existingVisit.animalName,
         species: existingVisit.animalSpecies,
         breed: existingVisit.animalBreed,
+      } as ClientAnimal
+    : visitMode === "appointment" && selectedAppointment
+    ? {
+        animalId: "",
+        name: selectedAppointment.animalName,
+        species: "",
+        breed: null,
       } as ClientAnimal
     : selectedAnimal;
 
@@ -340,12 +404,52 @@ export default function AddUpdateVisit({
 
             {/* Step 1: Client & Animal Selection (Create mode only) */}
             {currentStep === STEP_CLIENT_ANIMAL && !isUpdateMode && (
-              <ClientAnimalStep
-                onSelect={handleClientAnimalSelect}
-                initialClient={selectedClient}
-                initialAnimalId={selectedAnimal?.animalId}
-                isRtl={isRtl}
-              />
+              <div className="space-y-5">
+                {/* Mode Selector Tabs */}
+                <Tabs
+                  value={visitMode}
+                  onValueChange={handleModeChange}
+                  dir={isRtl ? "rtl" : "ltr"}
+                  className="w-full"
+                >
+                  <TabsList className="grid w-full grid-cols-2 h-11 p-1 bg-slate-100 rounded-lg">
+                    <TabsTrigger
+                      value="appointment"
+                      className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md cursor-pointer"
+                    >
+                      <Calendar className="h-4 w-4" />
+                      {t(i18nKeyContainer.visit.modeAppointment)}
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="client"
+                      className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md cursor-pointer"
+                    >
+                      <User className="h-4 w-4" />
+                      {t(i18nKeyContainer.visit.modeClient)}
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+
+                {/* Appointment Selection Step */}
+                {visitMode === "appointment" && (
+                  <AppointmentSelectionStep
+                    onSelect={handleAppointmentSelect}
+                    initialAppointment={selectedAppointment}
+                    isRtl={isRtl}
+                    onSwitchToClientMode={() => handleModeChange("client")}
+                  />
+                )}
+
+                {/* Client & Animal Selection Step */}
+                {visitMode === "client" && (
+                  <ClientAnimalStep
+                    onSelect={handleClientAnimalSelect}
+                    initialClient={selectedClient}
+                    initialAnimalId={selectedAnimal?.animalId}
+                    isRtl={isRtl}
+                  />
+                )}
+              </div>
             )}
 
             {/* Step 2: Visit Details */}
