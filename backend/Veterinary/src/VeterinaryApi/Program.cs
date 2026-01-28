@@ -6,11 +6,12 @@ using DotNetEnv;
 using Scalar.AspNetCore;
 using VeterinaryApi.Common.Exceptions;
 using FluentValidation;
+using VeterinaryApi.Common.Extensions;
 
-
-var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
+var builder = WebApplication.CreateBuilder(args);
+
 builder.Configuration.AddEnvironmentVariables();
 
 
@@ -27,6 +28,7 @@ builder.Services.AddValidatorsFromAssemblyContaining
 builder.Services.AddProblemDetails();
 
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddExceptionHandler<DomainExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 
@@ -72,6 +74,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.ApplyMigrations();
     app.MapOpenApi();
     app.MapScalarApiReference();
 }

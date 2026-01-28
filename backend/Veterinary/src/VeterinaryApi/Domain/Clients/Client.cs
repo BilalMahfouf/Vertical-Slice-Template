@@ -1,4 +1,5 @@
-﻿using VeterinaryApi.Domain.Clinics;
+﻿using VeterinaryApi.Domain.Animals;
+using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Domain.Common;
 
 namespace VeterinaryApi.Domain.Clients;
@@ -11,6 +12,8 @@ public class Client : Entity
     public string? Notes { get; private set; }
     public DateTime? UpdatedOnUtc { get; private set; }
     public Clinic Clinic { get; private set; } = null!;
+
+    public IReadOnlyCollection<Animal> Animals { get; private set; }=null!;
 
     private Client()
     {

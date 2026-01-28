@@ -51,10 +51,28 @@ export const ErrorCodes = {
   // Client errors
   CLIENT_NOT_FOUND: "Client.ClientNotFound",
   CLIENTS_NOT_FOUND: "Client.ClientsNotFound",
+  CLIENT_DUPLICATE: "Client.DuplicateClient",
+  CLIENT_SAME_NAME_EXISTS: "Client.ClientWithSameNameExists",
   
   // Animal errors
   ANIMAL_NOT_FOUND: "Animal.AnimalNotFound",
   ANIMALS_NOT_FOUND: "Animal.AnimalsNotFound",
+  
+  // Appointment errors
+  APPOINTMENT_NOT_FOUND: "Appointment.AppointmentNotFound",
+  APPOINTMENTS_NOT_FOUND: "Appointment.AppointmentsNotFound",
+  APPOINTMENT_GENERIC_NOT_FOUND: "Appointment.NotFound",
+  APPOINTMENT_INVALID_DATE: "Appointment.InvalidAppointmentDate",
+  APPOINTMENT_RESCHEDULE_PROBLEM: "Appointment.RescheduleProblem",
+  APPOINTMENT_COMPLETE_PROBLEM: "Appointment.CompleteProblem",
+  APPOINTMENT_CANCEL_PROBLEM: "Appointment.CancelProblem",
+  APPOINTMENT_INVALID_STATUS: "Appointment.InvalidAppointmentStatus",
+  APPOINTMENT_OUTDATED: "Appointment.OutDatedAppointment",
+  
+  // Visit errors
+  VISIT_NOT_FOUND: "Visit.VisitNotFound",
+  VISITS_NOT_FOUND: "Visit.VisitsNotFound",
+  VISIT_WITH_APPOINTMENT_ALREADY_EXISTS: "Visit.VisitWithAppointmentlAlreadyExist",
   
   // Clinic errors
   CLINIC_NOT_FOUND: "Clinic.ClinicNotFound",
@@ -148,6 +166,8 @@ export function getErrorI18nKey(errorCode: string): string {
     // Client errors
     [ErrorCodes.CLIENT_NOT_FOUND]: "errors.client.notFound",
     [ErrorCodes.CLIENTS_NOT_FOUND]: "errors.client.listNotFound",
+    [ErrorCodes.CLIENT_DUPLICATE]: "errors.client.duplicate",
+    [ErrorCodes.CLIENT_SAME_NAME_EXISTS]: "errors.client.sameNameExists",
     
     // Animal errors
     [ErrorCodes.ANIMAL_NOT_FOUND]: "errors.animal.notFound",

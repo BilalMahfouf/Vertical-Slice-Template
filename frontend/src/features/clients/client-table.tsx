@@ -8,7 +8,7 @@ import {
   DateCell,
 } from "@/components/tables";
 import clientApi, { type Client } from "./client-api";
-import { User, Eye, Edit, Trash2, Phone, FileText } from "lucide-react";
+import { User, Eye, Edit, Trash2, Phone, FileText, PawPrint } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 
@@ -23,13 +23,18 @@ export default function ClientDataTable({
   onEdit,
   onDelete,
 }: ClientDataTableProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.language === "ar";
 
   const clientColumns: DataTableColumn<Client>[] = [
     {
       accessorKey: "fullName",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Client" enableSorting={false} />
+        <DataTableColumnHeader 
+          column={column} 
+          title={t(i18nKeyContainer.client.tableClient)} 
+          enableSorting={false} 
+        />
       ),
       cell: ({ row }) => (
         <div className="flex items-start gap-3">
@@ -40,7 +45,7 @@ export default function ClientDataTable({
             <div className="font-medium text-slate-900">{row.original.fullName}</div>
             <div className="flex items-center gap-1.5 text-sm text-slate-500">
               <Phone className="h-3.5 w-3.5" />
-              <span>{row.original.phone}</span>
+              <span dir="ltr">{row.original.phone}</span>
             </div>
           </div>
         </div>
@@ -49,14 +54,38 @@ export default function ClientDataTable({
     {
       accessorKey: "clinicName",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Clinic" enableSorting={false} />
+        <DataTableColumnHeader 
+          column={column} 
+          title={t(i18nKeyContainer.client.tableClinic)} 
+          enableSorting={false} 
+        />
       ),
       cell: ({ row }) => <TextCell primary={row.original.clinicName} />,
     },
     {
+      accessorKey: "numberOfAnimals",
+      header: ({ column }) => (
+        <DataTableColumnHeader 
+          column={column} 
+          title={t(i18nKeyContainer.client.tableAnimals)} 
+          enableSorting={false} 
+        />
+      ),
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <PawPrint className="h-4 w-4 text-slate-400" />
+          <span className="font-medium text-slate-700">{row.original.numberOfAnimals}</span>
+        </div>
+      ),
+    },
+    {
       accessorKey: "notes",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Notes" enableSorting={false} />
+        <DataTableColumnHeader 
+          column={column} 
+          title={t(i18nKeyContainer.client.tableNotes)} 
+          enableSorting={false} 
+        />
       ),
       cell: ({ row }) => (
         <div className="max-w-50">
@@ -66,7 +95,7 @@ export default function ClientDataTable({
               <span className="text-sm text-slate-600 truncate">{row.original.notes}</span>
             </div>
           ) : (
-            <span className="text-sm text-slate-400">No notes</span>
+            <span className="text-sm text-slate-400">{t(i18nKeyContainer.client.noNotes)}</span>
           )}
         </div>
       ),
@@ -74,7 +103,11 @@ export default function ClientDataTable({
     {
       accessorKey: "createdOnUtc",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Registered" enableSorting={false} />
+        <DataTableColumnHeader 
+          column={column} 
+          title={t(i18nKeyContainer.client.tableRegistered)} 
+          enableSorting={false} 
+        />
       ),
       cell: ({ row }) => <DateCell date={row.original.createdOnUtc} />,
     },
@@ -111,17 +144,20 @@ export default function ClientDataTable({
   ];
 
   return (
-    <DataTable
-      columns={clientColumns}
-      queryFn={clientApi.getAllClients}
-      queryKey="clients"
-      searchPlaceholder={t(i18nKeyContainer.table.search)}
-      defaultPageSize={10}
-      enableSearch={true}
-      searchDebounceMs={1000}
-      onView={onView}
-      onEdit={onEdit}
-      onDelete={onDelete}
-    />
+    <div dir={isRtl ? "rtl" : "ltr"}>
+      <DataTable
+        columns={clientColumns}
+        queryFn={clientApi.getAllClients}
+        queryKey="clients"
+        searchPlaceholder={t(i18nKeyContainer.client.searchPlaceholder)}
+        defaultPageSize={10}
+        enableSearch={true}
+        emptyMessage={t(i18nKeyContainer.client.noClients)}
+        searchDebounceMs={1000}
+        onView={onView}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    </div>
   );
 }

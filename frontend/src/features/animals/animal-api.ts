@@ -18,6 +18,13 @@ export type Animal = {
   createdOnUtc: string;
   status: string;
 }
+
+// Simplified animal type for GetAnimalsByClientId endpoint
+export type ClientAnimal = {
+  animalId: string;
+  name: string;
+  species: string;
+}
 export interface CreateAnimalRequest {
   clientId: string;
   name: string;
@@ -89,6 +96,15 @@ const animalApi = {
             throw new Error('Failed to delete animal');
         }
         return;
-    }, 
+    },
+    getAnimalsByClientId: async(clientId: string): Promise<ClientAnimal[]> => {
+        console.log("Fetching animals for clientId:", clientId);
+        const response = await api.get<PagedList<ClientAnimal>>(`/animals/by-client/${clientId}`);
+        if(response.status !== 200){
+            throw new Error('Failed to fetch client animals');
+        }
+        console.log("Fetched animals:", response.data.item);
+        return response.data.item;
+    },
 }
 export default  animalApi;

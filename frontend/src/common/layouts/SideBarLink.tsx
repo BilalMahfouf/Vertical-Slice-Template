@@ -1,4 +1,3 @@
-import type React from "react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";

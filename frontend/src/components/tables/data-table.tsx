@@ -7,6 +7,7 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
+import { Loader2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -184,12 +185,22 @@ export function DataTable<TData>({
           hasActions={true}
         />
       ) : (
-        <div
-          className={cn(
-            "rounded-lg border border-slate-200 bg-white transition-opacity",
-            isFetching && "opacity-70"
+        <div className="relative">
+          {/* Loading overlay when refetching */}
+          {isFetching && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 rounded-lg">
+              <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-md">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                <span className="text-sm font-medium text-slate-600">Loading...</span>
+              </div>
+            </div>
           )}
-        >
+          <div
+            className={cn(
+              "rounded-lg border border-slate-200 bg-white transition-opacity",
+              isFetching && "opacity-50"
+            )}
+          >
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -254,6 +265,7 @@ export function DataTable<TData>({
               )}
             </TableBody>
           </Table>
+        </div>
         </div>
       )}
 

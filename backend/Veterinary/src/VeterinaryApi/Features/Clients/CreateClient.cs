@@ -48,6 +48,32 @@ public static class CreateClient
                 return Result<Response>.Failure(
                     ClinicErrors.ClinicNotFound());
             }
+            var fullName = $"{command.firstName} {command.lastName}";
+            var isDuplicate = await _db.Clients.AsNoTracking()
+                .AnyAsync(e =>
+                    e.ClinicId == clinic.Id &&
+                    e.FullName == fullName &&
+                    e.Phone == command.phone,
+                    cancellationToken);
+            if (isDuplicate)
+            {
+                return Result<Response>.Failure(
+                    ClientErrors.DuplicateClient(
+                        fullName,
+                        command.phone));
+            }
+            var isExistWithSameName = await _db.Clients.AsNoTracking()
+                .AnyAsync(e =>
+                    e.ClinicId == clinic.Id &&
+                    e.FullName == fullName,
+                    cancellationToken);
+            if (isExistWithSameName)
+            {
+                return Result<Response>.Failure(
+                    ClientErrors.ClientWithSameNameExists(
+                        fullName));
+            }
+
             var client = Client.Create(
                 clinic.Id,
                 command.firstName,
