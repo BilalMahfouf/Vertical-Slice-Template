@@ -13,9 +13,12 @@ public static class VisitErrors
         "Visit.VisitNotFound",
         $"Visit with id {id} was not found.");
 
-
-
     public static Error VisitsNotFound = Error.NotFound(
         "Visit.VisitsNotFound",
         "No visits found.");
+
+    public static Error VisitWithAppointmentlAlreadyExist(Guid appointmentId)
+        => Error.Conflict(
+            $"Visit.{nameof(VisitWithAppointmentlAlreadyExist)}",
+            $"The Appointment with id {appointmentId} already have a visit");
 }

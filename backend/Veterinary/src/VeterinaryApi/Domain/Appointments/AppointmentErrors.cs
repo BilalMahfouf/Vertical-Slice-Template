@@ -28,4 +28,11 @@ public static class AppointmentErrors
     public static Error InvalidAppointmentStatus =>
                 Error.Validation("Appointment.InvalidAppointmentStatus",
             "The appointment status is invalid for this operation");
+
+    public static Error OutDatedAppointment(DateTime appointmentDate)
+        => Error.Conflict($"{nameof(Appointment)}.{nameof(OutDatedAppointment)}",
+            $"The appointment date {appointmentDate} conflicts " +
+            $"with the visit date {DateTime.UtcNow}. " +
+            $"Appointments must not be outdated.");
+
 }

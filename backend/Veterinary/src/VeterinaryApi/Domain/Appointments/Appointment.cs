@@ -56,8 +56,8 @@ public sealed class Appointment : Entity
     }
     public void Complete()
     {
-        if (this.Status is not AppointmentStatus.Confirmed or
-             AppointmentStatus.Rescheduled)
+        if (this.Status is not (AppointmentStatus.Confirmed or
+             AppointmentStatus.Rescheduled))
         {
             throw new DomainException(AppointmentErrors.CompleteProblem);
         }

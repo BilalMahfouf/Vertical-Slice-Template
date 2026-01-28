@@ -61,10 +61,18 @@ export const ErrorCodes = {
   // Appointment errors
   APPOINTMENT_NOT_FOUND: "Appointment.AppointmentNotFound",
   APPOINTMENTS_NOT_FOUND: "Appointment.AppointmentsNotFound",
+  APPOINTMENT_GENERIC_NOT_FOUND: "Appointment.NotFound",
+  APPOINTMENT_INVALID_DATE: "Appointment.InvalidAppointmentDate",
+  APPOINTMENT_RESCHEDULE_PROBLEM: "Appointment.RescheduleProblem",
+  APPOINTMENT_COMPLETE_PROBLEM: "Appointment.CompleteProblem",
+  APPOINTMENT_CANCEL_PROBLEM: "Appointment.CancelProblem",
+  APPOINTMENT_INVALID_STATUS: "Appointment.InvalidAppointmentStatus",
+  APPOINTMENT_OUTDATED: "Appointment.OutDatedAppointment",
   
   // Visit errors
   VISIT_NOT_FOUND: "Visit.VisitNotFound",
   VISITS_NOT_FOUND: "Visit.VisitsNotFound",
+  VISIT_WITH_APPOINTMENT_ALREADY_EXISTS: "Visit.VisitWithAppointmentlAlreadyExist",
   
   // Clinic errors
   CLINIC_NOT_FOUND: "Clinic.ClinicNotFound",

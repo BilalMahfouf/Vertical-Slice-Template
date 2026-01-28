@@ -219,8 +219,6 @@ export default function AddUpdateVisit({
       const request: CreateVisitRequest = visitMode === "appointment"
         ? {
             // Appointment mode: use appointmentId, backend will resolve client/animal
-            animalId: "", // Backend will get from appointment
-            clientId: "", // Backend will get from appointment
             appointmentId: selectedAppointment!.id,
             visitType: formData.visitType,
             symptoms: parseStringToArray(formData.symptoms),

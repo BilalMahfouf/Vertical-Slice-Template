@@ -36,8 +36,8 @@ export type VisitResponse = {
 }
 
 export interface CreateVisitRequest {
-  animalId: string;
-  clientId: string;
+  animalId?: string;
+  clientId?: string;
   appointmentId?: string | null;
   visitType: number; // Enum value: 1=Clinic, 2=Field, 3=Emergency
   symptoms?: string[] | null;

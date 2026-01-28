@@ -1,4 +1,5 @@
-﻿using VeterinaryApi.Domain.Animals;
+﻿using Microsoft.VisualBasic;
+using VeterinaryApi.Domain.Animals;
 using VeterinaryApi.Domain.Appointments;
 using VeterinaryApi.Domain.Clients;
 using VeterinaryApi.Domain.Common;
@@ -33,9 +34,18 @@ public class Visit : Entity
         List<string>? symptoms,
         List<string>? diagnosis,
         List<string>? treatment,
-        string? followUpNotes
+        string? followUpNotes,
+        DateTime? appointmentDate = null
         )
     {
+        if (appointmentDate.HasValue)
+        {
+            if (appointmentDate.Value.Date < DateTime.UtcNow.Date)
+            {
+                throw new DomainException(
+                    AppointmentErrors.OutDatedAppointment(appointmentDate.Value));
+            }
+        }
         var visit = new Visit();
 
         visit.AnimalId = animalId;

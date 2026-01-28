@@ -47,12 +47,21 @@ export function useVisitToast() {
     // Map visit-specific error codes to i18n keys
     let titleKey: string;
     let descKey: string;
-    
+    console.log("Parsed visit error:", parsedError);
     switch (parsedError.code) {
       case ErrorCodes.VISIT_NOT_FOUND:
         titleKey = i18nKeyContainer.errors.visit.notFound;
         descKey = i18nKeyContainer.errors.visit.notFoundDesc;
         break;
+      case ErrorCodes.VISITS_NOT_FOUND:
+        titleKey = i18nKeyContainer.errors.visit.listNotFound;
+        descKey = i18nKeyContainer.errors.visit.listNotFoundDesc;
+        break;
+      case ErrorCodes.VISIT_WITH_APPOINTMENT_ALREADY_EXISTS:
+        titleKey = i18nKeyContainer.errors.visit.appointmentAlreadyExists;
+        descKey = i18nKeyContainer.errors.visit.appointmentAlreadyExistsDesc;
+        toast.warning(t(titleKey), { description: t(descKey) });
+        return parsedError;
       case ErrorCodes.CLIENT_NOT_FOUND:
         titleKey = i18nKeyContainer.errors.visit.clientNotFound;
         descKey = i18nKeyContainer.errors.visit.clientNotFoundDesc;
@@ -61,6 +70,40 @@ export function useVisitToast() {
         titleKey = i18nKeyContainer.errors.visit.animalNotFound;
         descKey = i18nKeyContainer.errors.visit.animalNotFoundDesc;
         break;
+      case ErrorCodes.APPOINTMENT_NOT_FOUND:
+      case ErrorCodes.APPOINTMENT_GENERIC_NOT_FOUND:
+        titleKey = i18nKeyContainer.errors.visit.appointmentNotFound;
+        descKey = i18nKeyContainer.errors.visit.appointmentNotFoundDesc;
+        break;
+      case ErrorCodes.APPOINTMENT_INVALID_DATE:
+        titleKey = i18nKeyContainer.errors.visit.invalidAppointmentDate;
+        descKey = i18nKeyContainer.errors.visit.invalidAppointmentDateDesc;
+        toast.warning(t(titleKey), { description: t(descKey) });
+        return parsedError;
+      case ErrorCodes.APPOINTMENT_INVALID_STATUS:
+        titleKey = i18nKeyContainer.errors.visit.invalidAppointmentStatus;
+        descKey = i18nKeyContainer.errors.visit.invalidAppointmentStatusDesc;
+        toast.warning(t(titleKey), { description: t(descKey) });
+        return parsedError;
+      case ErrorCodes.APPOINTMENT_OUTDATED:
+        titleKey = i18nKeyContainer.errors.visit.outdatedAppointment;
+        descKey = i18nKeyContainer.errors.visit.outdatedAppointmentDesc;
+        break;
+      case ErrorCodes.APPOINTMENT_RESCHEDULE_PROBLEM:
+        titleKey = i18nKeyContainer.errors.visit.rescheduleProblem;
+        descKey = i18nKeyContainer.errors.visit.rescheduleProblemDesc;
+        toast.warning(t(titleKey), { description: t(descKey) });
+        return parsedError;
+      case ErrorCodes.APPOINTMENT_COMPLETE_PROBLEM:
+        titleKey = i18nKeyContainer.errors.visit.completeProblem;
+        descKey = i18nKeyContainer.errors.visit.completeProblemDesc;
+        toast.warning(t(titleKey), { description: t(descKey) });
+        return parsedError;
+      case ErrorCodes.APPOINTMENT_CANCEL_PROBLEM:
+        titleKey = i18nKeyContainer.errors.visit.cancelProblem;
+        descKey = i18nKeyContainer.errors.visit.cancelProblemDesc;
+        toast.warning(t(titleKey), { description: t(descKey) });
+        return parsedError;
       case ErrorCodes.VALIDATION_ERROR:
         titleKey = i18nKeyContainer.errors.validation;
         descKey = i18nKeyContainer.errors.validationDesc;

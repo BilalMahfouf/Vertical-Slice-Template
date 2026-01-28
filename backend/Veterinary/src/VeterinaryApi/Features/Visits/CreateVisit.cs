@@ -56,7 +56,7 @@ public static class CreateVisit
             {
                 return null;
             }
-            var visit= Visit.Create(
+            var visit = Visit.Create(
                 appointment.AnimalId,
                 appointment.Animal.ClientId,
                 appointmentId,
@@ -64,7 +64,8 @@ public static class CreateVisit
                 command.Symptoms,
                 command.Diagnosis,
                 command.Treatment,
-                command.Notes);
+                command.Notes,
+                appointment.AppointmentDate);
 
             appointment.Complete();
             
@@ -79,7 +80,7 @@ public static class CreateVisit
 
             if (command.AppointmentId is not null)
             {
-                var visitCreatedWithAppointmentId =
+               var visitCreatedWithAppointmentId =
                     await CreateWithAppointment(command);
                 if (visitCreatedWithAppointmentId is null)
                 {
