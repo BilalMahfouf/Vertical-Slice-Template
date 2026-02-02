@@ -9,19 +9,12 @@ import {
   Users,
   ClipboardList,
   TrendingUp,
-  Stethoscope,
   Loader2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+
 import dashboardApi, { type DashboardCardsResponse } from "./dashboard-api";
 import AddUpdateVisit from "../visits/add-update-visit";
 
