@@ -405,5 +405,36 @@
         "serverDesc": "An unexpected server error occurred. Please try again later.",
         "unknown": "Unknown Error",
         "unknownDesc": "An unexpected error occurred. Please try again."
+    },
+    "dashboardPage": {
+        "title": "Dashboard",
+        "subtitle": "Quick overview of visits and appointments",
+        "addVisit": "Add Visit",
+        "appointmentsButton": "Appointments",
+        "cards": {
+            "totalAnimals": {
+                "title": "Total Animals",
+                "description": "registered animals"
+            },
+            "totalAppointments": {
+                "title": "Total Appointments",
+                "description": "scheduled appointments"
+            },
+            "totalVisits": {
+                "title": "Total Visits",
+                "description": "completed visits"
+            },
+            "completedAppointments": {
+                "title": "Completed Appointments",
+                "description": "finished appointments"
+            }
+        },
+        "addVisitModal": {
+            "title": "Add New Visit",
+            "description": "Enter the details of the new visit",
+            "placeholder": "Visit form is under development",
+            "cancel": "Cancel",
+            "save": "Save"
+        }
     }
 }

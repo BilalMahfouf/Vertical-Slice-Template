@@ -405,5 +405,36 @@
         "serverDesc": "حدث خطأ غير متوقع في الخادم. يرجى المحاولة مرة أخرى لاحقاً.",
         "unknown": "خطأ غير معروف",
         "unknownDesc": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+    },
+    "dashboardPage": {
+        "title": "لوحة التحكم",
+        "subtitle": "نظرة سريعة على الزيارات والمواعيد",
+        "addVisit": "إضافة زيارة",
+        "appointmentsButton": "المواعيد",
+        "cards": {
+            "totalAnimals": {
+                "title": "إجمالي الحيوانات",
+                "description": "الحيوانات المسجلة"
+            },
+            "totalAppointments": {
+                "title": "إجمالي المواعيد",
+                "description": "المواعيد المجدولة"
+            },
+            "totalVisits": {
+                "title": "إجمالي الزيارات",
+                "description": "الزيارات المكتملة"
+            },
+            "completedAppointments": {
+                "title": "المواعيد المكتملة",
+                "description": "المواعيد المنتهية"
+            }
+        },
+        "addVisitModal": {
+            "title": "إضافة زيارة جديدة",
+            "description": "قم بإدخال تفاصيل الزيارة الجديدة",
+            "placeholder": "نموذج إضافة الزيارة قيد التطوير",
+            "cancel": "إلغاء",
+            "save": "حفظ"
+        }
     }
 }

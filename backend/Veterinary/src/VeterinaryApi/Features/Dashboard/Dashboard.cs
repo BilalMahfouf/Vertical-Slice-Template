@@ -5,6 +5,7 @@ using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
+using VeterinaryApi.Domain.Appointments;
 
 namespace VeterinaryApi.Features.Dashboard;
 
@@ -14,7 +15,8 @@ public static class Dashboard
     public sealed record Response(
         int TotalAnimals,
         int TotalAppointments,
-        int TotalVisits);
+        int TotalVisits,
+        int CompletedAppointments);
 
     public sealed class DashboardQuery : IQueryHandler<Query, Response>
     {
@@ -29,14 +31,18 @@ public static class Dashboard
             Query query,
             CancellationToken cancellationToken = default)
         {
-            var totalAnimals = await _db.Animals.CountAsync();
-            var totalAppointments = await _db.Appointments.CountAsync();
-            var totalVisits = await _db.Visits.CountAsync();
+            var totalAnimals = await _db.Animals.CountAsync(cancellationToken);
+            var totalAppointments = await _db.Appointments.CountAsync(cancellationToken);
+            var totalVisits = await _db.Visits.CountAsync(cancellationToken);
+            var completedAppointments = await _db.Appointments
+                .CountAsync(e => e.Status == AppointmentStatus.Completed,
+                cancellationToken);
 
             var response = new Response(
                 TotalAnimals: totalAnimals,
                 TotalAppointments: totalAppointments,
-                TotalVisits: totalVisits);
+                TotalVisits: totalVisits,
+                completedAppointments);
             return Result<Response>.Success(response);
         }
     }

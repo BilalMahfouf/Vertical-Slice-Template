@@ -1,667 +1,460 @@
-# Copilot Instructions - Veterinary Application
+# Project Map (AI + Dev Guide)
 
-> **Purpose**: This document defines the development guidelines, architecture principles, and UI standards for the Veterinary Application. Follow these rules to ensure all features are simple, production-ready, and avoid over-engineering.
+> **VetiCloud** — Veterinary clinic management SaaS. Multi-tenant, multi-language (en/fr/ar+RTL).
 
----
+## 1. What This Repo Is
 
-<!--
-## Table of Contents
+A full-stack veterinary practice management system: clients, animals, appointments, visits, notifications, settings. Supports multi-clinic tenancy with role-based access.
 
-1. [General Development Rules](#general-development-rules)
-2. [Architecture Rules](#architecture-rules)
-3. [Feature Implementation Rules](#feature-implementation-rules)
-4. [Error Handling](#error-handling)
-5. [UI Rules](#ui-rules)
-6. [RTL Support](#rtl-support)
-7. [i18n Rules](#i18n-rules)
-8. [Reusable Components](#reusable-components)
-9. [Tooling Rules](#tooling-rules)
-10. [System Flow](#system-flow)
-11. [Communication Rules](#communication-rules)
-
---- -->
-
-## General Development Rules
-
-- **Keep implementations simple and clean** - Do NOT over-engineer solutions.
-- **Always prefer reusable components** - Check existing components before creating new ones.
-- **Follow existing project structure and patterns** - Consistency is key.
-- **Before writing code, scan the codebase** - Understand the structure and conventions first.
-- **User prefers flat response DTOs** - Use flat fields at root level (e.g., `AnimalId, AnimalName, ...`) instead of nested records (e.g., `AnimalInfo Animal, ...`). This applies to all `GetById` and `GetAll` endpoint responses.
+**Non-goals:**
+- No billing/payments module
+- No inventory/pharmacy management
+- No public-facing client portal
+- No mobile apps (web only)
 
 ---
 
-## Architecture Rules
+## 2. Tech Stack
 
-### The "Dumb Frontend" Pattern
+| Layer | Technology | Version | Notes |
+|-------|------------|---------|-------|
+| **Frontend** | React | 19.2 | Feature-based architecture |
+| | TypeScript | 5.9 | Strict mode |
+| | Vite | 7.2 | Build + dev server |
+| | react-router-dom | 7.11 | Client routing |
+| | TanStack Query | 5.90 | Server state + caching |
+| | TanStack Table | 8.21 | Headless tables |
+| | react-hook-form + Zod | 7.69 / 4.3 | Forms + validation |
+| | Axios | 1.13 | HTTP client |
+| | Tailwind CSS | 4.1 | Utility-first styling |
+| | shadcn/ui (Radix) | — | Component primitives |
+| | Lucide React | 0.562 | Icons |
+| | i18next | 25.7 | i18n (en/fr/ar) |
+| | Sonner | 2.0 | Toast notifications |
+| **Backend** | .NET | 10.0 | Minimal APIs |
+| | Carter | 10.0 | Endpoint routing |
+| | EF Core + Npgsql | 10.0 | PostgreSQL ORM |
+| | FluentValidation | 12.1 | Request validation |
+| | JWT Bearer | 10.0 | Auth tokens |
+| | Argon2 | 2.0 | Password hashing |
+| | MailKit | 4.14 | Email sending |
+| **Testing** | xUnit + Moq | 2.9 / 4.20 | Backend unit tests |
+| **Tooling** | pnpm | — | Package manager (required) |
+| | ESLint + Prettier | 9.39 / 3.7 | Lint + format |
+| | Docker Compose | — | Local dev environment |
 
-The frontend must stay **"dumb"**. All business logic is handled in the backend.
+---
 
-**Frontend responsibilities (ONLY):**
-
-- Send HTTP requests via Axios
-- Receive responses
-- Display data
-- Handle UI state (modals, loading states, etc.)
-
-**Backend responsibilities:**
-
-- All business logic
-- Validation
-- Data transformation
-- Error generation
-
-### Backend Structure
-
-The backend uses **CQRS pattern** with:
-
-- **Commands**: For create/update/delete operations (e.g., `CreateClient.cs`)
-- **Queries**: For read operations (e.g., `GetAllClient.cs`, `GetClientById.cs`)
-- **Result pattern**: All handlers return `Result<T>` or `Result`
-- **Error types**: `Error.NotFound()`, `Error.Validation()`, `Error.Conflict()`, `Error.Unauthorized()`
+## 3. Architecture Overview
 
 ```
-backend/Veterinary/src/VeterinaryApi/
-├── Features/           # Feature-based organization
-│   ├── Clients/        # Each feature has its own folder
-│   │   ├── CreateClient.cs
-│   │   ├── GetAllClient.cs
-│   │   ├── GetClientById.cs
-│   │   ├── UpdateClient.cs
-│   │   └── DeleteClient.cs
-│   ├── Animals/
-│   ├── Appointments/
-│   └── Visits/
-├── Domain/             # Domain entities and errors
-│   └── Clients/
-│       ├── Client.cs
-│       └── ClientErrors.cs
-└── Common/             # Shared infrastructure
-    ├── Errors/
-    ├── Results/
-    └── CQRS/
+┌─────────────────────────────────────────────────────────────────────┐
+│                         BROWSER (React SPA)                         │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────────┐ │
+│  │ Features │──│ API Layer│──│ TanStack │──│ Components (shadcn) │ │
+│  │ (pages)  │  │ (axios)  │  │  Query   │  │ + Layouts            │ │
+│  └──────────┘  └────┬─────┘  └──────────┘  └──────────────────────┘ │
+└─────────────────────┼───────────────────────────────────────────────┘
+                      │ HTTPS (JWT Bearer)
+┌─────────────────────▼───────────────────────────────────────────────┐
+│                      BACKEND (.NET 10 Minimal API)                  │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────────┐ │
+│  │ Endpoints│──│ CQRS     │──│ Domain   │──│ Infrastructure       │ │
+│  │ (Carter) │  │ Handlers │  │ Entities │  │ (EF Core, Auth, Mail)│ │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┬───────────┘ │
+└─────────────────────────────────────────────────────────┼───────────┘
+                                                          │
+                                              ┌───────────▼───────────┐
+                                              │   PostgreSQL (npgsql) │
+                                              └───────────────────────┘
 ```
 
-### Frontend Structure
+**Business logic**: Backend only. Frontend is "dumb" (display + HTTP calls).
 
+**Domains**: Auth, Clinics, Users, Clients, Animals, Appointments, Visits, Notifications, Settings.
+
+---
+
+## 4. Directory & File Map
+
+### Frontend Tree
 ```
 frontend/src/
-├── features/           # Feature-based organization
-│   ├── clients/
-│   │   ├── client-api.ts          # API calls
-│   │   ├── ClientPage.tsx         # Main page
-│   │   ├── client-table.tsx       # Table component
-│   │   ├── add-client.tsx         # Add/Edit form
-│   │   ├── view-client.tsx        # View details
-│   │   ├── use-client-toast.ts    # Toast notifications
-│   │   └── use-delete-client.ts   # Delete hook
-│   ├── animals/
-│   ├── appointments/
-│   └── visits/
-├── components/         # Shared UI components
-│   ├── ui/             # Base UI components (Button, Dialog, etc.)
-│   └── tables/         # Table components
+├── features/{feature}/     # Feature modules
+│   ├── {Feature}Page.tsx   # Route page
+│   ├── {feature}-api.ts    # All API calls
+│   ├── {feature}-table.tsx # DataTable config
+│   ├── add-{feature}.tsx   # Create/Edit dialog
+│   ├── view-{feature}.tsx  # View dialog
+│   ├── use-{feature}-toast.ts
+│   └── use-delete-{feature}.ts
+├── components/
+│   ├── ui/                 # shadcn/ui primitives
+│   └── tables/             # DataTable system
 ├── lib/
-│   ├── api/            # Axios instance and error handling
-│   └── i18n/           # Internationalization
-└── common/
-    └── layouts/        # Layout components
+│   ├── api/                # Axios instance + error types
+│   ├── i18n/               # i18next + locales
+│   └── utils.ts            # cn(), getTableRequestParams()
+├── common/layouts/         # MainLayout, Sidebar, TopNav
+└── hooks/                  # Shared hooks
 ```
+
+### Backend Tree
+```
+backend/Veterinary/src/VeterinaryApi/
+├── Features/{Feature}/
+│   ├── Create{Feature}.cs  # Command + Handler + Endpoint
+│   ├── GetAll{Feature}.cs  # Query + Handler + Endpoint
+│   ├── Get{Feature}ById.cs
+│   ├── Update{Feature}.cs
+│   ├── Delete{Feature}.cs
+│   └── Common.cs           # Shared DTOs
+├── Domain/{Feature}/
+│   ├── {Entity}.cs
+│   └── {Entity}Errors.cs
+├── Common/                 # CQRS, Results, Errors, Pagination
+├── Infrastructure/         # Persistence, Auth, Services
+└── Migrations/
+```
+
+### Task → File Map
+
+| Task | Files to Touch |
+|------|----------------|
+| **Add new page/route** | `features/{feature}/{Feature}Page.tsx`, `App.tsx` (add route) |
+| **Add new API call** | `features/{feature}/{feature}-api.ts` |
+| **Add reusable component** | `components/ui/{component}.tsx` |
+| **Add feature-specific component** | `features/{feature}/{component}.tsx` |
+| **Add form with validation** | `features/{feature}/add-{feature}.tsx` (Zod schema + react-hook-form) |
+| **Add translation key** | `lib/i18n/keyContainer.ts` + `locales/{en,fr,ar}/{lang}.json` |
+| **Add error code** | `lib/api/error-types.ts` (frontend) + `Domain/{Feature}/{Feature}Errors.cs` (backend) |
+| **Add table column** | `features/{feature}/{feature}-table.tsx` |
+| **Add toast notification** | `features/{feature}/use-{feature}-toast.ts` |
+| **Add backend endpoint** | `Features/{Feature}/{Action}{Feature}.cs` |
+| **Add domain entity** | `Domain/{Feature}/{Entity}.cs` + migration |
+| **Add theme token** | `index.css` (CSS variables) |
 
 ---
 
-## Feature Implementation Rules
+## 5. Frontend Code Structure (React + TS)
 
-### 1. API File Pattern
+### Component Patterns
+- **Feature-based**: Each feature is self-contained in `features/{name}/`
+- **Page components**: PascalCase (`ClientPage.tsx`)
+- **Other components**: kebab-case (`add-client.tsx`, `client-table.tsx`)
+- **No barrel exports** except `components/tables/index.ts`
 
-Every feature **MUST** have its own API file containing all related API calls.
-
-**Naming convention**: `{feature}-api.ts` (e.g., `client-api.ts`, `visit-api.ts`, `animal-api.ts`)
-
-**Example structure**:
-
+### Type Definitions
 ```typescript
-// client-api.ts
-import type { PagedList, TableRequest } from "@/components/tables";
-import api from "@/lib/api/api";
-import { getTableRequsestParams } from "@/lib/utils";
-
-// Types
+// Define types in {feature}-api.ts
 export type Client = {
   id: string;
-  clinicId: string;
-  clinicName: string;
   fullName: string;
-  phone: string;
-  notes?: string;
-  numberOfAnimals: number;
-  createdOnUtc: string;
+  // ... flat structure, no nested records
 };
 
 export type CreateClientRequest = {
   firstName: string;
   lastName: string;
-  phone: string;
-  notes?: string;
-};
-
-// API object with all feature calls
-const clientApi = {
-  getAllClients: async (request: TableRequest): Promise<PagedList<Client>> => {
-    const params = getTableRequsestParams(request);
-    const result = await api.get<PagedList<Client>>("/clients", { params });
-    if (result.status !== 200) {
-      throw new Error("Failed to fetch clients");
-    }
-    return result.data;
-  },
-
-  addClient: async (client: CreateClientRequest): Promise<string> => {
-    const result = await api.post<string>("/clients", client);
-    if (result.status !== 201) {
-      throw new Error("Failed to add client");
-    }
-    return result.data;
-  },
-
-  getClientById: async (id: string): Promise<Client> => {
-    const result = await api.get<Client>(`/clients/${id}`);
-    if (result.status !== 200) {
-      throw new Error("Failed to fetch client");
-    }
-    return result.data;
-  },
-
-  updateClient: async (
-    id: string,
-    request: CreateClientRequest,
-  ): Promise<void> => {
-    const result = await api.put<void>(`/clients/${id}`, request);
-    if (result.status !== 204) {
-      throw new Error("Failed to update client");
-    }
-  },
-
-  deleteClientById: async (id: string): Promise<void> => {
-    const result = await api.delete<void>(`/clients/${id}`);
-    if (result.status !== 204) {
-      throw new Error("Failed to delete client");
-    }
-  },
-};
-
-export default clientApi;
-```
-
-### 2. Toast Notifications
-
-Every feature **MUST** show toast notifications for:
-
-- ✅ **Success** - When an operation completes successfully
-- ❌ **Errors** - When an operation fails
-
-**Create a feature-specific toast hook**: `use-{feature}-toast.ts`
-
-**Example**:
-
-```typescript
-// use-client-toast.ts
-import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
-import {
-  parseApiError,
-  ErrorCodes,
-  type ParsedApiError,
-} from "@/lib/api/error-types";
-import i18nKeyContainer from "@/lib/i18n/keyContainer";
-
-export function useClientToast() {
-  const { t } = useTranslation();
-
-  const success = (operation: "added" | "updated" | "deleted") => {
-    const titleKey = i18nKeyContainer.toast.client[operation];
-    const descKey = i18nKeyContainer.toast.client[`${operation}Desc`];
-
-    toast.success(t(titleKey), {
-      description: t(descKey),
-    });
-  };
-
-  const error = (apiError: unknown): ParsedApiError => {
-    const parsedError = parseApiError(apiError);
-
-    // Map feature-specific error codes to i18n keys
-    switch (parsedError.code) {
-      case ErrorCodes.CLIENT_NOT_FOUND:
-        toast.error(t(i18nKeyContainer.errors.client.notFound), {
-          description: t(i18nKeyContainer.errors.client.notFoundDesc),
-        });
-        break;
-      case ErrorCodes.CLIENT_DUPLICATE:
-        toast.warning(t(i18nKeyContainer.errors.client.duplicate), {
-          description: t(i18nKeyContainer.errors.client.duplicateDesc),
-        });
-        break;
-      default:
-        toast.error(t(i18nKeyContainer.errors.generic.title), {
-          description: t(i18nKeyContainer.errors.generic.description),
-        });
-    }
-
-    return parsedError;
-  };
-
-  return { success, error };
-}
-```
-
----
-
-## Error Handling
-
-### Backend Error Structure
-
-The backend returns errors using **RFC 7807 ProblemDetails** format:
-
-```json
-{
-  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-  "title": "Client.ClientNotFound",
-  "status": 404,
-  "errors": ["Client.ClientNotFound", "Client with id 'xxx' was not found"]
-}
-```
-
-**Error types and their HTTP status codes**:
-| ErrorType | Status Code |
-|---------------|-------------|
-| Validation | 400 |
-| Unauthorized | 401 |
-| NotFound | 404 |
-| Conflict | 409 |
-| Failure | 500 |
-
-### Backend Error Definition
-
-Errors are defined in `Domain/{Feature}/{Feature}Errors.cs`:
-
-```csharp
-// ClientErrors.cs
-public static class ClientErrors
-{
-    public static Error ClientNotFound(Guid clientId)
-        => Error.NotFound("Client.ClientNotFound",
-            $"Client with id '{clientId}' was not found");
-
-    public static Error ClientsNotFound
-        => Error.NotFound("Client.ClientsNotFound", "Clients not found");
-
-    public static Error DuplicateClient(string fullName, string phone)
-        => Error.Conflict("Client.DuplicateClient",
-            $"Client with name '{fullName}' and phone '{phone}' already exists");
-}
-```
-
-### Frontend Error Mapping
-
-Map backend error codes in `lib/api/error-types.ts`:
-
-```typescript
-export const ErrorCodes = {
-  // Client errors
-  CLIENT_NOT_FOUND: "Client.ClientNotFound",
-  CLIENTS_NOT_FOUND: "Client.ClientsNotFound",
-  CLIENT_DUPLICATE: "Client.DuplicateClient",
-
-  // Animal errors
-  ANIMAL_NOT_FOUND: "Animal.AnimalNotFound",
-  ANIMALS_NOT_FOUND: "Animal.AnimalsNotFound",
-
-  // Add new error codes here...
-} as const;
-```
-
----
-
-## UI Rules
-
-- **Follow existing UI patterns** - Check similar features before implementing new UI.
-- **Keep layouts clean, readable, and consistent**.
-- **Avoid complex UI patterns** unless absolutely necessary.
-- **Use existing UI components** from `components/ui/` (Button, Dialog, Card, etc.).
-- **Use Tailwind CSS** for styling.
-- **Use Lucide React** for icons.
-
-### Component Usage
-
-```typescript
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Edit, Trash } from "lucide-react";
-```
-
----
-
-## RTL Support
-
-The app **MUST** fully support Arabic (RTL layout).
-
-### RTL Detection
-
-```typescript
-const { i18n } = useTranslation();
-const isRtl = i18n.language === "ar";
-```
-
-### Direction Attribute
-
-Always set the `dir` attribute on container elements:
-
-```tsx
-<div dir={isRtl ? "rtl" : "ltr"}>{/* Content */}</div>
-```
-
-### Logical CSS Properties (REQUIRED)
-
-Use **logical properties** instead of physical (left/right) properties:
-
-| ❌ Physical (Don't use)   | ✅ Logical (Use these)   |
-| ------------------------- | ------------------------ |
-| `ml-4`, `mr-4`            | `ms-4`, `me-4`           |
-| `pl-4`, `pr-4`            | `ps-4`, `pe-4`           |
-| `left-0`, `right-0`       | `start-0`, `end-0`       |
-| `text-left`, `text-right` | `text-start`, `text-end` |
-| `border-l`, `border-r`    | `border-s`, `border-e`   |
-| `rounded-l`, `rounded-r`  | `rounded-s`, `rounded-e` |
-
-### RTL-Aware Examples
-
-```tsx
-// Button alignment
-<Button className="ms-auto gap-2">  {/* Not ml-auto */}
-  <Plus className="h-4 w-4" />
-  {t(i18nKeyContainer.client.addNewClient)}
-</Button>
-
-// Sidebar positioning
-<div className={cn(
-  "fixed top-0 bottom-0 w-80 border-e",  {/* Not border-r */}
-  isRtl ? "end-0" : "start-0"  {/* Not left-0/right-0 */}
-)}>
-
-// Spacing
-<div className="ps-4 pe-2">  {/* Not pl-4 pr-2 */}
-  {/* Content */}
-</div>
-```
-
----
-
-## i18n Rules
-
-### Key Container
-
-**ALWAYS** use `i18nKeyContainer` for all text. **NEVER** hardcode strings.
-
-```typescript
-import { useTranslation } from "react-i18next";
-import i18nKeyContainer from "@/lib/i18n/keyContainer";
-
-const { t } = useTranslation();
-
-// ✅ Correct
-<h1>{t(i18nKeyContainer.client.title)}</h1>
-
-// ❌ Wrong - Never hardcode
-<h1>Clients</h1>
-<h1>{t("client.title")}</h1>  // Don't use string literals
-```
-
-### Adding New Translation Keys
-
-When adding new text, you **MUST**:
-
-1. **Add key to `keyContainer.ts`**:
-
-```typescript
-const i18nKeyContainer = {
-  // ...existing keys
-  newFeature: {
-    title: "newFeature.title",
-    description: "newFeature.description",
-  },
 };
 ```
 
-2. **Add translations to ALL locale files**:
+### Hook Patterns
+- **Query hooks**: Use `useQuery` directly or `useTableQuery` for tables
+- **Mutation hooks**: Separate file `use-delete-{feature}.ts` or inline
+- **Toast hooks**: `use-{feature}-toast.ts` per feature
+- **Shared hooks**: `hooks/` folder
 
-`locales/en/en.json`:
-
-```json
-{
-  "newFeature": {
-    "title": "New Feature",
-    "description": "This is a new feature"
-  }
-}
-```
-
-`locales/fr/fr.json`:
-
-```json
-{
-  "newFeature": {
-    "title": "Nouvelle fonctionnalité",
-    "description": "C'est une nouvelle fonctionnalité"
-  }
-}
-```
-
-`locales/ar/ar.json`:
-
-```json
-{
-  "newFeature": {
-    "title": "ميزة جديدة",
-    "description": "هذه ميزة جديدة"
-  }
-}
-```
-
-### Key Naming Convention
-
-Use dot notation for nested keys:
-
-- `feature.action` (e.g., `client.addClient`)
-- `feature.field.label` (e.g., `client.firstName`)
-- `common.action` (e.g., `common.cancel`, `common.save`)
-- `errors.feature.errorType` (e.g., `errors.client.notFound`)
-- `toast.feature.action` (e.g., `toast.client.added`)
-
----
-
-## Reusable Components
-
-### Table Components (`components/tables/`)
-
-Use the existing `DataTable` component for all table views:
-
+### Utilities
 ```typescript
-import { DataTable, type DataTableColumn } from "@/components/tables";
-
-const columns: DataTableColumn<Client>[] = [
-  {
-    accessorKey: "fullName",
-    header: t(i18nKeyContainer.client.fullName),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "phone",
-    header: t(i18nKeyContainer.client.phoneNumber),
-  },
-  // Actions column is automatically added when onView/onEdit/onDelete are provided
-];
-
-<DataTable
-  columns={columns}
-  queryFn={clientApi.getAllClients}
-  queryKey="clients"
-  onView={handleView}
-  onEdit={handleEdit}
-  onDelete={handleDelete}
-  enableSearch={true}
-/>
+import { cn } from "@/lib/utils";           // clsx + tailwind-merge
+import { getTableRequestParams } from "@/lib/utils"; // pagination params
 ```
 
-**Available table features**:
+### CSS / Styling
+- Tailwind utility classes only
+- `cn()` for conditional classes
+- **Logical properties for RTL**: `ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`
+- CSS variables in `index.css` for theme tokens
 
-- Server-side pagination
-- Server-side sorting
-- Search with debounce
-- Loading skeletons
-- Row actions (view, edit, delete)
+### States Pattern
+| State | Implementation |
+|-------|----------------|
+| Loading | `<Skeleton />` or `isLoading` from useQuery |
+| Error | Toast via `use-{feature}-toast.ts` |
+| Empty | Inline empty state in component |
+| Success | Toast + cache invalidation |
 
-### UI Components (`components/ui/`)
-
-| Component             | Usage                             |
-| --------------------- | --------------------------------- |
-| `Button`              | All buttons and clickable actions |
-| `Dialog`              | Modals and popups                 |
-| `Card`                | Content containers                |
-| `Input`               | Text inputs                       |
-| `Select`              | Dropdown selections               |
-| `Label`               | Form labels                       |
-| `Avatar`              | User/entity images                |
-| `Badge`               | Status indicators                 |
-| `Separator`           | Visual dividers                   |
-| `ConfirmDeleteDialog` | Delete confirmation modals        |
+### Accessibility
+- All interactive elements keyboard-accessible (Radix handles this)
+- Use semantic HTML
+- ARIA labels for icon-only buttons
+- Focus visible states via Tailwind `focus-visible:`
 
 ---
 
-## Tooling Rules
+## 6. Data & Request Flow
 
-- **Package Manager**: Use **pnpm** (not npm or yarn)
-- **Before installing dependencies**: Ask for permission first
-- **Before running terminal commands**: Ask for permission first
-
-```bash
-# ✅ Use pnpm
-pnpm install
-pnpm add <package>
-pnpm dev
-
-# ❌ Don't use npm/yarn
-npm install
-yarn add
+### Lifecycle
+```
+User Action → Component → API call (axios) → TanStack Query cache
+     ↑                                              ↓
+     └──────────── Re-render with new data ─────────┘
 ```
 
----
-
-## System Flow
-
-### Complete Request Flow
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                           FRONTEND                                   │
-├─────────────────────────────────────────────────────────────────────┤
-│  1. User Action (click button, submit form)                          │
-│                           ↓                                          │
-│  2. Feature Component calls API function                             │
-│     Example: clientApi.addClient(data)                               │
-│                           ↓                                          │
-│  3. API file sends HTTP request via Axios                            │
-│     POST /api/clients { firstName, lastName, phone }                 │
-└─────────────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────────┐
-│                           BACKEND                                    │
-├─────────────────────────────────────────────────────────────────────┤
-│  4. Endpoint receives request                                        │
-│     CreateClient.Endpoint maps to CreateClient.Command               │
-│                           ↓                                          │
-│  5. Command Handler executes business logic                          │
-│     - Validates data                                                 │
-│     - Checks for duplicates                                          │
-│     - Creates entity                                                 │
-│     - Saves to database                                              │
-│                           ↓                                          │
-│  6. Returns Result<Response> or Result.Failure(Error)                │
-│                           ↓                                          │
-│  7. Endpoint converts to HTTP response                               │
-│     Success: 201 Created with ID                                     │
-│     Failure: ProblemDetails with error code                          │
-└─────────────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────────┐
-│                           FRONTEND                                   │
-├─────────────────────────────────────────────────────────────────────┤
-│  8. API function receives response                                   │
-│                           ↓                                          │
-│  9. Success: Show success toast, refresh data, close modal           │
-│     Error: Parse error, map to i18n key, show error toast            │
-│                           ↓                                          │
-│  10. UI updates to reflect new state                                 │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
-### TanStack Query Integration
-
-Use TanStack Query for all data fetching:
-
+### API Configuration
 ```typescript
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// lib/api/api.ts
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL + "/api",
+  timeout: 10000,
+  withCredentials: true, // for refresh token cookie
+});
+```
 
-// Fetching data
-const { data, isLoading, error } = useQuery({
-  queryKey: ["clients"],
+### Auth Token Flow
+1. Login → Access token stored in memory (`tokenManager.ts`)
+2. Refresh token in httpOnly cookie
+3. Request interceptor attaches `Authorization: Bearer {token}`
+4. 401 response → Auto-refresh via `/auth/refresh` → Retry original request
+5. Refresh fails → Redirect to `/login`
+
+### Query Pattern
+```typescript
+const { data, isLoading } = useQuery({
+  queryKey: ["clients", params],
   queryFn: () => clientApi.getAllClients(params),
 });
+```
 
-// Mutations
+### Mutation Pattern
+```typescript
 const queryClient = useQueryClient();
 const mutation = useMutation({
   mutationFn: clientApi.addClient,
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ["clients"] });
-    toast.success("Client added");
+    clientToast.success("added");
+    onClose();
   },
-  onError: (error) => {
-    clientToast.error(error);
-  },
+  onError: (err) => clientToast.error(err),
 });
+```
+
+### Error Handling
+1. Backend returns RFC 7807 ProblemDetails: `{ title: "Client.NotFound", status: 404, errors: [...] }`
+2. Frontend `parseApiError()` extracts error code
+3. Feature toast hook maps code to i18n key
+4. Display localized toast message
+
+---
+
+## 7. UI Identity (Design System)
+
+### Visual Principles
+| Property | Value |
+|----------|-------|
+| Border radius | `rounded-md` (6px default) |
+| Spacing scale | Tailwind default (4px base) |
+| Typography | System font stack via shadcn |
+| Shadows | Minimal, `shadow-sm` for elevation |
+
+### Color Tokens (CSS Variables)
+```css
+--primary: 217 91% 51%;        /* #1E88E5 Material Blue 600 */
+--primary-foreground: 0 0% 100%;
+--secondary: 215 16% 47%;      /* Slate */
+--destructive: 0 84% 60%;      /* Red */
+--success: 142 76% 36%;        /* Green */
+--warning: 45 93% 47%;         /* Amber */
+--background: 0 0% 100%;
+--foreground: 222 47% 11%;
+--muted: 210 40% 96%;
+--border: 214 32% 91%;
+```
+
+### Component Rules
+| Do | Don't |
+|----|-------|
+| Use shadcn/ui components | Create custom primitives |
+| Use `Button`, `Dialog`, `Card` | Use raw HTML buttons/modals |
+| Use `Lucide` icons | Use other icon libraries |
+| Use `Sonner` for toasts | Use alert() or custom toasts |
+
+### Layout Rules
+- Sidebar: Fixed, 256px wide, collapsible on mobile
+- Main content: Scrollable, max-width container
+- Breakpoints: Tailwind defaults (`sm:640px`, `md:768px`, `lg:1024px`)
+
+### UX Patterns
+| Pattern | Implementation |
+|---------|----------------|
+| Modals | `<Dialog>` for forms and views |
+| Confirmations | `<ConfirmDeleteDialog>` |
+| Loading | Skeleton loaders in tables |
+| Notifications | Sonner toasts (top-right, RTL: top-left) |
+| Empty states | Inline with icon + message |
+
+### RTL Support (Required)
+```typescript
+const { i18n } = useTranslation();
+const isRtl = i18n.language === "ar";
+// Set dir="rtl" on containers
+// Use logical properties: ms-, me-, ps-, pe-, start-, end-
+```
+
+### UI PR Checklist
+- [ ] Uses existing shadcn/ui components
+- [ ] RTL-compatible (logical CSS properties)
+- [ ] All text via `t(i18nKeyContainer.x.y)`
+- [ ] Loading/error/empty states handled
+- [ ] Keyboard accessible
+- [ ] Mobile responsive
+
+---
+
+## 8. Common Practices & Standards
+
+### TypeScript
+- Strict mode enabled
+- No `any` except rare cases
+- Prefer `type` over `interface` for DTOs
+- Export types from API files
+
+### Lint/Format
+```bash
+pnpm lint          # ESLint check
+pnpm lint:fix      # ESLint fix
+pnpm format        # Prettier
+```
+
+### Testing
+| Layer | Framework | Location |
+|-------|-----------|----------|
+| Backend unit | xUnit + Moq | `Tests/Application.Tests/` |
+| Frontend | — | Not configured |
+
+### Logging
+- Backend: Use `ILogger<T>`
+- Frontend: `console.error` for caught errors only
+
+### Security
+- Never log tokens or passwords
+- Sanitize user input on backend
+- Access token in memory only (not localStorage)
+- Refresh token httpOnly cookie
+- HTTPS required
+
+### Performance
+- Use `React.memo` sparingly (only for expensive renders)
+- TanStack Query handles caching
+- Lazy load routes if needed
+- Optimize images (not currently applicable)
+
+### Read-Only Files (Do Not Modify)
+- `*.config.ts` / `*.config.js` — Build/tool configs
+- `tsconfig*.json` — TypeScript configs
+- `eslint.config.*` — Linter configs
+- `vite.config.ts` — Vite config
+- `docker-compose*.yml` — Docker configs
+- `*.csproj` — .NET project files
+- `appsettings*.json` — Backend configs
+
+---
+
+## 9. Feature Development Playbook
+
+### New Frontend Feature
+1. Create folder: `features/{feature}/`
+2. Create API file: `{feature}-api.ts` with types + API object
+3. Create page: `{Feature}Page.tsx`
+4. Add route in `App.tsx`
+5. Create table: `{feature}-table.tsx` using `DataTable`
+6. Create forms: `add-{feature}.tsx` with Zod + react-hook-form
+7. Create toast hook: `use-{feature}-toast.ts`
+8. Add translations: `keyContainer.ts` + all locale files
+9. Add error codes: `lib/api/error-types.ts`
+
+### New Backend Feature
+1. Create entity: `Domain/{Feature}/{Entity}.cs`
+2. Create errors: `Domain/{Feature}/{Entity}Errors.cs`
+3. Add DbSet to `AppDbContext`
+4. Create migration: `dotnet ef migrations add Add{Entity}`
+5. Create CQRS files in `Features/{Feature}/`:
+   - `Create{Entity}.cs`
+   - `GetAll{Entity}.cs`
+   - `Get{Entity}ById.cs`
+   - `Update{Entity}.cs`
+   - `Delete{Entity}.cs`
+6. Register endpoints (auto via Carter)
+
+---
+
+## 10. Quick Commands
+
+```bash
+# Frontend
+cd frontend
+pnpm install          # Install dependencies
+pnpm dev              # Start dev server (Vite)
+pnpm build            # Production build
+pnpm lint             # Run ESLint
+pnpm format           # Run Prettier
+
+# Backend
+cd backend/Veterinary/src/VeterinaryApi
+dotnet restore        # Restore packages
+dotnet run            # Run API
+dotnet watch run      # Run with hot reload
+dotnet ef migrations add <Name>   # Add migration
+dotnet ef database update         # Apply migrations
+
+# Docker (from backend/Veterinary)
+docker-compose up -d  # Start all services
+
+# Tests
+cd backend/Veterinary/Tests/Application.Tests
+dotnet test           # Run unit tests
 ```
 
 ---
 
-## Communication Rules
+## 11. "When You Are Unsure" Rules
 
-> ⚠️ **IMPORTANT**: If anything is unclear, **DO NOT guess**. Always ask for clarification instead of making assumptions.
+### AI Behavior Contract
 
-- When requirements are ambiguous, ask questions.
-- When multiple implementation approaches exist, present options.
-- When unsure about UI/UX decisions, ask for guidance.
-- When backend structure is unclear, ask before proceeding.
+1. **Prefer this document** over scanning the repo
+2. **Only scan if**: info not in this doc or `copilot-instructions.md`
+3. **If scanning**, state exactly which files and why
+4. **Never invent**:
+   - API endpoints (check `{feature}-api.ts`)
+   - Types (check API files)
+   - CSS tokens (check `index.css`)
+   - i18n keys (check `keyContainer.ts`)
+   - Error codes (check `error-types.ts`)
+5. **Ask one focused question** when blocked
+6. **Follow patterns exactly**: copy structure from existing features
+7. **Check existing components first** before creating new ones
+8. **Use pnpm**, never npm or yarn
+9. **Use logical CSS properties** for RTL support
+10. **All user-facing text** must use `t(i18nKeyContainer.x.y)`
 
----
+### Files to Inspect by Task
 
-## Quick Reference Checklist
+| Unsure About | Inspect |
+|--------------|---------|
+| API structure | `features/clients/client-api.ts` |
+| Table setup | `features/clients/client-table.tsx` |
+| Form pattern | `features/clients/add-client.tsx` |
+| Toast pattern | `features/clients/use-client-toast.ts` |
+| Error handling | `lib/api/error-types.ts` |
+| i18n keys | `lib/i18n/keyContainer.ts` |
+| Theme tokens | `index.css` |
+| Layout | `common/layouts/MainLayout.tsx` |
+| Backend CQRS | `Features/Clients/CreateClient.cs` |
+| Domain errors | `Domain/Clients/ClientErrors.cs` |
 
-When implementing a new feature, ensure:
-
-- [ ] Created `{feature}-api.ts` with all API calls
-- [ ] Created `use-{feature}-toast.ts` for notifications
-- [ ] Added error codes to `error-types.ts`
-- [ ] Added all text to `keyContainer.ts`
-- [ ] Added translations to `en.json`, `fr.json`, `ar.json`
-- [ ] Used logical CSS properties for RTL support
-- [ ] Used existing UI components
-- [ ] Used `DataTable` for table views
-- [ ] Followed flat DTO pattern for responses
-- [ ] Kept frontend "dumb" - no business logic
+### Do Not Touch
+- Config files (`*.config.*`, `tsconfig.*`, `docker-compose.*`)
+- Project files (`*.csproj`, `package.json` dependencies)
+- Environment files (`.env*`, `appsettings.*`)
