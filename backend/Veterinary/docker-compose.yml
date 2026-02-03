@@ -13,10 +13,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: "https://+:7256;http://+:8080"
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /app/certificates/aspnetapp.pfx
-      ASPNETCORE_Kestrel__Certificates__Default__Password: "2501"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/localhost.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "devpassword"
     volumes:
-      - ${HOME}/.aspnet/https:/https/:ro
+      - ./src/VeterinaryApi/certificates:/https/:ro
       - ./src/VeterinaryApi/.env:/app/.env:ro
 
   veterinary.database:
