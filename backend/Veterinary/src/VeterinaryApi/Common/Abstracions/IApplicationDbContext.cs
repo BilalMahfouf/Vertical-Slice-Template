@@ -5,6 +5,7 @@ using VeterinaryApi.Domain.Clients;
 using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Domain.Users;
 using VeterinaryApi.Domain.Visits;
+using VeterinaryApi.Infrastructure.OutboxMessages;
 
 namespace VeterinaryApi.Common.Abstracions;
 
@@ -17,6 +18,7 @@ public interface IApplicationDbContext
     public DbSet<Animal> Animals { get; }
     public DbSet<Appointment> Appointments { get; }
     public DbSet<Visit> Visits { get; }
+    public DbSet<OutboxMessage> OutboxMessages { get; } 
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

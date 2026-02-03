@@ -2,11 +2,15 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.Text;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.Abstracions.Emails;
+using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Infrastructure.Auth;
+using VeterinaryApi.Infrastructure.CQRS;
 using VeterinaryApi.Infrastructure.Interceptors;
+using VeterinaryApi.Infrastructure.OutboxMessages;
 using VeterinaryApi.Infrastructure.Persistence;
 using VeterinaryApi.Infrastructure.Services.Hashers;
 using VeterinaryApi.Infrastructure.Services.Notifications;
@@ -63,6 +67,7 @@ public static class DependencyInjection
         // interceptors config
 
         services.AddScoped<AuditInterceptor>();
+        services.AddSingleton<InsertOutboxMessagesInterceptors>();
 
         // ef core config  
         var connectionString = Environment
@@ -70,7 +75,9 @@ public static class DependencyInjection
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
             (sp, options) =>
         {
-            options.UseNpgsql(connectionString);
+            options.UseNpgsql(connectionString)
+            .AddInterceptors(sp
+                .GetRequiredService<InsertOutboxMessagesInterceptors>());
         }, ServiceLifetime.Scoped);
 
         // Email Options config 
@@ -86,6 +93,28 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUser, CurrentUserService>();
 
         services.AddHttpContextAccessor();
+
+        // CQRS
+        services.AddTransient<IDomainEventDispatcher, DomainEventsDispatcher>();
+
+        // Quartz Background job
+        services.AddQuartz(configure =>
+          {
+              var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+              configure.
+              AddJob<ProcessOutboxMessagesJob>((sp, opts) =>
+              {
+                  opts.WithIdentity(jobKey);
+              })
+              .AddTrigger(trigger =>
+              trigger.ForJob(jobKey)
+              .WithSimpleSchedule(schedule =>
+              schedule.WithIntervalInSeconds(10)
+              .RepeatForever()));
+          });
+        services.AddQuartzHostedService(opt =>
+        opt.WaitForJobsToComplete = true
+        );
 
         return services;
     }

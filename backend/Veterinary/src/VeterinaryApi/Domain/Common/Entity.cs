@@ -11,6 +11,17 @@ public class Entity : IEntity, ISoftDelete
     public bool IsDeleted { get; private set; }
     public DateTime? DeletedOnUtc { get; private set; }
 
+    private List<IDomainEvent> _events = new();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _events.AsReadOnly();
+    protected void RaiseDomainEvent(IDomainEvent @event)
+    {
+        _events.Add(@event);
+    }
+    public void ClearDomainEvent()
+    {
+        _events.Clear();
+    }
+
     public void Delete()
     {
         if (IsDeleted)

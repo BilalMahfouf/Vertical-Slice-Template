@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Sidebar from './SideBar';
 import TopNavigation from './TopNavigation';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);

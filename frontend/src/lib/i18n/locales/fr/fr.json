@@ -405,5 +405,36 @@
         "serverDesc": "Une erreur serveur inattendue s'est produite. Veuillez réessayer plus tard.",
         "unknown": "Erreur inconnue",
         "unknownDesc": "Une erreur inattendue s'est produite. Veuillez réessayer."
+    },
+    "dashboardPage": {
+        "title": "Tableau de bord",
+        "subtitle": "Aperçu rapide des visites et rendez-vous",
+        "addVisit": "Ajouter une visite",
+        "appointmentsButton": "Rendez-vous",
+        "cards": {
+            "totalAnimals": {
+                "title": "Total Animaux",
+                "description": "animaux enregistrés"
+            },
+            "totalAppointments": {
+                "title": "Total Rendez-vous",
+                "description": "rendez-vous programmés"
+            },
+            "totalVisits": {
+                "title": "Total Visites",
+                "description": "visites terminées"
+            },
+            "completedAppointments": {
+                "title": "Rendez-vous Terminés",
+                "description": "rendez-vous finis"
+            }
+        },
+        "addVisitModal": {
+            "title": "Ajouter une nouvelle visite",
+            "description": "Entrez les détails de la nouvelle visite",
+            "placeholder": "Le formulaire de visite est en cours de développement",
+            "cancel": "Annuler",
+            "save": "Enregistrer"
+        }
     }
 }
