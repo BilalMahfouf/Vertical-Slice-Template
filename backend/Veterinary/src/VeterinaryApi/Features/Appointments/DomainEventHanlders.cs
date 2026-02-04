@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Domain.Appointments;
+using VeterinaryApi.Domain.Notifications;
 
 namespace VeterinaryApi.Features.Appointments;
 
@@ -9,10 +11,14 @@ public sealed class AppointmentCancelledDomainEventHandler
     : IDomainEventHandler<AppointmentCancelledDomainEvent>
 {
     private readonly IApplicationDbContext _db;
+    private readonly INotificatioService _notificationService;
 
-    public AppointmentCancelledDomainEventHandler(IApplicationDbContext db)
+    public AppointmentCancelledDomainEventHandler(
+        IApplicationDbContext db,
+        INotificatioService notificationService)
     {
         _db = db;
+        _notificationService = notificationService;
     }
 
     public async Task Handle(
@@ -24,6 +30,7 @@ public sealed class AppointmentCancelledDomainEventHandler
             .Select(e => new
             {
                 ClientName = e.Animal.Client.FullName,
+                AppointmentDate=e.AppointmentDate,
                 CreatedOnUtc = e.CreatedOnUtc,
 
             }).FirstOrDefaultAsync(cancellationToken);
@@ -31,6 +38,16 @@ public sealed class AppointmentCancelledDomainEventHandler
         {
             return;
         }
+        var body = $"Appointment on the date {data.AppointmentDate}," +
+            $" for the client {data.ClientName} is cancelled";
+        var notification = Notification.Create("Appointment Cancelled", body);
+        _db.Notifications.Add(notification);
+        await _db.SaveChangesAsync(cancellationToken);
+        var notificationResponse = new NotificationResponse(
+            notification.Id,
+            notification.Title,
+            notification.Body);
+        await _notificationService.SendNotificationAsync(notificationResponse, cancellationToken);
 
     }
 }

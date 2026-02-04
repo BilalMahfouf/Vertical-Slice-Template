@@ -2,5 +2,8 @@
 
 public interface INotificatioService
 {
-    Task SendNotificationAsync(Notification notification);
+    Task SendNotificationAsync(
+        NotificationResponse notification,
+        CancellationToken cancellationToken = default);
 }
+public sealed record NotificationResponse(Guid Id, string Title, string Body);

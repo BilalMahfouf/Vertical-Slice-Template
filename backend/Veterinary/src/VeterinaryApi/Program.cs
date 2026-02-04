@@ -7,6 +7,7 @@ using Scalar.AspNetCore;
 using VeterinaryApi.Common.Exceptions;
 using FluentValidation;
 using VeterinaryApi.Common.Extensions;
+using VeterinaryApi.Infrastructure.Notifications;
 
 
 Env.Load();
@@ -87,6 +88,8 @@ app.UseExceptionHandler();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.MapHub<NotificationHub>("/hubs/notification");
 
 var api = app.MapGroup("/api/v1");
 api.MapCarter();

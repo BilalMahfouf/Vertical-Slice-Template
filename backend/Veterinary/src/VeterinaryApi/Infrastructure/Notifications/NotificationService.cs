@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Domain.Notifications;
 
 namespace VeterinaryApi.Infrastructure.Notifications;
@@ -6,14 +7,22 @@ namespace VeterinaryApi.Infrastructure.Notifications;
 public class NotificationService : INotificatioService
 {
     private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly ICurrentUser _currentUser;
 
-    public NotificationService(IHubContext<NotificationHub> hubContext)
+    public NotificationService(
+        IHubContext<NotificationHub> hubContext,
+        ICurrentUser currentUser)
     {
         _hubContext = hubContext;
+        _currentUser = currentUser;
     }
 
-    public Task SendNotificationAsync(Notification notification)
+    public async Task SendNotificationAsync(
+        NotificationResponse notification,
+        CancellationToken cancellationToken = default)
     {
-        return Task.CompletedTask;
+        await _hubContext.Clients
+                .User(_currentUser.UserId.ToString())
+                .SendAsync("ReciveNotification", new { notification });
     }
 }
