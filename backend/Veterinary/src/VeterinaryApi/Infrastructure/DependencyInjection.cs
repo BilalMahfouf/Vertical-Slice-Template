@@ -15,6 +15,7 @@ using VeterinaryApi.Infrastructure.Persistence;
 using VeterinaryApi.Infrastructure.Services.Hashers;
 using VeterinaryApi.Infrastructure.Services.Notifications;
 using VeterinaryApi.Infrastructure.Services.Users;
+using VeterinaryApi.Infrastructure.Tenants;
 
 namespace VeterinaryApi.Infrastructure;
 
@@ -68,6 +69,7 @@ public static class DependencyInjection
 
         services.AddScoped<AuditInterceptor>();
         services.AddSingleton<InsertOutboxMessagesInterceptors>();
+        services.AddScoped<TenantInterceptor>();
 
         // ef core config  
         var connectionString = Environment
@@ -77,7 +79,9 @@ public static class DependencyInjection
         {
             options.UseNpgsql(connectionString)
             .AddInterceptors(sp
-                .GetRequiredService<InsertOutboxMessagesInterceptors>());
+                .GetRequiredService<InsertOutboxMessagesInterceptors>())
+            .AddInterceptors(sp
+                .GetRequiredService<TenantInterceptor>());
         }, ServiceLifetime.Scoped);
 
         // Email Options config 

@@ -56,5 +56,12 @@ public class OwnerConfiguration : IEntityTypeConfiguration<Client>
 
         builder.Property(o => o.DeletedOnUtc)
             .HasColumnName("deleted_on_utc");
+
+        builder.Property(o => o.TenantId)
+            .HasColumnName("tenant_id")
+            .IsRequired();
+
+        builder.HasIndex(o => o.TenantId)
+            .HasDatabaseName("ix_owners_tenant_id");
     }
 }

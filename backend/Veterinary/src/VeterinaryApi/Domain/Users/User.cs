@@ -38,6 +38,7 @@ public class User : Entity
             Role = role,
             IsActive = true
         };
+        user.TenantId = user.Id;
         return user;
     }
 

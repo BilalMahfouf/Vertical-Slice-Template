@@ -55,15 +55,23 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.CreatedOnUtc)
             .HasColumnName("created_on_utc");
 
-        // Unique index on Email
-        builder.HasIndex(u => u.Email)
-            .IsUnique()
-            .HasDatabaseName("ix_users_email");
+        builder.Property(u => u.TenantId)
+            .HasColumnName("tenant_id")
+            .IsRequired();
 
-        // Unique index on UserName
-        builder.HasIndex(u => u.UserName)
+        // Index on TenantId
+        builder.HasIndex(u => u.TenantId)
+            .HasDatabaseName("ix_users_tenant_id");
+
+        // Unique index on Email within Tenant
+        builder.HasIndex(u => new { u.TenantId, u.Email })
             .IsUnique()
-            .HasDatabaseName("ix_users_user_name");
+            .HasDatabaseName("ix_users_tenant_id_email");
+
+        // Unique index on UserName within Tenant
+        builder.HasIndex(u => new { u.TenantId, u.UserName })
+            .IsUnique()
+            .HasDatabaseName("ix_users_tenant_id_user_name");
 
         // Configure backing field for Sessions
         builder.Navigation(u => u.Sessions)

@@ -69,5 +69,12 @@ public class AppointmentConfiguration : IEntityTypeConfiguration<Appointment>
 
         builder.Property(a => a.DeletedOnUtc)
             .HasColumnName("deleted_on_utc");
+
+        builder.Property(a => a.TenantId)
+            .HasColumnName("tenant_id")
+            .IsRequired();
+
+        builder.HasIndex(a => a.TenantId)
+            .HasDatabaseName("ix_appointments_tenant_id");
     }
 }

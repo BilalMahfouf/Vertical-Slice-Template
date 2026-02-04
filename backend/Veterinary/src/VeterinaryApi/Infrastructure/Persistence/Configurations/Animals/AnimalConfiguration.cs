@@ -87,5 +87,12 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 
         builder.Property(a => a.DeletedOnUtc)
             .HasColumnName("deleted_on_utc");
+
+        builder.Property(a => a.TenantId)
+            .HasColumnName("tenant_id")
+            .IsRequired();
+
+        builder.HasIndex(a => a.TenantId)
+            .HasDatabaseName("ix_animals_tenant_id");
     }
 }

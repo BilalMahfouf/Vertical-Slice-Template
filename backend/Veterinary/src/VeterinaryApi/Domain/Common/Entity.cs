@@ -3,7 +3,7 @@ using VeterinaryApi.Common.Errors;
 
 namespace VeterinaryApi.Domain.Common;
 
-public class Entity : IEntity, ISoftDelete
+public class Entity : IEntity, ISoftDelete,ITenantOwned
 {
     public Guid Id { get; protected set; }
     public DateTime CreatedOnUtc { get; set; }
@@ -13,6 +13,7 @@ public class Entity : IEntity, ISoftDelete
 
     private List<IDomainEvent> _events = new();
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _events.AsReadOnly();
+    public Guid TenantId { get; set; } 
     protected void RaiseDomainEvent(IDomainEvent @event)
     {
         _events.Add(@event);
