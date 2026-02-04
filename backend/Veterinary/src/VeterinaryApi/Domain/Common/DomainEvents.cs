@@ -2,7 +2,7 @@
 
 public interface IDomainEvent;
 
-public sealed record DomainEvent : IDomainEvent
+public abstract record DomainEvent : IDomainEvent
 {
     public Guid Id { get; private set; }
     public DomainEvent()
