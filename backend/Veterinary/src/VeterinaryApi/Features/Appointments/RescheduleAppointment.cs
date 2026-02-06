@@ -75,7 +75,9 @@ public static class RescheduleAppointment
                         ? Results.NoContent()
                         : result.Problem();
                 })
-                .WithTags("Appointments")
+                .WithTags($"{nameof(Appointment)}s")
+                .WithSummary("Reschedule an appointment")
+                .WithDescription("Reschedules an existing appointment to a new date. The new date must be in the future.")
                 .WithName("RescheduleAppointment");
         }
     }

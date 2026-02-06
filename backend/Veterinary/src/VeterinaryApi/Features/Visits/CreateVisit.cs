@@ -68,7 +68,7 @@ public static class CreateVisit
                 appointment.AppointmentDate);
 
             appointment.Complete();
-            
+
             return visit;
         }
         public async Task<Result<Response>> Handle(
@@ -80,8 +80,8 @@ public static class CreateVisit
 
             if (command.AppointmentId is not null)
             {
-               var visitCreatedWithAppointmentId =
-                    await CreateWithAppointment(command);
+                var visitCreatedWithAppointmentId =
+                     await CreateWithAppointment(command);
                 if (visitCreatedWithAppointmentId is null)
                 {
                     return Result<Response>.Failure(
@@ -91,7 +91,7 @@ public static class CreateVisit
             }
             else
             {
-                if(command.AnimalId is null || command.ClientId is null)
+                if (command.AnimalId is null || command.ClientId is null)
                 {
                     return Result<Response>.Failure(
                         Error.Validation(
@@ -143,7 +143,10 @@ public static class CreateVisit
                 {
                     id = result.Value.Id
                 }) : result.Problem();
-            });
+            })
+            .WithTags($"{nameof(Visit)}s")
+            .WithSummary("Create a new visit")
+            .WithDescription("Creates a new visit record. Can be created from an existing appointment (provide AppointmentId) or directly for an animal (provide AnimalId and ClientId). Includes symptoms, diagnosis, treatment, and notes.");
         }
     }
 }

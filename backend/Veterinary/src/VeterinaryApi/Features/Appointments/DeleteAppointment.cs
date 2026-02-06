@@ -28,7 +28,7 @@ public static class DeleteAppointment
             CancellationToken cancellationToken = default)
         {
             var appointment = await _db.Appointments
-                .FirstOrDefaultAsync(e=>e.Id==command.id);
+                .FirstOrDefaultAsync(e => e.Id == command.id);
             if (appointment is null)
             {
                 return Result.Failure(
@@ -54,7 +54,9 @@ public static class DeleteAppointment
                     return result.IsSuccess ? Results.NoContent()
                     : result.Problem();
                 })
-                .WithTags("Appointments")
+                .WithTags($"{nameof(Appointment)}s")
+                .WithSummary("Delete an appointment")
+                .WithDescription("Soft deletes an appointment record by its unique identifier.")
                 .WithName("DeleteAppointment");
         }
     }

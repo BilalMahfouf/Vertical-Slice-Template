@@ -23,12 +23,12 @@ public static class CreateClinic
     public class CreateClinicCommandHandler : ICommandHandler<CreateClinicCommand, Response>
     {
         private readonly IApplicationDbContext _db;
-        public CreateClinicCommandHandler(IApplicationDbContext db, ICurrentUser currentUser)
+        public CreateClinicCommandHandler(IApplicationDbContext db, ICurrentTenant currentUser)
         {
             _db = db;
             _currentUser = currentUser;
         }
-        private readonly ICurrentUser _currentUser;
+        private readonly ICurrentTenant _currentUser;
         public async Task<Result<Response>> Handle(
             CreateClinicCommand command,
             CancellationToken cancellationToken)
@@ -49,17 +49,20 @@ public static class CreateClinic
         {
             public void AddRoutes(IEndpointRouteBuilder app)
             {
-                app.MapPost("/clinics",[Authorize] async (
+                app.MapPost("/clinics", [Authorize] async (
                     [FromBody] CreateClinicCommand command,
                     ICommandHandler<CreateClinicCommand, Response> handler,
-                    ICurrentUser currentUser,
+                    ICurrentTenant currentUser,
                     CancellationToken cancellationToken) =>
                 {
                     var result = await handler.Handle(command, cancellationToken);
                     return result.IsSuccess ? Results.Created("/", result.Value)
                     : result.Problem();
 
-                }).WithTags("clinics");
+                })
+                .WithTags($"{nameof(Clinic)}s")
+                .WithSummary("Create a new clinic")
+                .WithDescription("Creates a new clinic associated with the current authenticated doctor. Requires clinic name, phone, address, and staff count.");
             }
         }
     }

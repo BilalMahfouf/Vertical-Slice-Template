@@ -137,7 +137,10 @@ public static class GetAllAnimals
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
 
-            }).WithTags("animals");
+            })
+            .WithTags($"{nameof(Animal)}s")
+            .WithSummary("Get all animals")
+            .WithDescription("Retrieves a paginated list of all animals with optional search, sorting, and filtering capabilities.");
         }
     }
 }

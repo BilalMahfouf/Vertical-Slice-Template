@@ -35,7 +35,7 @@ public class GetVisitsTable
         }
 
 
-        public async Task<Result<PagedList<Response>>>Handle(
+        public async Task<Result<PagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
         {
@@ -127,7 +127,10 @@ public class GetVisitsTable
                 var result = await handler.Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("visits");
+            })
+            .WithTags($"{nameof(Visit)}s")
+            .WithSummary("Get all visits")
+            .WithDescription("Retrieves a paginated list of all visits with optional search, sorting, and filtering capabilities.");
         }
     }
 }

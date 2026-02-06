@@ -68,7 +68,10 @@ public static class ResetPassword
                 return result.IsSuccess ? Results.Ok()
                                  : result.Problem();
 
-            }).WithTags("Authentication");
+            })
+            .WithTags("Authentication")
+            .WithSummary("Reset password")
+            .WithDescription("Resets the user's password using a valid reset token. Requires matching password and confirm password fields.");
         }
     }
 }

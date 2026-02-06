@@ -7,9 +7,9 @@ namespace VeterinaryApi.Infrastructure.Interceptors;
 
 public class AuditInterceptor : SaveChangesInterceptor
 {
-    private readonly ICurrentUser _currentUser;
+    private readonly ICurrentTenant _currentUser;
 
-    public AuditInterceptor(ICurrentUser currentUser)
+    public AuditInterceptor(ICurrentTenant currentUser)
     {
         _currentUser = currentUser;
     }

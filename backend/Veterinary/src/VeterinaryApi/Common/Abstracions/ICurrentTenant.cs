@@ -1,6 +1,6 @@
 ﻿namespace VeterinaryApi.Common.Abstracions;
 
-public interface ICurrentUser
+public interface ICurrentTenant
 {
     public Guid UserId { get; }
 }

@@ -9,7 +9,7 @@ using VeterinaryApi.Domain.Appointments;
 
 namespace VeterinaryApi.Features.Appointments;
 
-public static  class CancelAppointment
+public static class CancelAppointment
 {
     public sealed record Request(string? notes);
     public sealed record CancelAppointmentCommand(
@@ -44,13 +44,13 @@ public static  class CancelAppointment
             _validator.ValidateAndThrow(command);
 
             var appointment = await _db.Appointments
-                .FirstOrDefaultAsync(e=>e.Id==command.id, cancellationToken);
-            if( appointment is null)
+                .FirstOrDefaultAsync(e => e.Id == command.id, cancellationToken);
+            if (appointment is null)
             {
                 return Result.Failure(AppointmentErrors.NotFound(command.id));
             }
             appointment.Cancel(command.notes);
-            
+
             _db.Appointments.Update(appointment);
             await _db.SaveChangesAsync(cancellationToken);
             return Result.Success;
@@ -61,7 +61,7 @@ public static  class CancelAppointment
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPatch("/appointments/{id:guid}/cancel",
-                [Authorize]async (Guid id,
+                [Authorize] async (Guid id,
                     CancelAppointment.Request request,
                     ICommandHandler<CancelAppointmentCommand> handler,
                     CancellationToken cancellationToken) =>
@@ -73,8 +73,10 @@ public static  class CancelAppointment
                     return result.IsSuccess ? Results.NoContent()
                         : result.Problem();
                 })
-                .WithTags("Appointments")
-                .WithName("Cancel Appointment");
+                .WithTags($"{nameof(Appointment)}s")
+                .WithSummary("Cancel an appointment")
+                .WithDescription("Cancels an existing appointment. Optional notes can be provided for the cancellation reason.")
+                .WithName("CancelAppointment");
         }
     }
 }

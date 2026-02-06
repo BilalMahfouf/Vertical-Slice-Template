@@ -61,7 +61,10 @@ public static class GetAnimalsByClientId
                     .Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("Animals");
+            })
+            .WithTags($"{nameof(Animal)}s")
+            .WithSummary("Get animals by client ID")
+            .WithDescription("Retrieves all animals belonging to a specific client by client ID.");
         }
     }
 }

@@ -39,7 +39,7 @@ public static class DeleteClinic
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/clinics/{id:guid}",[Authorize] async (
+            app.MapDelete("/clinics/{id:guid}", [Authorize] async (
                 Guid id,
                 ICommandHandler<DeleteClinicCommand> handler,
                 CancellationToken cancellationToken) =>
@@ -48,7 +48,10 @@ public static class DeleteClinic
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.NoContent() :
                     result.Problem();
-            });
+            })
+            .WithTags($"{nameof(Clinic)}s")
+            .WithSummary("Delete a clinic")
+            .WithDescription("Soft deletes a clinic record by its unique identifier.");
         }
     }
 }

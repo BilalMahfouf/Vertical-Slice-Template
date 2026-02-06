@@ -60,7 +60,10 @@ public static class Register
             {
                 var result = await hander.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.Ok() : result.Problem();
-            }).WithTags("Authentication");
+            })
+            .WithTags("Authentication")
+            .WithSummary("Register a new user")
+            .WithDescription("Creates a new user account with email, password, username, first name, and last name.");
         }
     }
 }

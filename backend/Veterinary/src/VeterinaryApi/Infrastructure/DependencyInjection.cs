@@ -7,9 +7,11 @@ using System.Text;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.Abstracions.Emails;
 using VeterinaryApi.Common.CQRS;
+using VeterinaryApi.Domain.Notifications;
 using VeterinaryApi.Infrastructure.Auth;
 using VeterinaryApi.Infrastructure.CQRS;
 using VeterinaryApi.Infrastructure.Interceptors;
+using VeterinaryApi.Infrastructure.Notifications;
 using VeterinaryApi.Infrastructure.OutboxMessages;
 using VeterinaryApi.Infrastructure.Persistence;
 using VeterinaryApi.Infrastructure.Services.Hashers;
@@ -94,7 +96,7 @@ public static class DependencyInjection
         });
         services.AddSingleton<IEmailService, EmailService>();
 
-        services.AddScoped<ICurrentUser, CurrentUserService>();
+        services.AddScoped<ICurrentTenant, CurrentUserService>();
 
         services.AddHttpContextAccessor();
 
@@ -119,9 +121,15 @@ public static class DependencyInjection
         services.AddQuartzHostedService(opt =>
         opt.WaitForJobsToComplete = true
         );
-
-        
-
+        services.AddSignalR();
+        services.AddScoped<INotificatioService, NotificationService>();
+        services.Scan(scan => scan.FromAssembliesOf(typeof(Program))
+                    .AddClasses(classes => classes
+                        .AssignableTo(typeof(IDomainEventHandler<>)), publicOnly: false)
+                    .AsImplementedInterfaces()
+                    .WithScopedLifetime());
+        services.AddTransient<IDomainEventPublisher, DomainEventPublisher>();
         return services;
     }
+
 }

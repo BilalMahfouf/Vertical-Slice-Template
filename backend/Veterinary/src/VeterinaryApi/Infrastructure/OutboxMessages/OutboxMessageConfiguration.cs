@@ -22,7 +22,6 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
 
         builder.Property(o => o.Content)
             .HasColumnName("content")
-            .HasColumnType("jsonb")
             .IsRequired();
 
         builder.Property(o => o.CreatedOnUtc)

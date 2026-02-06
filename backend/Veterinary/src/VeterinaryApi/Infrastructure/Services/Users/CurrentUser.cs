@@ -4,7 +4,7 @@ using VeterinaryApi.Common.Abstracions;
 namespace VeterinaryApi.Infrastructure.Services.Users;
 
 
-internal class CurrentUserService : ICurrentUser
+internal class CurrentUserService : ICurrentTenant
 {
     private readonly IHttpContextAccessor _contextAccessor;
 

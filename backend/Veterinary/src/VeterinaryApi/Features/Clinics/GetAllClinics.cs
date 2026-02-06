@@ -89,7 +89,7 @@ public static class GetAllClinics
             tempQuery = tempQuery.Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize);
 
-            var data =  tempQuery.ToList();
+            var data = tempQuery.ToList();
             if (data is null)
             {
                 return Result<PagedList<Response>>
@@ -104,7 +104,7 @@ public static class GetAllClinics
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/clinics",[Authorize] async (
+            app.MapGet("/clinics", [Authorize] async (
                 [FromQuery] int? page,
                 [FromQuery] int? pageSize,
                 [FromQuery] string? sortColumn,
@@ -119,7 +119,10 @@ public static class GetAllClinics
                 return result.IsSuccess ? Results.Ok(result.Value)
                 : result.Problem();
 
-            }).WithTags("clinics");
+            })
+            .WithTags($"{nameof(Clinic)}s")
+            .WithSummary("Get all clinics")
+            .WithDescription("Retrieves a paginated list of all clinics with optional search, sorting, and filtering capabilities.");
         }
     }
 }

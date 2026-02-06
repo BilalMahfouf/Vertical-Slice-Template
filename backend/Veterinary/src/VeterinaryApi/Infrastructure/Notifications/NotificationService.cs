@@ -7,11 +7,11 @@ namespace VeterinaryApi.Infrastructure.Notifications;
 public class NotificationService : INotificatioService
 {
     private readonly IHubContext<NotificationHub> _hubContext;
-    private readonly ICurrentUser _currentUser;
+    private readonly ICurrentTenant _currentUser;
 
     public NotificationService(
         IHubContext<NotificationHub> hubContext,
-        ICurrentUser currentUser)
+        ICurrentTenant currentUser)
     {
         _hubContext = hubContext;
         _currentUser = currentUser;

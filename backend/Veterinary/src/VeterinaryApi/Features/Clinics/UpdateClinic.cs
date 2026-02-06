@@ -11,8 +11,8 @@ namespace VeterinaryApi.Features.Clinics;
 
 public static class UpdateClinic
 {
-    public record Request(string Name, string Phone,string Address);
-    public record UpdateClinicCommand(Guid Id, string Name,string Phone, string Address)
+    public record Request(string Name, string Phone, string Address);
+    public record UpdateClinicCommand(Guid Id, string Name, string Phone, string Address)
         : ICommand;
     public class UpdateClinicCommandHandler : ICommandHandler<UpdateClinicCommand>
     {
@@ -31,7 +31,7 @@ public static class UpdateClinic
             {
                 return Result.Failure(ClinicErrors.ClinicNotFound(command.Id));
             }
-            clinic.UpdateDetails(command.Name,command.Phone, command.Address);
+            clinic.UpdateDetails(command.Name, command.Phone, command.Address);
 
             _db.Clinics.Update(clinic);
             await _db.SaveChangesAsync(cancellationToken);
@@ -42,7 +42,7 @@ public static class UpdateClinic
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPut("/clinics/{id:guid}",[Authorize] async (
+            app.MapPut("/clinics/{id:guid}", [Authorize] async (
                 Guid id,
                 [FromBody] Request request,
                 ICommandHandler<UpdateClinicCommand> handler,
@@ -56,7 +56,10 @@ public static class UpdateClinic
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.NoContent() :
                     result.Problem();
-            });
+            })
+            .WithTags($"{nameof(Clinic)}s")
+            .WithSummary("Update a clinic")
+            .WithDescription("Updates an existing clinic's details including name, phone, and address.");
         }
     }
 }

@@ -121,7 +121,10 @@ public static class GetAllAppointments
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
 
-            }).WithTags("appointments");
+            })
+            .WithTags($"{nameof(Appointment)}s")
+            .WithSummary("Get all appointments")
+            .WithDescription("Retrieves a paginated list of all appointments with optional search, sorting, and filtering capabilities.");
         }
     }
 }

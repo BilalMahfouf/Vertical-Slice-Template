@@ -77,7 +77,10 @@ public static class ForgetPassword
             {
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.Ok() : result.Problem();
-            }).WithTags("Authentication");
+            })
+            .WithTags("Authentication")
+            .WithSummary("Request password reset")
+            .WithDescription("Sends a password reset email to the specified email address. The email contains a link with a reset token valid for 15 minutes.");
         }
     }
 }

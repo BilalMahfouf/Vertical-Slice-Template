@@ -115,7 +115,10 @@ public static class GetAllClients
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
 
-            }).WithTags("clients");
+            })
+            .WithTags($"{nameof(Client)}s")
+            .WithSummary("Get all clients")
+            .WithDescription("Retrieves a paginated list of all clients with optional search, sorting, and filtering capabilities. Includes animal count per client.");
         }
     }
 }

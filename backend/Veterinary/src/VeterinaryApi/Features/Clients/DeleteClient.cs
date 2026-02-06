@@ -39,7 +39,7 @@ public static class DeleteClient
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/clients/{id:guid}", [Authorize]async (
+            app.MapDelete("/clients/{id:guid}", [Authorize] async (
                 Guid id,
                 ICommandHandler<DeleteClientCommand> handler,
                 CancellationToken cancellationToken) =>
@@ -48,7 +48,10 @@ public static class DeleteClient
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.NoContent() :
                     result.Problem();
-            }).WithTags("clients");
+            })
+            .WithTags($"{nameof(Client)}s")
+            .WithSummary("Delete a client")
+            .WithDescription("Soft deletes a client record by its unique identifier. Associated animals will remain but orphaned.");
         }
     }
 }

@@ -58,7 +58,7 @@ public static class GetAppointmentById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/appointments/{id:guid}",[Authorize] async (
+            app.MapGet("/appointments/{id:guid}", [Authorize] async (
                 Guid id,
                 IQueryHandler<Query, Response> handler,
                 CancellationToken cancellationToken) =>
@@ -67,7 +67,10 @@ public static class GetAppointmentById
                 var result = await handler.Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("appointments");
+            })
+            .WithTags($"{nameof(Appointment)}s")
+            .WithSummary("Get appointment by ID")
+            .WithDescription("Retrieves detailed information about a specific appointment by its unique identifier.");
         }
     }
 }

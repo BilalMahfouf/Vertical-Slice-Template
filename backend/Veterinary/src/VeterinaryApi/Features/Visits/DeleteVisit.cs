@@ -52,9 +52,9 @@ public static class DeleteVisit
                         ? Results.NoContent()
                         : result.Problem();
                 })
-                .WithTags("visits")
-                .WithSummary("Deletes a visit by Id.")
-                .WithDescription("Deletes a visit by Id.");
+                .WithTags($"{nameof(Visit)}s")
+                .WithSummary("Delete a visit")
+                .WithDescription("Soft deletes a visit record by its unique identifier.");
         }
     }
 }

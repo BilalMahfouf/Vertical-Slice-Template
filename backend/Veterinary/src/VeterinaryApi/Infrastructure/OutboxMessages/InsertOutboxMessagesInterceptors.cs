@@ -38,7 +38,7 @@ namespace VeterinaryApi.Infrastructure.OutboxMessages
                            .Select(@event => new OutboxMessage
                            {
                                Id = Guid.NewGuid(),
-                               Name = @event.GetType().Name,
+                               Name = @event.GetType().AssemblyQualifiedName!,
                                Content = JsonConvert.SerializeObject(@event,
                                _serializerSettings),
                                CreatedOnUtc = DateTime.UtcNow

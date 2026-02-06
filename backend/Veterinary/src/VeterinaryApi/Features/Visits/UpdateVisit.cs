@@ -25,7 +25,7 @@ public static class UpdateVisit
         List<string>? Symptoms,
         List<string>? Diagnosis,
         List<string>? Treatment,
-        string? FollowUpNotes ) : ICommand<Response>;
+        string? FollowUpNotes) : ICommand<Response>;
 
     public sealed class Validator : AbstractValidator<UpdateVisitCommand>
     {
@@ -49,7 +49,7 @@ public static class UpdateVisit
         private readonly IValidator<UpdateVisitCommand> _validator;
 
         public UpdateVisitCommandHandler(
-            IApplicationDbContext db, 
+            IApplicationDbContext db,
             IValidator<UpdateVisitCommand> validator)
         {
             _db = db;
@@ -62,7 +62,7 @@ public static class UpdateVisit
             var visit = await _db.Visits
                 .FirstOrDefaultAsync(v => v.Id == command.Id,
                 cancellationToken);
-            if(visit is null)
+            if (visit is null)
             {
                 return Result<Response>.Failure(
                     VisitErrors.VisitNotFound(command.Id));
@@ -101,7 +101,10 @@ public static class UpdateVisit
                 return result.IsSuccess
                     ? Results.Ok(result.Value)
                     : result.Problem();
-            }).WithTags("visits");
+            })
+            .WithTags($"{nameof(Visit)}s")
+            .WithSummary("Update a visit")
+            .WithDescription("Updates an existing visit's details including visit type, symptoms, diagnosis, treatment, and follow-up notes.");
         }
     }
 }
