@@ -16,5 +16,9 @@ public sealed class Notification : Entity
         notficaiton.IsRead = false; 
         return notficaiton;
     }
+    public void MarkAsRead()
+    {
+        this.IsRead = true;
+    }
 
 }

@@ -19,9 +19,18 @@ public static class GetAllNotifications
         string Title,
         string Body,
         DateTime CreatedOnUtc);
+    public enum Type
+    {
+        All = 1,
+        NotReaded = 2,
+    }
+    public sealed record Query(
+        CursorRequest<Response> cursorRequest,
+        Type? type
+        ) : IQuery<CursorPagedList<Response>>;
 
     public sealed class GetAllNotificationQueryHandler
-        : IQueryHandler<CursorRequest<Response>, CursorPagedList<Response>>
+        : IQueryHandler<Query, CursorPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
@@ -35,18 +44,21 @@ public static class GetAllNotifications
         }
 
         public async Task<Result<CursorPagedList<Response>>> Handle(
-            CursorRequest<Response> query,
+            Query query,
             CancellationToken cancellationToken = default)
         {
-            var cursorData = CursorHelper.Decode(query.Cursor);
+            var cursorData = CursorHelper.Decode(query.cursorRequest.Cursor);
 
-            var isAll = false;
-            if (query.search is not null)
+            var isAll = query.type switch
             {
-                isAll = query.search.Contains("all", StringComparison.OrdinalIgnoreCase);
-            }
+                Type.All => true,
+                Type.NotReaded => false,
+                _ => false
+            };
+
 
             var baseQuery = _db.Notifications
+                .ForTenant(_currentTenant.UserId!.Value)
                 .Where(e => e.IsRead == isAll);
 
             // Step 3: Apply cursor filter
@@ -55,7 +67,7 @@ public static class GetAllNotifications
             if (cursorData is not null)
             {
 
-                if (query.Direction == CursorDirection.Next)
+                if (query.cursorRequest.Direction == CursorDirection.Next)
                 {
                     // Get items OLDER than cursor (going forward in desc list)
                     baseQuery = baseQuery.Where(e =>
@@ -75,7 +87,7 @@ public static class GetAllNotifications
 
             // Step 4: Order and fetch one extra item to detect hasNextPage
             IQueryable<Notification> orderedQuery;
-            if (query.Direction == CursorDirection.Next)
+            if (query.cursorRequest.Direction == CursorDirection.Next)
             {
                 orderedQuery = baseQuery
                     .OrderByDescending(e => e.CreatedOnUtc)
@@ -91,7 +103,7 @@ public static class GetAllNotifications
 
             // Fetch pageSize + 1 to check if there are more items
             var notifications = await orderedQuery
-                .Take(query.PageSize + 1)
+                .Take(query.cursorRequest.PageSize + 1)
                 .Select(e => new Response(e.Id, e.Title, e.Body, e.CreatedOnUtc))
                 .ToListAsync(cancellationToken);
 
@@ -101,13 +113,14 @@ public static class GetAllNotifications
                     .Failure(NotificationErrors.NotFound);
             }
 
-            bool hasMore = notifications.Count > query.PageSize;
+            bool hasMore = notifications.Count > query.cursorRequest.PageSize;
 
             if (hasMore)
-                notifications = notifications.Take(query.PageSize).ToList();
+                notifications = notifications
+                    .Take(query.cursorRequest.PageSize).ToList();
 
             // For "prev" direction, reverse to maintain newest-first order
-            if (query.Direction == CursorDirection.Prev)
+            if (query.cursorRequest.Direction == CursorDirection.Prev)
                 notifications.Reverse();
 
             // Step 6: Generate cursors
@@ -120,7 +133,7 @@ public static class GetAllNotifications
                 var lastItem = notifications.Last();
 
                 // NextCursor points to last item (to get older items)
-                if (hasMore || query.Direction == CursorDirection.Prev)
+                if (hasMore || query.cursorRequest.Direction == CursorDirection.Prev)
                     nextCursor = CursorHelper.Encode(lastItem.CreatedOnUtc, lastItem.Id);
 
                 // PreviousCursor points to first item (to get newer items)
@@ -129,13 +142,14 @@ public static class GetAllNotifications
                     previousCursor = CursorHelper.Encode(firstItem.CreatedOnUtc, firstItem.Id);
             }
 
-            bool hasNextPage = query.Direction == CursorDirection.Next ?
+            bool hasNextPage = query.cursorRequest.Direction
+                == CursorDirection.Next ?
                 hasMore : cursorData != null;
-            bool hasPreviousPage = query.Direction == CursorDirection.Prev ?
+            bool hasPreviousPage = query.cursorRequest.Direction == CursorDirection.Prev ?
                 hasMore : cursorData != null;
 
-            var pageSize = notifications.Count < query.PageSize
-                ? notifications.Count : query.PageSize;
+            var pageSize = notifications.Count < query.cursorRequest.PageSize
+                ? notifications.Count : query.cursorRequest.PageSize;
 
             // Step 7: Build response
             var response = CursorPagedList<Response>.Create(
@@ -158,10 +172,13 @@ public static class GetAllNotifications
                 [FromQuery] int? pageSize,
                 [FromQuery] string? cursor,
                 [FromQuery] string? direction,
-                IQueryHandler<CursorRequest<Response>, CursorPagedList<Response>> handler,
+                [FromQuery] Type? type,
+                IQueryHandler<Query, CursorPagedList<Response>> handler,
                 CancellationToken ct = default) =>
             {
-                var query = CursorRequest<Response>.Create(pageSize, cursor, direction);
+                var query = new Query(
+                    CursorRequest<Response>.Create(pageSize, cursor, direction),
+                    type);
                 var result = await handler.Handle(query, ct);
                 return result.IsSuccess
                     ? Results.Ok(result.Value)
@@ -169,7 +186,8 @@ public static class GetAllNotifications
             })
             .WithTags($"{nameof(Notification)}s")
             .WithSummary("Get all notifications (cursor pagination)")
-            .WithDescription("Retrieves unread notifications using cursor-based pagination. Pass 'cursor' from previous response to load more.");
+            .WithDescription("Retrieves notifications using cursor-based pagination. Pass 'cursor' from previous response to load more. Use 'type' to filter read/unread.");
         }
+
     }
 }
