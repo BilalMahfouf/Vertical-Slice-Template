@@ -4,6 +4,7 @@ using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
+using VeterinaryApi.Domain.Notifications;
 using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Notifications;
@@ -32,7 +33,7 @@ public static class MarkAllNotificationAsRead
                 .ForTenant(_currentTenant.UserId!.Value)
                 .Where(n => n.IsRead == false)
                 .ToListAsync(cancellationToken);
-            if(notifications is null || !notifications.Any())
+            if (notifications is null || !notifications.Any())
             {
                 return Result.Success;
             }
@@ -56,7 +57,10 @@ public static class MarkAllNotificationAsRead
                 var command = new Command();
                 var result = await handler.Handle(command, ct);
                 return result.IsSuccess ? Results.NoContent() : result.Problem();
-            }).WithTags($"{nameof(Notifications)}s");
+            })
+            .WithTags($"{nameof(Notification)}s")
+            .WithSummary("Mark all notifications as read")
+            .WithDescription("Marks all unread notifications for the current authenticated user as read. Returns success even if no unread notifications exist.");
         }
     }
 

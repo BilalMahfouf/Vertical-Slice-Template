@@ -54,7 +54,10 @@ public static class MarkNotifcationAsRead
                 var command = new Command(notificationId);
                 var result = await handler.Handle(command, ct);
                 return result.IsSuccess ? Results.NoContent() : result.Problem();
-            }).WithTags($"{nameof(Notifications)}s");
+            })
+            .WithTags($"{nameof(Notification)}s")
+            .WithSummary("Mark notification as read")
+            .WithDescription("Marks a specific notification as read by its unique identifier. The notification must belong to the current authenticated user.");
         }
     }
 }
