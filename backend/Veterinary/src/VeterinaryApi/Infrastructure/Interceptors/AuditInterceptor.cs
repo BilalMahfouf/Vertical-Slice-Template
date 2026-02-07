@@ -29,7 +29,11 @@ public class AuditInterceptor : SaveChangesInterceptor
                 {
                     continue;
                 }
-                entity.CreatedByUserId = _currentUser.UserId;
+                if (_currentUser.UserId is null)
+                {
+                    continue;
+                }
+                entity.CreatedByUserId = _currentUser.UserId.Value;
             }
 
         }

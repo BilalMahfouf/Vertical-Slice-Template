@@ -33,9 +33,13 @@ public class TenantInterceptor : SaveChangesInterceptor
                 {
                     continue;
                 }
-                entity.TenantId = _currentUser.UserId;
+                if (_currentUser.UserId is null)
+                {
+                    continue;
+                }
+                entity.TenantId = _currentUser.UserId.Value;
             }
         }
-        return  base.SavingChangesAsync(eventData, result, cancellationToken);
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 }

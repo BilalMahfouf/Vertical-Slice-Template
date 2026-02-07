@@ -6,7 +6,9 @@ using VeterinaryApi.Domain.Common;
 
 namespace VeterinaryApi.Infrastructure.OutboxMessages
 {
-    public class InsertOutboxMessagesInterceptors : SaveChangesInterceptor
+    public class InsertOutboxMessagesInterceptors(
+        ICurrentTenant currentTenant)
+        : SaveChangesInterceptor
     {
 
 
@@ -29,7 +31,7 @@ namespace VeterinaryApi.Infrastructure.OutboxMessages
 
         private void InsertOutboxMessage(DbContext context)
         {
-            var outboxMessages = context.ChangeTracker
+            var events = context.ChangeTracker
                            .Entries<Entity>()
                            .Select(entry => entry.Entity)
                            .SelectMany(e =>
@@ -37,15 +39,25 @@ namespace VeterinaryApi.Infrastructure.OutboxMessages
                                var domainEvents = e.DomainEvents.ToList();
                                e.ClearDomainEvent();
                                return domainEvents;
-                           })
-                           .Select(@event => new OutboxMessage
-                           {
-                               Id = Guid.NewGuid(),
-                               Name = @event.GetType().AssemblyQualifiedName!,
-                               Content = JsonConvert.SerializeObject(@event,
-                               _serializerSettings),
-                               CreatedOnUtc = DateTime.UtcNow
                            }).ToList();
+            if(events.Count == 0)
+            {
+                return;
+            }
+            foreach (var @event in events)
+            {
+                @event.TenantId = currentTenant.UserId!.Value;
+            }
+
+            var outboxMessages = events
+                .Select(@event => new OutboxMessage
+                {
+                    Id = Guid.NewGuid(),
+                    Name = @event.GetType().AssemblyQualifiedName!,
+                    Content = JsonConvert.SerializeObject(@event,
+                                           _serializerSettings),
+                    CreatedOnUtc = DateTime.UtcNow
+                }).ToList();
             context.Set<OutboxMessage>().AddRange(outboxMessages);
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace VeterinaryApi.Domain.Common;
 
-public interface IDomainEvent;
+public interface IDomainEvent : ITenantOwned;
 
 public abstract record DomainEvent : IDomainEvent
 {

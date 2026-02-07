@@ -30,17 +30,20 @@ public sealed class AppointmentCancelledDomainEventHandler
             .Select(e => new
             {
                 ClientName = e.Animal.Client.FullName,
-                AppointmentDate=e.AppointmentDate,
+                AppointmentDate = e.AppointmentDate,
                 CreatedOnUtc = e.CreatedOnUtc,
 
             }).FirstOrDefaultAsync(cancellationToken);
-        if(data is null)
+        if (data is null)
         {
             return;
         }
         var body = $"Appointment on the date {data.AppointmentDate}," +
             $" for the client {data.ClientName} is cancelled";
-        var notification = Notification.Create("Appointment Cancelled", body);
+        var notification = Notification.Create(
+            "Appointment Cancelled",
+            body);
+        notification.TenantId = domainEvent.TenantId;
         _db.Notifications.Add(notification);
         await _db.SaveChangesAsync(cancellationToken);
         var notificationResponse = new NotificationResponse(

@@ -35,7 +35,7 @@ public static class CreateClinic
         {
 
             var clinic = Clinic.Create(
-                _currentUser.UserId,
+                _currentUser.UserId!.Value,
                 command.name,
                 command.phone,
                 command.address,

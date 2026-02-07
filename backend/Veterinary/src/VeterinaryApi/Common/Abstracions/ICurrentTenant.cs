@@ -2,5 +2,5 @@
 
 public interface ICurrentTenant
 {
-    public Guid UserId { get; }
+    public Guid? UserId { get; }
 }

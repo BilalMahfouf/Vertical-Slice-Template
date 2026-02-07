@@ -13,13 +13,13 @@ internal class CurrentUserService : ICurrentTenant
         _contextAccessor = contextAccessor;
     }
 
-    public Guid UserId
+    public Guid? UserId
     {
         get
         {
             var userId = _contextAccessor.HttpContext?.User?
                 .FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return Guid.TryParse(userId, out Guid id) ? id : Guid.Empty;
+            return Guid.TryParse(userId, out Guid id) ? id : null;
         }
     }
 }

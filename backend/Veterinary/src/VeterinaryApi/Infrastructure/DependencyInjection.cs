@@ -70,7 +70,7 @@ public static class DependencyInjection
         // interceptors config
 
         services.AddScoped<AuditInterceptor>();
-        services.AddSingleton<InsertOutboxMessagesInterceptors>();
+        services.AddScoped<InsertOutboxMessagesInterceptors>();
         services.AddScoped<TenantInterceptor>();
 
         // ef core config  
