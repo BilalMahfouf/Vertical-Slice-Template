@@ -46,9 +46,7 @@ public static class GetAllNotifications
                 isAll = query.search.Contains("all", StringComparison.OrdinalIgnoreCase);
             }
 
-
             var baseQuery = _db.Notifications
-                .ForTenant(_currentTenant.UserId)
                 .Where(e => e.IsRead == isAll);
 
             // Step 3: Apply cursor filter
@@ -97,6 +95,12 @@ public static class GetAllNotifications
                 .Select(e => new Response(e.Id, e.Title, e.Body, e.CreatedOnUtc))
                 .ToListAsync(cancellationToken);
 
+            if (notifications.Count <= 0)
+            {
+                return Result<CursorPagedList<Response>>
+                    .Failure(NotificationErrors.NotFound);
+            }
+
             bool hasMore = notifications.Count > query.PageSize;
 
             if (hasMore)
@@ -130,10 +134,13 @@ public static class GetAllNotifications
             bool hasPreviousPage = query.Direction == CursorDirection.Prev ?
                 hasMore : cursorData != null;
 
+            var pageSize = notifications.Count < query.PageSize
+                ? notifications.Count : query.PageSize;
+
             // Step 7: Build response
             var response = CursorPagedList<Response>.Create(
                 notifications,
-                query.PageSize,
+                pageSize,
                 hasNextPage,
                 hasPreviousPage,
                 nextCursor,

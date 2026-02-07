@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Newtonsoft.Json;
+using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Domain.Common;
 
 namespace VeterinaryApi.Infrastructure.OutboxMessages
 {
     public class InsertOutboxMessagesInterceptors : SaveChangesInterceptor
     {
+
+
         public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
        DbContextEventData eventData,
        InterceptionResult<int> result,
