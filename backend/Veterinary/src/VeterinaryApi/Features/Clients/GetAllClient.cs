@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
-using VeterinaryApi.Common.Paginations;
+using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Clients;
 
@@ -16,7 +16,7 @@ public static class GetAllClients
 
 
     public class GetAllClientsQueryHandler
-        : IQueryHandler<TableRequest<ClientReadResponse>, PagedList<ClientReadResponse>>
+        : IQueryHandler<TableRequest<ClientReadResponse>, OffSetPagedList<ClientReadResponse>>
     {
         private readonly IApplicationDbContext _db;
 
@@ -25,14 +25,14 @@ public static class GetAllClients
             _db = db;
         }
 
-        public async Task<Result<PagedList<ClientReadResponse>>> Handle(
+        public async Task<Result<OffSetPagedList<ClientReadResponse>>> Handle(
             TableRequest<ClientReadResponse> query,
             CancellationToken cancellationToken = default)
         {
             var count = await _db.Clients.CountAsync(cancellationToken);
             if (count <= 0)
             {
-                return Result<PagedList<ClientReadResponse>>.Failure(
+                return Result<OffSetPagedList<ClientReadResponse>>.Failure(
                     ClientErrors.ClientsNotFound);
             }
             var clients = _db.Clients.AsQueryable();
@@ -66,7 +66,7 @@ public static class GetAllClients
             var temp = await client.ToListAsync(cancellationToken);
             if (temp is null)
             {
-                return Result<PagedList<ClientReadResponse>>
+                return Result<OffSetPagedList<ClientReadResponse>>
                     .Failure(ClientErrors.ClientsNotFound);
             }
             var clientQuery = temp.AsQueryable();
@@ -85,12 +85,12 @@ public static class GetAllClients
             var data = clientQuery.ToList();
             if (data is null)
             {
-                return Result<PagedList<ClientReadResponse>>
+                return Result<OffSetPagedList<ClientReadResponse>>
                     .Failure(ClientErrors.ClientsNotFound);
             }
-            var result = PagedList<ClientReadResponse>
+            var result = OffSetPagedList<ClientReadResponse>
                 .Create(data, count, query.Page, query.PageSize);
-            return Result<PagedList<ClientReadResponse>>.Success(result);
+            return Result<OffSetPagedList<ClientReadResponse>>.Success(result);
         }
     }
     public class Endpoint : IEndpoint
@@ -104,7 +104,7 @@ public static class GetAllClients
                 [FromQuery] string? sortOrder,
                 [FromQuery] string? search,
                 [FromServices] IQueryHandler<TableRequest<ClientReadResponse>
-                , PagedList<ClientReadResponse>> handler,
+                , OffSetPagedList<ClientReadResponse>> handler,
                 CancellationToken cancellationToken) =>
             {
                 var request = TableRequest<ClientReadResponse>

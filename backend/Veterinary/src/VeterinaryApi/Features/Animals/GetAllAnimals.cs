@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
-using VeterinaryApi.Common.Paginations;
+using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain;
 using VeterinaryApi.Domain.Animals;
@@ -32,7 +32,7 @@ public static class GetAllAnimals
         string status);
 
     public class GetAllAnimalsQueryHandler
-        : IQueryHandler<TableRequest<Response>, PagedList<Response>>
+        : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
 
@@ -41,14 +41,14 @@ public static class GetAllAnimals
             _db = db;
         }
 
-        public async Task<Result<PagedList<Response>>> Handle(
+        public async Task<Result<OffSetPagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
         {
             var count = await _db.Animals.CountAsync(cancellationToken);
             if (count <= 0)
             {
-                return Result<PagedList<Response>>.Failure(
+                return Result<OffSetPagedList<Response>>.Failure(
                     AnimalErrors.AnimalsNotFound);
             }
             var animal = _db.Animals.AsNoTracking();
@@ -90,7 +90,7 @@ public static class GetAllAnimals
             var temp = await animals.ToListAsync(cancellationToken);
             if (temp is null)
             {
-                return Result<PagedList<Response>>
+                return Result<OffSetPagedList<Response>>
                     .Failure(AnimalErrors.AnimalsNotFound);
             }
 
@@ -110,12 +110,12 @@ public static class GetAllAnimals
             var data = animalsQuery.ToList();
             if (data is null)
             {
-                return Result<PagedList<Response>>
+                return Result<OffSetPagedList<Response>>
                     .Failure(AnimalErrors.AnimalsNotFound);
             }
-            var result = PagedList<Response>
+            var result = OffSetPagedList<Response>
                 .Create(data, count, query.Page, query.PageSize);
-            return Result<PagedList<Response>>.Success(result);
+            return Result<OffSetPagedList<Response>>.Success(result);
         }
     }
     public class Endpoint : IEndpoint
@@ -128,7 +128,7 @@ public static class GetAllAnimals
                 [FromQuery] string? sortColumn,
                 [FromQuery] string? sortOrder,
                 [FromQuery] string? search,
-                [FromServices] IQueryHandler<TableRequest<Response>, PagedList<Response>> handler,
+                [FromServices] IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>> handler,
                 CancellationToken cancellationToken) =>
             {
                 var query = TableRequest<Response>

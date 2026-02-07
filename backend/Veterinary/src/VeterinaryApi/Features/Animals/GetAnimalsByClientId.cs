@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
-using VeterinaryApi.Common.Paginations;
+using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Animals;
 
@@ -11,18 +11,18 @@ namespace VeterinaryApi.Features.Animals;
 
 public static class GetAnimalsByClientId
 {
-    public sealed record Query(Guid ClientId) : IQuery<PagedList<Response>>;
+    public sealed record Query(Guid ClientId) : IQuery<OffSetPagedList<Response>>;
     public sealed record Response(Guid AnimalId, string Name, string Species);
 
     public sealed class GetAnimalsByClientIdQueryHandler
-        : IQueryHandler<Query, PagedList<Response>>
+        : IQueryHandler<Query, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
         public GetAnimalsByClientIdQueryHandler(IApplicationDbContext db)
         {
             _db = db;
         }
-        public async Task<Result<PagedList<Response>>> Handle(
+        public async Task<Result<OffSetPagedList<Response>>> Handle(
             Query query,
             CancellationToken cancellationToken = default)
         {
@@ -36,15 +36,15 @@ public static class GetAnimalsByClientId
                 .ToListAsync(cancellationToken);
             if (animals is null || !animals.Any())
             {
-                return Result<PagedList<Response>>.Failure(
+                return Result<OffSetPagedList<Response>>.Failure(
                     AnimalErrors.AnimalsNotFound);
             }
-            var result = PagedList<Response>.Create(
+            var result = OffSetPagedList<Response>.Create(
                 animals,
                 animals.Count,
                 1,
                 animals.Count);
-            return Result<PagedList<Response>>.Success(result);
+            return Result<OffSetPagedList<Response>>.Success(result);
         }
     }
     public sealed class Endpoint : IEndpoint
@@ -53,7 +53,7 @@ public static class GetAnimalsByClientId
         {
             app.MapGet("/animals/by-client/{clientId:guid}", [Authorize] async (
                 Guid clientId,
-                IQueryHandler<Query, PagedList<Response>> handler,
+                IQueryHandler<Query, OffSetPagedList<Response>> handler,
                 CancellationToken cancellationToken) =>
             {
                 var query = new Query(clientId);
