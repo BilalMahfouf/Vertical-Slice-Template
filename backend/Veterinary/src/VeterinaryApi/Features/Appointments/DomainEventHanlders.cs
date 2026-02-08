@@ -49,8 +49,13 @@ public sealed class AppointmentCancelledDomainEventHandler
         var notificationResponse = new NotificationResponse(
             notification.Id,
             notification.Title,
-            notification.Body);
-        await _notificationService.SendNotificationAsync(notificationResponse, cancellationToken);
+            notification.Body,
+            notification.IsRead,
+            notification.CreatedOnUtc);
+        await _notificationService.SendNotificationAsync(
+            notificationResponse,
+            notification.TenantId,
+            cancellationToken);
 
     }
 }

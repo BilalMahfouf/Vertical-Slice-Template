@@ -54,8 +54,8 @@ const router = createBrowserRouter([
 export default function App() {
     return (
         <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <Toaster />
+            <RouterProvider router={router} />
+            <Toaster />
         </QueryClientProvider>
     )
 }

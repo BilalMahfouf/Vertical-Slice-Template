@@ -19,10 +19,11 @@ public class NotificationService : INotificatioService
 
     public async Task SendNotificationAsync(
         NotificationResponse notification,
+        Guid UserId,
         CancellationToken cancellationToken = default)
     {
         await _hubContext.Clients
-                .User(_currentUser.UserId.ToString())
-                .SendAsync("ReciveNotification", new { notification });
+                .User(UserId.ToString())
+                .SendAsync("ReceiveNotification", new { notification });
     }
 }

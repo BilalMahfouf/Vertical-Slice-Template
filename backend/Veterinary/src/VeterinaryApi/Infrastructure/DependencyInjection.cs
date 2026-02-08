@@ -65,6 +65,22 @@ public static class DependencyInjection
                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET_KEY")!)),
                    ClockSkew = TimeSpan.Zero
                };
+
+               //SignalR sends token via query string for WebSocket connections
+
+              options.Events = new JwtBearerEvents
+              {
+                  OnMessageReceived = context =>
+                  {
+                      var accessToken = context.Request.Query["access_token"];
+                      var path = context.HttpContext.Request.Path;
+                      if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                      {
+                          context.Token = accessToken;
+                      }
+                      return Task.CompletedTask;
+                  }
+              };
            });
 
         // interceptors config
