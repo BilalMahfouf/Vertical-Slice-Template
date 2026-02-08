@@ -5,7 +5,6 @@ import DashboardPage from './features/dashboard/DashboardPage';
 import AnimalPage from './features/animals/AnimalPage';
 import {QueryClientProvider, QueryClient} from '@tanstack/react-query';
 import SettingPage from './features/visits/VisitPage';
-import NotificationPage from './features/notifications/NotificationPage';
 import VisitPage from './features/visits/VisitPage';
 import ClientPage from './features/clients/ClientPage';
 import { Toaster } from './components/ui/sonner';
@@ -46,10 +45,6 @@ const router = createBrowserRouter([
       {
         path: '/settings',
         element: <SettingPage />,
-      },
-      {
-        path: '/notifications',
-        element: <NotificationPage />,
       }
     ],
   },

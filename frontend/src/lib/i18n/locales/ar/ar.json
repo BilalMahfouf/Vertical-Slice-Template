@@ -436,5 +436,38 @@
             "cancel": "إلغاء",
             "save": "حفظ"
         }
+    },
+    "notification": {
+        "title": "الإشعارات",
+        "description": "ابق على اطلاع بأنشطة عيادتك",
+        "all": "الكل",
+        "unread": "غير مقروء",
+        "markAsRead": "تحديد كمقروء",
+        "markAllAsRead": "تحديد الكل كمقروء",
+        "noNotifications": "لا توجد إشعارات متاحة",
+        "noNotificationsDesc": "لا توجد إشعارات في الوقت الحالي.",
+        "noUnreadNotifications": "لا توجد إشعارات غير مقروءة",
+        "noUnreadNotificationsDesc": "تم قراءة جميع الإشعارات.",
+        "loadingMore": "جاري التحميل...",
+        "justNow": "الآن",
+        "minutesAgo": "منذ {{count}} دقيقة",
+        "hoursAgo": "منذ {{count}} ساعة",
+        "daysAgo": "منذ {{count}} يوم"
+    },
+    "toast": {
+        "notification": {
+            "markedAsRead": "تم قراءة الإشعار",
+            "markedAsReadDesc": "تم تحديد الإشعار كمقروء.",
+            "markedAllAsRead": "تم قراءة جميع الإشعارات",
+            "markedAllAsReadDesc": "تم تحديد جميع الإشعارات كمقروءة."
+        }
+    },
+    "errors": {
+        "notification": {
+            "fetchFailed": "فشل التحميل",
+            "fetchFailedDesc": "تعذر تحميل الإشعارات. يرجى المحاولة مرة أخرى.",
+            "markReadFailed": "فشل الإجراء",
+            "markReadFailedDesc": "تعذر تحديد الإشعار كمقروء. يرجى المحاولة مرة أخرى."
+        }
     }
 }

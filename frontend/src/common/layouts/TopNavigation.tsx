@@ -1,8 +1,9 @@
-import { Search, Bell, Menu } from 'lucide-react';
+import { Search, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import NotificationDropdown from '@/features/notifications/NotificationDropdown';
 
 interface TopNavigationProps {
   onToggleSidebar: () => void;
@@ -51,15 +52,7 @@ export default function TopNavigation({ onToggleSidebar }: TopNavigationProps) {
         {/* Right Side - Notifications */}
         <div className='flex items-center gap-2'>
           {/* Notifications */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className='relative hover:bg-slate-100'
-          >
-            <Bell className='h-5 w-5 text-slate-600' />
-            {/* Notification badge */}
-            <span className='absolute top-1.5 end-1.5 h-2 w-2 bg-red-500 rounded-full ring-2 ring-white'></span>
-          </Button>
+          <NotificationDropdown />
         </div>
       </div>
     </nav>

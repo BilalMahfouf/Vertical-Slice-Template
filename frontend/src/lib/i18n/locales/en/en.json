@@ -436,5 +436,38 @@
             "cancel": "Cancel",
             "save": "Save"
         }
+    },
+    "notification": {
+        "title": "Notifications",
+        "description": "Stay updated with your clinic activities",
+        "all": "All",
+        "unread": "Unread",
+        "markAsRead": "Mark as read",
+        "markAllAsRead": "Mark all as read",
+        "noNotifications": "No notifications available",
+        "noNotificationsDesc": "There are no notifications at the moment.",
+        "noUnreadNotifications": "No unread notifications",
+        "noUnreadNotificationsDesc": "All notifications have been read.",
+        "loadingMore": "Loading more...",
+        "justNow": "Just now",
+        "minutesAgo": "{{count}} min ago",
+        "hoursAgo": "{{count}}h ago",
+        "daysAgo": "{{count}}d ago"
+    },
+    "toast": {
+        "notification": {
+            "markedAsRead": "Notification Read",
+            "markedAsReadDesc": "The notification has been marked as read.",
+            "markedAllAsRead": "All Notifications Read",
+            "markedAllAsReadDesc": "All notifications have been marked as read."
+        }
+    },
+    "errors": {
+        "notification": {
+            "fetchFailed": "Failed to Load",
+            "fetchFailedDesc": "Unable to load notifications. Please try again.",
+            "markReadFailed": "Action Failed",
+            "markReadFailedDesc": "Unable to mark notification as read. Please try again."
+        }
     }
 }

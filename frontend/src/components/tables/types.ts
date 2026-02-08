@@ -27,6 +27,19 @@ export interface PagedList<T> {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Response structure for cursor-based paginated data.
+ * Maps to the backend CursorPagedList<T> model.
+ */
+export interface CursorPagedList<T> {
+  items: T[];
+  pageSize: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  nextCursor: string | null;
+  previousCursor: string | null;
+}
+
 // ==================== Table Configuration Types ====================
 
 /**

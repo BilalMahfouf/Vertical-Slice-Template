@@ -18,6 +18,7 @@ public static class GetAllNotifications
         Guid Id,
         string Title,
         string Body,
+        bool IsRead,
         DateTime CreatedOnUtc);
     public enum Type
     {
@@ -104,7 +105,7 @@ public static class GetAllNotifications
             // Fetch pageSize + 1 to check if there are more items
             var notifications = await orderedQuery
                 .Take(query.cursorRequest.PageSize + 1)
-                .Select(e => new Response(e.Id, e.Title, e.Body, e.CreatedOnUtc))
+                .Select(e => new Response(e.Id, e.Title, e.Body,e.IsRead, e.CreatedOnUtc))
                 .ToListAsync(cancellationToken);
 
             if (notifications.Count <= 0)
