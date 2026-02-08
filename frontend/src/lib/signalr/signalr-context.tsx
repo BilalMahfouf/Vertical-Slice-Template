@@ -67,7 +67,7 @@ export const SignalRProvider = ({ children }: PropsWithChildren) => {
     connection.on("ReceiveNotification", (data: { notification?: { title?: string; body?: string } }) => {
         console.log("Received notification via SignalR:", data);
       console.log("Invalidating notifications query...");
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications","unread"] });
 
       // Show toast notification
       if (data?.notification) {
