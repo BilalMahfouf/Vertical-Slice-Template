@@ -54,7 +54,7 @@ public static class GetClientById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/clients/{id:guid}",[Authorize] async (
+            app.MapGet("/clients/{id:guid}", [Authorize] async (
                 Guid id,
                 IQueryHandler<Query, Response> handler,
                 CancellationToken cancellationToken) =>
@@ -63,7 +63,10 @@ public static class GetClientById
                 var result = await handler.Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("clients");
+            })
+            .WithTags($"{nameof(Client)}s")
+            .WithSummary("Get client by ID")
+            .WithDescription("Retrieves detailed information about a specific client by their unique identifier.");
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace VeterinaryApi.Common.Paginations;
+﻿namespace VeterinaryApi.Common.Paginations.OffSet;
 
-public class PagedList<T>
+public class OffSetPagedList<T>
 {
     public IEnumerable<T> Item { get; private set; } = null!;
     public int TotalCount { get; private set; }
@@ -9,17 +9,17 @@ public class PagedList<T>
     public bool HasNextPage => Page * PageSize < TotalCount;
     public bool HasPreviousPage => Page > 1;
 
-    private PagedList()
+    private OffSetPagedList()
     {
         
     }
-    public static PagedList<T> Create(
+    public static OffSetPagedList<T> Create(
         IEnumerable<T> items,
         int totalCount,
         int page,
         int pageSize)
     {
-        return new PagedList<T>
+        return new OffSetPagedList<T>
         {
             Item = items,
             TotalCount = totalCount,

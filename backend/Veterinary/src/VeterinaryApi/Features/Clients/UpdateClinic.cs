@@ -57,7 +57,7 @@ public static class UpdateClient
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPut("/clients/{id:guid}",[Authorize] async (
+            app.MapPut("/clients/{id:guid}", [Authorize] async (
                 Guid id,
                 [FromBody] Request request,
                 ICommandHandler<UpdateClientCommand> handler,
@@ -72,7 +72,10 @@ public static class UpdateClient
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.NoContent() :
                     result.Problem();
-            }).WithTags("clients");
+            })
+            .WithTags($"{nameof(Client)}s")
+            .WithSummary("Update a client")
+            .WithDescription("Updates an existing client's details including first name, last name, phone number, and notes.");
         }
     }
 }

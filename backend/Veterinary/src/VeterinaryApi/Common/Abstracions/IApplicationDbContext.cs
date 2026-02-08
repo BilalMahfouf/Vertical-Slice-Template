@@ -3,6 +3,7 @@ using VeterinaryApi.Domain.Animals;
 using VeterinaryApi.Domain.Appointments;
 using VeterinaryApi.Domain.Clients;
 using VeterinaryApi.Domain.Clinics;
+using VeterinaryApi.Domain.Notifications;
 using VeterinaryApi.Domain.Users;
 using VeterinaryApi.Domain.Visits;
 using VeterinaryApi.Infrastructure.OutboxMessages;
@@ -18,7 +19,8 @@ public interface IApplicationDbContext
     public DbSet<Animal> Animals { get; }
     public DbSet<Appointment> Appointments { get; }
     public DbSet<Visit> Visits { get; }
-    public DbSet<OutboxMessage> OutboxMessages { get; } 
+    public DbSet<OutboxMessage> OutboxMessages { get; }
+    public DbSet<Notification> Notifications { get; }
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

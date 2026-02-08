@@ -86,7 +86,10 @@ public static class RefreshToken
                 {
                     result.Value
                 }) : result.Problem();
-            }).WithTags("Authentication");
+            })
+            .WithTags("Authentication")
+            .WithSummary("Refresh access token")
+            .WithDescription("Generates a new JWT access token using the refresh token from cookies. Also rotates the refresh token for security.");
         }
     }
 }

@@ -58,7 +58,10 @@ public class Logout
                 var command = new LogoutCommand(refreshToken);
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.Ok() : result.Problem();
-            }).WithTags("Authentication");
+            })
+            .WithTags("Authentication")
+            .WithSummary("User logout")
+            .WithDescription("Logs out the current user by invalidating the refresh token and clearing the refresh token cookie.");
         }
     }
 }

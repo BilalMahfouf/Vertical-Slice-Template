@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
-using VeterinaryApi.Common.Paginations;
+using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Clinics;
 
@@ -26,7 +26,7 @@ public static class GetAllClinics
         int StaffCount,
         DateTime CreatedOnUtc);
     public class GetAllClinicsQueryHandler
-        : IQueryHandler<TableRequest<Response>, PagedList<Response>>
+        : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
 
@@ -35,14 +35,14 @@ public static class GetAllClinics
             _db = db;
         }
 
-        public async Task<Result<PagedList<Response>>> Handle(
+        public async Task<Result<OffSetPagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
         {
             var count = await _db.Clinics.CountAsync(cancellationToken);
             if (count <= 0)
             {
-                return Result<PagedList<Response>>.Failure(
+                return Result<OffSetPagedList<Response>>.Failure(
                     ClinicErrors.ClinicsNotFound);
             }
             var clinics = _db.Clinics
@@ -64,7 +64,7 @@ public static class GetAllClinics
             var temp = await clinics.ToListAsync(cancellationToken);
             if (temp is null)
             {
-                return Result<PagedList<Response>>.Failure(ClinicErrors
+                return Result<OffSetPagedList<Response>>.Failure(ClinicErrors
                     .ClinicsNotFound);
             }
             var tempQuery = temp.AsQueryable();
@@ -76,7 +76,7 @@ public static class GetAllClinics
                 "clinicname" => e => e.ClinicName,
                 "phone" => e => e.Phone,
                 "staffcount" => e => e.StaffCount,
-                _ => e => e.Id
+                _ => e => e.CreatedOnUtc
             };
             if (query.SortOrder is "desc")
             {
@@ -89,28 +89,28 @@ public static class GetAllClinics
             tempQuery = tempQuery.Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize);
 
-            var data =  tempQuery.ToList();
+            var data = tempQuery.ToList();
             if (data is null)
             {
-                return Result<PagedList<Response>>
+                return Result<OffSetPagedList<Response>>
                     .Failure(ClinicErrors.ClinicsNotFound);
             }
-            var result = PagedList<Response>
+            var result = OffSetPagedList<Response>
                 .Create(data, count, query.Page, query.PageSize);
-            return Result<PagedList<Response>>.Success(result);
+            return Result<OffSetPagedList<Response>>.Success(result);
         }
     }
     public class Endpoint : IEndpoint
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/clinics",[Authorize] async (
+            app.MapGet("/clinics", [Authorize] async (
                 [FromQuery] int? page,
                 [FromQuery] int? pageSize,
                 [FromQuery] string? sortColumn,
                 [FromQuery] string? sortOrder,
                 [FromQuery] string? search,
-                [FromServices] IQueryHandler<TableRequest<Response>, PagedList<Response>> handler,
+                [FromServices] IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>> handler,
                 CancellationToken cancellationToken) =>
             {
                 TableRequest<Response> query = TableRequest<Response>
@@ -119,7 +119,10 @@ public static class GetAllClinics
                 return result.IsSuccess ? Results.Ok(result.Value)
                 : result.Problem();
 
-            }).WithTags("clinics");
+            })
+            .WithTags($"{nameof(Clinic)}s")
+            .WithSummary("Get all clinics")
+            .WithDescription("Retrieves a paginated list of all clinics with optional search, sorting, and filtering capabilities.");
         }
     }
 }

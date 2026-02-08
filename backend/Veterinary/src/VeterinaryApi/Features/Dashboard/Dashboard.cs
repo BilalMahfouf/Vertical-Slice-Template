@@ -58,7 +58,10 @@ public static class Dashboard
                 var result = await handler.Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value)
                 : result.Problem();
-            }).WithTags($"{nameof(Dashboard)}");
+            })
+            .WithTags(nameof(Dashboard))
+            .WithSummary("Get dashboard statistics")
+            .WithDescription("Retrieves summary statistics for the dashboard including total animals, appointments, visits, and completed appointments count.");
         }
     }
 }

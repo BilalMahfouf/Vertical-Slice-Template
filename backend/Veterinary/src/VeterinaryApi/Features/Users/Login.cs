@@ -100,7 +100,10 @@ public static class Login
                 {
                     result.Value
                 }) : result.Problem();
-            }).WithTags("Authentication");
+            })
+            .WithTags("Authentication")
+            .WithSummary("User login")
+            .WithDescription("Authenticates a user with email and password. Returns a JWT access token and sets a refresh token cookie.");
         }
     }
 }

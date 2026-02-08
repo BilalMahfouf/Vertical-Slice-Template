@@ -90,7 +90,10 @@ public static class GetVisitById
                 var result = await handler.Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("visits");
+            })
+            .WithTags($"{nameof(Visit)}s")
+            .WithSummary("Get visit by ID")
+            .WithDescription("Retrieves detailed information about a specific visit including animal details, client information, appointment data, symptoms, diagnosis, and treatment.");
         }
     }
 }

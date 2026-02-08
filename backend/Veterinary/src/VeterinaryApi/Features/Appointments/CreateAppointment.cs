@@ -43,12 +43,12 @@ public static class CreateAppointment
     {
         private readonly IValidator<CreateAppointmentCommand> _validator;
         private readonly IApplicationDbContext _db;
-        private readonly ICurrentUser _currentUser;
+        private readonly ICurrentTenant _currentUser;
 
         public CreateAppointmentsCommandHander(
             IApplicationDbContext db,
             IValidator<CreateAppointmentCommand> validator,
-            ICurrentUser currentUser)
+            ICurrentTenant currentUser)
         {
             _db = db;
             _validator = validator;
@@ -102,10 +102,13 @@ public static class CreateAppointment
                 return result.IsSuccess ? Results.Created(
                     $"/appointments/{result.Value.Id}", new
                     {
-                        id=result.Value.Id,
+                        id = result.Value.Id,
                     })
                 : result.Problem();
-            }).WithTags("appointments");
+            })
+            .WithTags($"{nameof(Appointment)}s")
+            .WithSummary("Create a new appointment")
+            .WithDescription("Creates a new appointment for an animal. Requires animal ID, appointment date, and location. The appointment date must be in the future.");
         }
     }
 }

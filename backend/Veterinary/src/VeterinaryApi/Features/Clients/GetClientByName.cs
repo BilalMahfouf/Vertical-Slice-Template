@@ -75,7 +75,10 @@ public static class GetClientByName
                     .Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("Clients");
+            })
+            .WithTags($"{nameof(Client)}s")
+            .WithSummary("Get client by name")
+            .WithDescription("Searches for a client by their full name. Returns the first matching client.");
         }
     }
 }

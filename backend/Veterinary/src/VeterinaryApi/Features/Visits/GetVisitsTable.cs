@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
-using VeterinaryApi.Common.Paginations;
+using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Visits;
 
@@ -25,7 +25,7 @@ public class GetVisitsTable
     DateTime VisitDate);
 
     public class GetVisitsTableQueryHandler
-        : IQueryHandler<TableRequest<Response>, PagedList<Response>>
+        : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
 
@@ -35,7 +35,7 @@ public class GetVisitsTable
         }
 
 
-        public async Task<Result<PagedList<Response>>>Handle(
+        public async Task<Result<OffSetPagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
         {
@@ -43,7 +43,7 @@ public class GetVisitsTable
                   .CountAsync(cancellationToken);
             if (count <= 0)
             {
-                return Result<PagedList<Response>>.Failure(
+                return Result<OffSetPagedList<Response>>.Failure(
                     VisitErrors.VisitsNotFound);
             }
             var visit = _db.Visits
@@ -70,12 +70,12 @@ public class GetVisitsTable
                 "animalname" => e => e.AnimalName,
                 "ownername" => e => e.OwnerName,
                 "visitdate" => e => e.VisitDate,
-                _ => e => e.Id
+                _ => e => e.VisitDate
             };
             var temp = await visits.ToListAsync(cancellationToken);
             if (temp is null)
             {
-                return Result<PagedList<Response>>
+                return Result<OffSetPagedList<Response>>
                     .Failure(VisitErrors.VisitsNotFound);
             }
 
@@ -95,12 +95,12 @@ public class GetVisitsTable
             var data = visitsQuery.ToList();
             if (data is null)
             {
-                return Result<PagedList<Response>>
+                return Result<OffSetPagedList<Response>>
                     .Failure(VisitErrors.VisitsNotFound);
             }
-            var result = PagedList<Response>
+            var result = OffSetPagedList<Response>
                 .Create(data, count, query.Page, query.PageSize);
-            return Result<PagedList<Response>>.Success(result);
+            return Result<OffSetPagedList<Response>>.Success(result);
         }
     }
 
@@ -114,7 +114,7 @@ public class GetVisitsTable
                 [FromQuery] string? sortColumn,
                 [FromQuery] string? sortOrder,
                 [FromQuery] string? search,
-                IQueryHandler<TableRequest<Response>, PagedList<Response>> handler,
+                IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>> handler,
                 CancellationToken cancellationToken) =>
             {
                 var query = TableRequest<Response>.Create(
@@ -127,7 +127,10 @@ public class GetVisitsTable
                 var result = await handler.Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("visits");
+            })
+            .WithTags($"{nameof(Visit)}s")
+            .WithSummary("Get all visits")
+            .WithDescription("Retrieves a paginated list of all visits with optional search, sorting, and filtering capabilities.");
         }
     }
 }

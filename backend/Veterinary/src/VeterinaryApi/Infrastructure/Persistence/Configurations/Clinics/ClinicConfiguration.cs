@@ -49,6 +49,11 @@ public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
         builder.Property(c => c.StaffCount)
             .HasColumnName("staff_count");
 
+        builder.Property(c => c.TenantId)
+            .HasColumnName("tenant_id")
+            .IsRequired();
 
+        builder.HasIndex(c => c.TenantId)
+            .HasDatabaseName("ix_clinics_tenant_id");
     }
 }

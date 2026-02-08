@@ -45,7 +45,7 @@ public static class GetClinicById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/clinics/{id:guid}",[Authorize] async (
+            app.MapGet("/clinics/{id:guid}", [Authorize] async (
                 Guid id,
                 IQueryHandler<Query, Response> handler,
                 CancellationToken cancellationToken) =>
@@ -54,7 +54,10 @@ public static class GetClinicById
                 var result = await handler.Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("clinics");
+            })
+            .WithTags($"{nameof(Clinic)}s")
+            .WithSummary("Get clinic by ID")
+            .WithDescription("Retrieves detailed information about a specific clinic by its unique identifier.");
         }
     }
 }

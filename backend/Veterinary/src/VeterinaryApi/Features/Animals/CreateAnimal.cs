@@ -127,7 +127,10 @@ public static class CreateAnimal
                 return result.IsSuccess
                     ? Results.Created($"/animals/{result.Value.Id}", result.Value)
                     : result.Problem();
-            }).WithTags("animals");
+            })
+            .WithTags($"{nameof(Animal)}s")
+            .WithSummary("Create a new animal")
+            .WithDescription("Creates a new animal record associated with a client. Requires valid client ID, name, species, and gender.");
         }
     }
 }

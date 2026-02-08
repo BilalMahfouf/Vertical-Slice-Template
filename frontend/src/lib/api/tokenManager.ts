@@ -6,7 +6,7 @@ let accessToken: string | null = null;
 let isRefreshing = false;
 let refreshSubscribers: Array<{
   resolve: (token: string) => void;
-  reject: (error: any) => void;
+  reject: (error: unknown) => void;
 }> = [];
 
 // Notify all queued requests with the new token
@@ -16,7 +16,7 @@ const onRefreshed = (token: string) => {
 };
 
 // Notify all queued requests that refresh failed
-const onRefreshFailed = (error: any) => {
+const onRefreshFailed = (error: unknown) => {
   refreshSubscribers.forEach((subscriber) => subscriber.reject(error));
   refreshSubscribers = [];
 };
@@ -24,7 +24,7 @@ const onRefreshFailed = (error: any) => {
 // Add request to queue
 const addRefreshSubscriber = (
   resolve: (token: string) => void,
-  reject: (error: any) => void
+  reject: (error: unknown) => void
 ) => {
   refreshSubscribers.push({ resolve, reject });
 };
@@ -43,11 +43,11 @@ export const tokenManager = {
   refreshAccessToken: async (): Promise<string | null> => {
     try {
       // refreshToken is sent automatically via httpOnly cookie
-      console.log('Refreshing access token...');
+    //   console.log('Refreshing access token...');
       const response = await api.post('/auth/refresh-token', {}, {
         skipAuthRefresh: true
       } as any);
-      console.log('Refresh token response status:', response.status);   
+    //   console.log('Refresh token response status:', response.status);   
       if(response.status !== 200) {
         return null;
       }

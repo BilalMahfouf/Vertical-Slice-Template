@@ -24,12 +24,12 @@ public static class CreateClient
         : ICommandHandler<Command, Response>
     {
         private readonly IApplicationDbContext _db;
-        private readonly ICurrentUser _currentUser;
+        private readonly ICurrentTenant _currentUser;
 
 
         public CommandHandler(
             IApplicationDbContext db,
-            ICurrentUser currentUser)
+            ICurrentTenant currentUser)
         {
             _db = db;
             _currentUser = currentUser;
@@ -97,7 +97,10 @@ public static class CreateClient
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.Created("/", result.Value)
                 : result.Problem();
-            }).WithTags("clients");
+            })
+            .WithTags($"{nameof(Client)}s")
+            .WithSummary("Create a new client")
+            .WithDescription("Creates a new client (pet owner) record. Checks for duplicate clients with the same name and phone number within the clinic.");
         }
     }
 }

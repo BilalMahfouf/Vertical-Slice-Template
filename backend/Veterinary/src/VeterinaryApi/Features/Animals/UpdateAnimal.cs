@@ -90,7 +90,10 @@ public static class UpdateAnimal
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.NoContent() :
                     result.Problem();
-            }).WithTags("animals");
+            })
+            .WithTags($"{nameof(Animal)}s")
+            .WithSummary("Update an animal")
+            .WithDescription("Updates an existing animal's details including name, species, breed, gender, birth date, color, microchip number, and status.");
         }
     }
 }

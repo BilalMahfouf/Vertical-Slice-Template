@@ -300,6 +300,12 @@
             "deleted": "Visite supprimée",
             "deletedDesc": "La visite a été supprimée avec succès."
         },
+        "notification": {
+            "markedAsRead": "Notification lue",
+            "markedAsReadDesc": "La notification a été marquée comme lue.",
+            "markedAllAsRead": "Toutes les notifications lues",
+            "markedAllAsReadDesc": "Toutes les notifications ont été marquées comme lues."
+        },
         "clientAdded": "Client ajouté",
         "clientAddedDesc": "Le client a été ajouté avec succès.",
         "clientUpdated": "Client mis à jour",
@@ -435,6 +441,31 @@
             "placeholder": "Le formulaire de visite est en cours de développement",
             "cancel": "Annuler",
             "save": "Enregistrer"
+        }
+    },
+    "notification": {
+        "title": "Notifications",
+        "description": "Restez informé des activités de votre clinique",
+        "all": "Toutes",
+        "unread": "Non lues",
+        "markAsRead": "Marquer comme lu",
+        "markAllAsRead": "Tout marquer comme lu",
+        "noNotifications": "Aucune notification disponible",
+        "noNotificationsDesc": "Il n'y a aucune notification pour le moment.",
+        "noUnreadNotifications": "Aucune notification non lue",
+        "noUnreadNotificationsDesc": "Toutes les notifications ont été lues.",
+        "loadingMore": "Chargement...",
+        "justNow": "À l'instant",
+        "minutesAgo": "Il y a {{count}} min",
+        "hoursAgo": "Il y a {{count}}h",
+        "daysAgo": "Il y a {{count}}j"
+    },
+    "errors": {
+        "notification": {
+            "fetchFailed": "Échec du chargement",
+            "fetchFailedDesc": "Impossible de charger les notifications. Veuillez réessayer.",
+            "markReadFailed": "Action échouée",
+            "markReadFailedDesc": "Impossible de marquer la notification comme lue. Veuillez réessayer."
         }
     }
 }

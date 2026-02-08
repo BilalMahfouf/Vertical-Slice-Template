@@ -90,6 +90,10 @@ namespace VeterinaryApi.Migrations
                         .HasColumnType("smallint")
                         .HasColumnName("status");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTime?>("UpdatedOnUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -99,6 +103,9 @@ namespace VeterinaryApi.Migrations
                     b.HasIndex("ClientId");
 
                     b.HasIndex("ClinicId");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_animals_tenant_id");
 
                     b.ToTable("animals", (string)null);
                 });
@@ -151,11 +158,18 @@ namespace VeterinaryApi.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("status_updated_on_utc");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalId");
 
                     b.HasIndex("ClinicId");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_appointments_tenant_id");
 
                     b.ToTable("appointments", (string)null);
                 });
@@ -198,6 +212,10 @@ namespace VeterinaryApi.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("phone");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTime?>("UpdatedOnUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -205,6 +223,9 @@ namespace VeterinaryApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClinicId");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_owners_tenant_id");
 
                     b.ToTable("owners", (string)null);
                 });
@@ -253,11 +274,64 @@ namespace VeterinaryApi.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("staff_count");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
 
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_clinics_tenant_id");
+
                     b.ToTable("clinics", (string)null);
+                });
+
+            modelBuilder.Entity("VeterinaryApi.Domain.Notifications.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("body");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_read");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_notifications_tenant_id");
+
+                    b.ToTable("notifications", (string)null);
                 });
 
             modelBuilder.Entity("VeterinaryApi.Domain.Users.User", b =>
@@ -312,6 +386,10 @@ namespace VeterinaryApi.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("role");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -320,13 +398,16 @@ namespace VeterinaryApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_email");
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_users_tenant_id");
 
-                    b.HasIndex("UserName")
+                    b.HasIndex("TenantId", "Email")
                         .IsUnique()
-                        .HasDatabaseName("ix_users_user_name");
+                        .HasDatabaseName("ix_users_tenant_id_email");
+
+                    b.HasIndex("TenantId", "UserName")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_tenant_id_user_name");
 
                     b.ToTable("users", (string)null);
                 });
@@ -351,6 +432,10 @@ namespace VeterinaryApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(1000)
@@ -366,6 +451,9 @@ namespace VeterinaryApi.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_user_sessions_tenant_id");
 
                     b.HasIndex("Token")
                         .HasDatabaseName("ix_user_sessions_token");
@@ -418,6 +506,10 @@ namespace VeterinaryApi.Migrations
                         .HasColumnType("text[]")
                         .HasColumnName("symptoms");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
                     b.PrimitiveCollection<List<string>>("Treatment")
                         .HasColumnType("text[]")
                         .HasColumnName("treatment");
@@ -434,6 +526,9 @@ namespace VeterinaryApi.Migrations
 
                     b.HasIndex("OwnerId");
 
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_visits_tenant_id");
+
                     b.ToTable("visits", (string)null);
                 });
 
@@ -445,7 +540,7 @@ namespace VeterinaryApi.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("jsonb")
+                        .HasColumnType("text")
                         .HasColumnName("content");
 
                     b.Property<DateTime>("CreatedOnUtc")

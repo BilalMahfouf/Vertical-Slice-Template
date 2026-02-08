@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
-using VeterinaryApi.Common.Paginations;
+using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Appointments;
 
@@ -24,7 +24,7 @@ public static class GetAllAppointments
         DateTime CreatedOnUtc);
 
     public class GetAllAppointmentsQueryHandler
-        : IQueryHandler<TableRequest<Response>, PagedList<Response>>
+        : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
 
@@ -33,14 +33,14 @@ public static class GetAllAppointments
             _db = db;
         }
 
-        public async Task<Result<PagedList<Response>>> Handle(
+        public async Task<Result<OffSetPagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
         {
             var count = await _db.Appointments.CountAsync(cancellationToken);
             if (count <= 0)
             {
-                return Result<PagedList<Response>>.Failure(
+                return Result<OffSetPagedList<Response>>.Failure(
                     AppointmentErrors.AppointmentsNotFound);
             }
             var appointment = _db.Appointments.AsNoTracking();
@@ -69,12 +69,12 @@ public static class GetAllAppointments
                 "date" => e => e.AppointmentDate,
                 "status" => e => e.Status,
                 "clientname" => e => e.ClientName,
-                _ => e => e.Id
+                _ => e => e.CreatedOnUtc
             };
             var temp = await appointments.ToListAsync(cancellationToken);
             if (temp is null)
             {
-                return Result<PagedList<Response>>
+                return Result<OffSetPagedList<Response>>
                     .Failure(AppointmentErrors.AppointmentsNotFound);
             }
 
@@ -94,12 +94,12 @@ public static class GetAllAppointments
             var data = appointmentsQuery.ToList();
             if (data is null)
             {
-                return Result<PagedList<Response>>
+                return Result<OffSetPagedList<Response>>
                     .Failure(AppointmentErrors.AppointmentsNotFound);
             }
-            var result = PagedList<Response>
+            var result = OffSetPagedList<Response>
                 .Create(data, count, query.Page, query.PageSize);
-            return Result<PagedList<Response>>.Success(result);
+            return Result<OffSetPagedList<Response>>.Success(result);
         }
     }
     public class Endpoint : IEndpoint
@@ -112,7 +112,7 @@ public static class GetAllAppointments
                 [FromQuery] string? sortColumn,
                 [FromQuery] string? sortOrder,
                 [FromQuery] string? search,
-                [FromServices] IQueryHandler<TableRequest<Response>, PagedList<Response>> handler,
+                [FromServices] IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>> handler,
                 CancellationToken cancellationToken) =>
             {
                 var query = TableRequest<Response>
@@ -121,7 +121,10 @@ public static class GetAllAppointments
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
 
-            }).WithTags("appointments");
+            })
+            .WithTags($"{nameof(Appointment)}s")
+            .WithSummary("Get all appointments")
+            .WithDescription("Retrieves a paginated list of all appointments with optional search, sorting, and filtering capabilities.");
         }
     }
 }

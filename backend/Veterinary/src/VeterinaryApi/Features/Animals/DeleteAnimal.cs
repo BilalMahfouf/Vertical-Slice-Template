@@ -39,7 +39,7 @@ public static class DeleteAnimal
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/animals/{id:guid}", [Authorize]async (
+            app.MapDelete("/animals/{id:guid}", [Authorize] async (
                 Guid id,
                 ICommandHandler<DeleteAnimalCommand> handler,
                 CancellationToken cancellationToken) =>
@@ -48,7 +48,10 @@ public static class DeleteAnimal
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess ? Results.NoContent() :
                     result.Problem();
-            });
+            })
+            .WithTags($"{nameof(Animal)}s")
+            .WithSummary("Delete an animal")
+            .WithDescription("Soft deletes an animal record by its unique identifier. The animal can be restored if needed.");
         }
     }
 }

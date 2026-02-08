@@ -7,14 +7,17 @@ using System.Text;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.Abstracions.Emails;
 using VeterinaryApi.Common.CQRS;
+using VeterinaryApi.Domain.Notifications;
 using VeterinaryApi.Infrastructure.Auth;
 using VeterinaryApi.Infrastructure.CQRS;
 using VeterinaryApi.Infrastructure.Interceptors;
+using VeterinaryApi.Infrastructure.Notifications;
 using VeterinaryApi.Infrastructure.OutboxMessages;
 using VeterinaryApi.Infrastructure.Persistence;
 using VeterinaryApi.Infrastructure.Services.Hashers;
 using VeterinaryApi.Infrastructure.Services.Notifications;
 using VeterinaryApi.Infrastructure.Services.Users;
+using VeterinaryApi.Infrastructure.Tenants;
 
 namespace VeterinaryApi.Infrastructure;
 
@@ -62,12 +65,29 @@ public static class DependencyInjection
                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET_KEY")!)),
                    ClockSkew = TimeSpan.Zero
                };
+
+               //SignalR sends token via query string for WebSocket connections
+
+              options.Events = new JwtBearerEvents
+              {
+                  OnMessageReceived = context =>
+                  {
+                      var accessToken = context.Request.Query["access_token"];
+                      var path = context.HttpContext.Request.Path;
+                      if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                      {
+                          context.Token = accessToken;
+                      }
+                      return Task.CompletedTask;
+                  }
+              };
            });
 
         // interceptors config
 
         services.AddScoped<AuditInterceptor>();
-        services.AddSingleton<InsertOutboxMessagesInterceptors>();
+        services.AddScoped<InsertOutboxMessagesInterceptors>();
+        services.AddScoped<TenantInterceptor>();
 
         // ef core config  
         var connectionString = Environment
@@ -77,7 +97,9 @@ public static class DependencyInjection
         {
             options.UseNpgsql(connectionString)
             .AddInterceptors(sp
-                .GetRequiredService<InsertOutboxMessagesInterceptors>());
+                .GetRequiredService<InsertOutboxMessagesInterceptors>())
+            .AddInterceptors(sp
+                .GetRequiredService<TenantInterceptor>());
         }, ServiceLifetime.Scoped);
 
         // Email Options config 
@@ -90,7 +112,7 @@ public static class DependencyInjection
         });
         services.AddSingleton<IEmailService, EmailService>();
 
-        services.AddScoped<ICurrentUser, CurrentUserService>();
+        services.AddScoped<ICurrentTenant, CurrentUserService>();
 
         services.AddHttpContextAccessor();
 
@@ -115,7 +137,15 @@ public static class DependencyInjection
         services.AddQuartzHostedService(opt =>
         opt.WaitForJobsToComplete = true
         );
-
+        services.AddSignalR();
+        services.AddScoped<INotificatioService, NotificationService>();
+        services.Scan(scan => scan.FromAssembliesOf(typeof(Program))
+                    .AddClasses(classes => classes
+                        .AssignableTo(typeof(IDomainEventHandler<>)), publicOnly: false)
+                    .AsImplementedInterfaces()
+                    .WithScopedLifetime());
+        services.AddTransient<IDomainEventPublisher, DomainEventPublisher>();
         return services;
     }
+
 }

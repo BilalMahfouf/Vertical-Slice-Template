@@ -73,6 +73,7 @@ public sealed class Appointment : Entity
         }
         UpdateStatus(AppointmentStatus.Cancelled);
         notes = string.IsNullOrWhiteSpace(notes) ? null : notes;
+        RaiseDomainEvent(new AppointmentCancelledDomainEvent(this.Id));
     }
     private void ValidateStatusEnum(AppointmentStatus status)
     {

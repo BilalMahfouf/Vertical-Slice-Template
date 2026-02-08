@@ -1,8 +1,8 @@
 ﻿using VeterinaryApi.Common.CQRS;
 
-namespace VeterinaryApi.Common.Paginations;
+namespace VeterinaryApi.Common.Paginations.OffSet;
 
-public class TableRequest<TResponse> : IQuery<PagedList<TResponse>>
+public class TableRequest<TResponse> : IQuery<OffSetPagedList<TResponse>>
 {
     public int PageSize { get; private set; }
     public int Page { get; private set; }

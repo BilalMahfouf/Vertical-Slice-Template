@@ -58,7 +58,9 @@ public static class GetUserById
                     ? Results.Ok(result.Value)
                     : result.Problem();
             })
-            .WithTags("Users");
+            .WithTags($"{nameof(User)}s")
+            .WithSummary("Get user by ID")
+            .WithDescription("Retrieves user information by their unique identifier. Returns user ID, email, and full name.");
         }
     }
 }

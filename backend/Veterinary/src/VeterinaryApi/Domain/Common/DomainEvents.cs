@@ -1,12 +1,9 @@
 ﻿namespace VeterinaryApi.Domain.Common;
 
-public interface IDomainEvent;
+public interface IDomainEvent : ITenantOwned;
 
-public sealed record DomainEvent : IDomainEvent
+public abstract record DomainEvent : IDomainEvent
 {
-    public Guid Id { get; private set; }
-    public DomainEvent()
-    {
-        Id = Guid.NewGuid();
-    }
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public Guid TenantId { get; set; }
 }

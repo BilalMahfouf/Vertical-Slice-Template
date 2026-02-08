@@ -78,5 +78,12 @@ public class VisitConfiguration : IEntityTypeConfiguration<Visit>
 
         builder.Property(v => v.DeletedOnUtc)
             .HasColumnName("deleted_on_utc");
+
+        builder.Property(v => v.TenantId)
+            .HasColumnName("tenant_id")
+            .IsRequired();
+
+        builder.HasIndex(v => v.TenantId)
+            .HasDatabaseName("ix_visits_tenant_id");
     }
 }

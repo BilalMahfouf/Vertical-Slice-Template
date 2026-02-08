@@ -7,9 +7,9 @@ namespace VeterinaryApi.Infrastructure.Interceptors;
 
 public class AuditInterceptor : SaveChangesInterceptor
 {
-    private readonly ICurrentUser _currentUser;
+    private readonly ICurrentTenant _currentUser;
 
-    public AuditInterceptor(ICurrentUser currentUser)
+    public AuditInterceptor(ICurrentTenant currentUser)
     {
         _currentUser = currentUser;
     }
@@ -29,7 +29,11 @@ public class AuditInterceptor : SaveChangesInterceptor
                 {
                     continue;
                 }
-                entity.CreatedByUserId = _currentUser.UserId;
+                if (_currentUser.UserId is null)
+                {
+                    continue;
+                }
+                entity.CreatedByUserId = _currentUser.UserId.Value;
             }
 
         }

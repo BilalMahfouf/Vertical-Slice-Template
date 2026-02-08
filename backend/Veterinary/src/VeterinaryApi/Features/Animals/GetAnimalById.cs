@@ -67,7 +67,7 @@ public static class GetAnimalById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/animals/{id:guid}",[Authorize] async (
+            app.MapGet("/animals/{id:guid}", [Authorize] async (
                 Guid id,
                 IQueryHandler<Query, Response> handler,
                 CancellationToken cancellationToken) =>
@@ -76,7 +76,10 @@ public static class GetAnimalById
                 var result = await handler.Handle(query, cancellationToken);
                 return result.IsSuccess ? Results.Ok(result.Value) :
                     result.Problem();
-            }).WithTags("animals");
+            })
+            .WithTags($"{nameof(Animal)}s")
+            .WithSummary("Get animal by ID")
+            .WithDescription("Retrieves detailed information about a specific animal by its unique identifier.");
         }
     }
 }
