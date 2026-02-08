@@ -70,7 +70,7 @@ public class GetVisitsTable
                 "animalname" => e => e.AnimalName,
                 "ownername" => e => e.OwnerName,
                 "visitdate" => e => e.VisitDate,
-                _ => e => e.Id
+                _ => e => e.VisitDate
             };
             var temp = await visits.ToListAsync(cancellationToken);
             if (temp is null)

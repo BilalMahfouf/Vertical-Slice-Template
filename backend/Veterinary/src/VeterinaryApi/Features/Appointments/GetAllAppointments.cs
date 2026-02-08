@@ -69,7 +69,7 @@ public static class GetAllAppointments
                 "date" => e => e.AppointmentDate,
                 "status" => e => e.Status,
                 "clientname" => e => e.ClientName,
-                _ => e => e.Id
+                _ => e => e.CreatedOnUtc
             };
             var temp = await appointments.ToListAsync(cancellationToken);
             if (temp is null)

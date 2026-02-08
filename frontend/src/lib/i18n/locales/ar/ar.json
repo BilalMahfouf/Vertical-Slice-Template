@@ -300,6 +300,12 @@
             "deleted": "تم حذف الزيارة",
             "deletedDesc": "تم حذف الزيارة بنجاح."
         },
+        "notification": {
+            "markedAsRead": "تم قراءة الإشعار",
+            "markedAsReadDesc": "تم تحديد الإشعار كمقروء.",
+            "markedAllAsRead": "تم قراءة جميع الإشعارات",
+            "markedAllAsReadDesc": "تم تحديد جميع الإشعارات كمقروءة."
+        },
         "clientAdded": "تمت إضافة العميل",
         "clientAddedDesc": "تمت إضافة العميل بنجاح.",
         "clientUpdated": "تم تحديث العميل",
@@ -453,14 +459,6 @@
         "minutesAgo": "منذ {{count}} دقيقة",
         "hoursAgo": "منذ {{count}} ساعة",
         "daysAgo": "منذ {{count}} يوم"
-    },
-    "toast": {
-        "notification": {
-            "markedAsRead": "تم قراءة الإشعار",
-            "markedAsReadDesc": "تم تحديد الإشعار كمقروء.",
-            "markedAllAsRead": "تم قراءة جميع الإشعارات",
-            "markedAllAsReadDesc": "تم تحديد جميع الإشعارات كمقروءة."
-        }
     },
     "errors": {
         "notification": {

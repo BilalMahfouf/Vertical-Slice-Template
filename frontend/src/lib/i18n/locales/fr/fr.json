@@ -300,6 +300,12 @@
             "deleted": "Visite supprimée",
             "deletedDesc": "La visite a été supprimée avec succès."
         },
+        "notification": {
+            "markedAsRead": "Notification lue",
+            "markedAsReadDesc": "La notification a été marquée comme lue.",
+            "markedAllAsRead": "Toutes les notifications lues",
+            "markedAllAsReadDesc": "Toutes les notifications ont été marquées comme lues."
+        },
         "clientAdded": "Client ajouté",
         "clientAddedDesc": "Le client a été ajouté avec succès.",
         "clientUpdated": "Client mis à jour",
@@ -453,14 +459,6 @@
         "minutesAgo": "Il y a {{count}} min",
         "hoursAgo": "Il y a {{count}}h",
         "daysAgo": "Il y a {{count}}j"
-    },
-    "toast": {
-        "notification": {
-            "markedAsRead": "Notification lue",
-            "markedAsReadDesc": "La notification a été marquée comme lue.",
-            "markedAllAsRead": "Toutes les notifications lues",
-            "markedAllAsReadDesc": "Toutes les notifications ont été marquées comme lues."
-        }
     },
     "errors": {
         "notification": {

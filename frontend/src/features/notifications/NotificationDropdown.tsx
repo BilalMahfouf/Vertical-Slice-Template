@@ -58,62 +58,76 @@ function NotificationItem({
     const formatTime = useRelativeTime();
 
     return (
-        <div
-            className={cn(
-                "px-4 py-3 transition-colors cursor-pointer hover:bg-slate-50",
-                notification.isRead ? "bg-white" : "bg-primary/5"
-            )}
-        >
-            <div className="flex items-start gap-3">
-                {/* Unread indicator */}
-                <div className="mt-1.5 shrink-0">
-                    {!notification.isRead && (
-                        <div className="w-2 h-2 rounded-full bg-primary" />
-                    )}
-                    {notification.isRead && <div className="w-2 h-2" />}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                        <h4
-                            className={cn(
-                                "text-sm leading-tight",
-                                notification.isRead
-                                    ? "font-normal text-muted-foreground"
-                                    : "font-semibold text-foreground"
-                            )}
-                        >
-                            {notification.title}
-                        </h4>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
-                            {formatTime(notification.createdOnUtc)}
-                        </span>
+        <div className="px-4 py-2">
+            <div
+                className={cn(
+                    "p-4 rounded-lg transition-all cursor-pointer",
+                    notification.isRead
+                        ? "bg-slate-50 hover:bg-slate-100"
+                        : "bg-blue-50/70 hover:bg-blue-50 shadow-sm ring-1 ring-blue-100"
+                )}
+            >
+                <div className="flex items-start gap-3">
+                    {/* Unread indicator */}
+                    <div className="mt-2 shrink-0">
+                        {!notification.isRead && (
+                            <div className="w-2.5 h-2.5 rounded-full bg-primary shadow-sm" />
+                        )}
+                        {notification.isRead && <div className="w-2.5 h-2.5" />}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                        {notification.body}
-                    </p>
 
-                    {/* Mark as read button for unread notifications */}
-                    {!notification.isRead && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mt-1.5 h-6 px-2 text-xs text-primary hover:text-primary"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onMarkAsRead(notification.id);
-                            }}
-                            disabled={isMarking}
-                        >
-                            {isMarking ? (
-                                <Loader2 className="h-3 w-3 me-1 animate-spin" />
-                            ) : (
-                                <CheckCheck className="h-3 w-3 me-1" />
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                        {/* Header row: Title + Time */}
+                        <div className="flex items-start justify-between gap-3 mb-2">
+                            <h4
+                                className={cn(
+                                    "text-sm leading-snug",
+                                    notification.isRead
+                                        ? "font-medium text-slate-600"
+                                        : "font-semibold text-slate-900"
+                                )}
+                            >
+                                {notification.title}
+                            </h4>
+                            <span className="text-xs text-slate-400 whitespace-nowrap shrink-0 mt-0.5">
+                                {formatTime(notification.createdOnUtc)}
+                            </span>
+                        </div>
+
+                        {/* Body text */}
+                        <p
+                            className={cn(
+                                "text-sm leading-relaxed line-clamp-2",
+                                notification.isRead
+                                    ? "text-slate-500"
+                                    : "text-slate-600"
                             )}
-                            {t(i18nKeyContainer.notification.markAsRead)}
-                        </Button>
-                    )}
+                        >
+                            {notification.body}
+                        </p>
+
+                        {/* Mark as read button for unread notifications */}
+                        {!notification.isRead && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="mt-3 h-7 px-3 text-xs font-medium text-primary hover:text-primary hover:bg-blue-100/50"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onMarkAsRead(notification.id);
+                                }}
+                                disabled={isMarking}
+                            >
+                                {isMarking ? (
+                                    <Loader2 className="h-3.5 w-3.5 me-1.5 animate-spin" />
+                                ) : (
+                                    <CheckCheck className="h-3.5 w-3.5 me-1.5" />
+                                )}
+                                {t(i18nKeyContainer.notification.markAsRead)}
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -267,7 +281,7 @@ export default function NotificationDropdown() {
                             size="sm"
                             onClick={() => markAllAsRead()}
                             disabled={isMarkingAll}
-                            className="h-7 px-2 text-xs text-primary hover:text-primary"
+                            className="h-7 px-2 text-xs text-primary hover:text-primary cursor-pointer hover:bg-blue-100/50"
                         >
                             {isMarkingAll ? (
                                 <Loader2 className="h-3 w-3 me-1 animate-spin" />

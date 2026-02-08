@@ -76,7 +76,7 @@ public static class GetAllClinics
                 "clinicname" => e => e.ClinicName,
                 "phone" => e => e.Phone,
                 "staffcount" => e => e.StaffCount,
-                _ => e => e.Id
+                _ => e => e.CreatedOnUtc
             };
             if (query.SortOrder is "desc")
             {

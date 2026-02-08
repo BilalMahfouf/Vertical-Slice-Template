@@ -61,7 +61,7 @@ public static class GetAllClients
                 "phone" => e => e.Phone,
                 "clinicname" => e => e.ClinicName,
                 "numberofanimals" => e => e.NumberOfAnimals,
-                _ => e => e.Id
+                _ => e => e.CreatedOnUtc
             };
             var temp = await client.ToListAsync(cancellationToken);
             if (temp is null)

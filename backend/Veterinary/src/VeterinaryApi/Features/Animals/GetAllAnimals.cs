@@ -85,7 +85,7 @@ public static class GetAllAnimals
                 "species" => e => e.Species,
                 "breed" => e => e.Breed ?? string.Empty,
                 "clientname" => e => e.ClientName,
-                _ => e => e.Id
+                _ => e => e.CreatedOnUtc
             };
             var temp = await animals.ToListAsync(cancellationToken);
             if (temp is null)
