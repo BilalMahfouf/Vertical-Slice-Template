@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
@@ -41,6 +42,14 @@ public static class Register
             CancellationToken cancellationToken = default)
         {
             var hashPassword = _passwordHasher.Hash(command.Password);
+
+            var isEmailInUse = await _db.Users
+                .AnyAsync(u => u.Email == command.Email, cancellationToken);
+            if (isEmailInUse)
+            {
+                return Result<Login.Response>
+                    .Failure(UserErrors.EmailAlreadyInUse(command.Email));
+            }
 
             var user = User.Register(
                 command.UserName,

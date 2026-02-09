@@ -9,14 +9,22 @@ import VisitPage from './features/visits/VisitPage';
 import ClientPage from './features/clients/ClientPage';
 import { Toaster } from './components/ui/sonner';
 import AppointmentPage from './features/appointments/AppointmentPage';
-
-
+import RegisterPage from './features/auth/pages/RegisterPage';
+import CreateClinicPage from './features/clinics/pages/CreateClinicPage';
 
 const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
     // errorElement: <NotFoundPage />,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
+  },
+  {
+    path: '/create-clinic',
+    element: <CreateClinicPage />,
   },
   {
     element: <MainLayout/>, // wrap all pages with sidebar
