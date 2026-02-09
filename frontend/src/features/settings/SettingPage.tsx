@@ -171,7 +171,9 @@ function MobileNav({ activeSection, onSectionChange, t }: MobileNavProps) {
           className="md:hidden cursor-pointer border-border/20"
         >
           <Menu className="h-5 w-5" />
-          <span className="sr-only">Open settings menu</span>
+          <span className="sr-only">
+            {t(i18nKeyContainer.settingsPage.openMenu)}
+          </span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-64 border-border/20">
@@ -309,7 +311,7 @@ function ProfileSection({
           {t(i18nKeyContainer.settingsPage.profile.header)}
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Manage your personal information and preferences.
+          {t(i18nKeyContainer.settingsPage.profile.description)}
         </p>
       </div>
 
@@ -319,10 +321,10 @@ function ProfileSection({
       <Card className=" border-white shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-base font-medium">
-            Personal Information
+            {t(i18nKeyContainer.settingsPage.profile.personalInfo.title)}
           </CardTitle>
           <CardDescription>
-            Update your name, username, and contact details.
+            {t(i18nKeyContainer.settingsPage.profile.personalInfo.description)}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -437,7 +439,7 @@ function ProfileSection({
                   ) : isSuccess && !form.formState.isDirty ? (
                     <>
                       <Check className="mr-2 h-4 w-4" />
-                      Saved
+                      {t(i18nKeyContainer.settingsPage.profile.saved)}
                     </>
                   ) : (
                     t(i18nKeyContainer.settingsPage.profile.saveChanges)
@@ -453,10 +455,10 @@ function ProfileSection({
       <Card className="border-white shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-base font-medium">
-            Language & Preferences
+            {t(i18nKeyContainer.settingsPage.profile.preferences.title)}
           </CardTitle>
           <CardDescription>
-            Choose your preferred language for the interface.
+            {t(i18nKeyContainer.settingsPage.profile.preferences.description)}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -502,7 +504,7 @@ function ProfileSectionSkeleton() {
         <Skeleton className="h-4 w-64 mt-2" />
       </div>
       <Separator className="bg-border/20" />
-      <Card className="border-border/20 shadow-sm">
+      <Card className="border-white shadow-sm">
         <CardHeader className="pb-4">
           <Skeleton className="h-5 w-36" />
           <Skeleton className="h-4 w-56 mt-1" />
@@ -625,18 +627,20 @@ function ClinicSection({ userProfile, t }: ClinicSectionProps) {
           {t(i18nKeyContainer.settingsPage.clinic.header)}
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Configure your clinic's details and settings.
+          {t(i18nKeyContainer.settingsPage.clinic.description)}
         </p>
       </div>
 
       <Separator className="bg-border/20" />
 
       {/* Clinic Details Card */}
-      <Card className="border-border/20 shadow-sm">
+      <Card className="border-white shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-base font-medium">Clinic Details</CardTitle>
+          <CardTitle className="text-base font-medium">
+            {t(i18nKeyContainer.settingsPage.clinic.basicInfo.title)}
+          </CardTitle>
           <CardDescription>
-            Update your clinic's name, address, and contact information.
+            {t(i18nKeyContainer.settingsPage.clinic.basicInfo.description)}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -656,7 +660,7 @@ function ClinicSection({ userProfile, t }: ClinicSectionProps) {
                         placeholder={t(
                           i18nKeyContainer.settingsPage.clinic.namePlaceholder
                         )}
-                        className="border-border/20"
+                        className="rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400  focus:outline-none focus:ring-1  resize-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -678,7 +682,7 @@ function ClinicSection({ userProfile, t }: ClinicSectionProps) {
                         placeholder={t(
                           i18nKeyContainer.settingsPage.clinic.addressPlaceholder
                         )}
-                        className="border-border/20"
+                        className="rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400  focus:outline-none focus:ring-1  resize-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -700,7 +704,7 @@ function ClinicSection({ userProfile, t }: ClinicSectionProps) {
                         placeholder={t(
                           i18nKeyContainer.settingsPage.clinic.phonePlaceholder
                         )}
-                        className="border-border/20"
+                        className="rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400  focus:outline-none focus:ring-1  resize-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -713,13 +717,18 @@ function ClinicSection({ userProfile, t }: ClinicSectionProps) {
                 name="staffCount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of Staff</FormLabel>
+                    <FormLabel>
+                      {t(i18nKeyContainer.settingsPage.clinic.staffCount.label)}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         min={0}
-                        placeholder="e.g. 5"
-                        className="border-border/20 max-w-45"
+                        placeholder={t(
+                          i18nKeyContainer.settingsPage.clinic.staffCount
+                            .placeholder
+                        )}
+                        className="rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400  focus:outline-none focus:ring-1  resize-none max-w-45"
                         value={field.value}
                         onChange={(e) => field.onChange(Number(e.target.value) || 0)}
                         onBlur={field.onBlur}
@@ -728,7 +737,10 @@ function ClinicSection({ userProfile, t }: ClinicSectionProps) {
                       />
                     </FormControl>
                     <FormDescription>
-                      Total number of staff members working at your clinic.
+                      {t(
+                        i18nKeyContainer.settingsPage.clinic.staffCount
+                          .description
+                      )}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -749,7 +761,7 @@ function ClinicSection({ userProfile, t }: ClinicSectionProps) {
                   ) : isSuccess && !form.formState.isDirty ? (
                     <>
                       <Check className="mr-2 h-4 w-4" />
-                      Saved
+                      {t(i18nKeyContainer.settingsPage.clinic.saved)}
                     </>
                   ) : (
                     t(i18nKeyContainer.settingsPage.clinic.saveChanges)
@@ -772,7 +784,7 @@ function ClinicSectionSkeleton() {
         <Skeleton className="h-4 w-56 mt-2" />
       </div>
       <Separator className="bg-border/20" />
-      <Card className="border-border/20 shadow-sm">
+      <Card className="border-white shadow-sm">
         <CardHeader className="pb-4">
           <Skeleton className="h-5 w-28" />
           <Skeleton className="h-4 w-64 mt-1" />
@@ -837,7 +849,7 @@ export default function SettingPage() {
               {t(i18nKeyContainer.settingsPage.title)}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Manage your account and clinic settings.
+              {t(i18nKeyContainer.settingsPage.description)}
             </p>
           </div>
         </div>

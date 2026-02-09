@@ -470,12 +470,19 @@
     },
     "settingsPage": {
         "title": "الإعدادات",
+        "description": "إدارة إعدادات حسابك والعيادة",
+        "openMenu": "فتح قائمة الإعدادات",
         "tabs": {
             "profile": "الملف الشخصي",
             "clinic": "العيادة"
         },
         "profile": {
             "header": "المعلومات الشخصية",
+            "description": "إدارة معلوماتك الشخصية وتفضيلاتك",
+            "personalInfo": {
+                "title": "المعلومات الشخصية",
+                "description": "تفاصيل حسابك الأساسية"
+            },
             "firstName": "الاسم الأول",
             "firstNamePlaceholder": "أدخل اسمك الأول",
             "lastName": "اسم العائلة",
@@ -485,8 +492,13 @@
             "email": "البريد الإلكتروني",
             "emailPlaceholder": "أدخل بريدك الإلكتروني",
             "emailNote": "تغيير بريدك الإلكتروني سيتطلب التحقق.",
+            "preferences": {
+                "title": "التفضيلات",
+                "description": "اللغة والإعدادات الإقليمية"
+            },
             "language": "اللغة",
             "saveChanges": "حفظ التغييرات",
+            "saved": "تم الحفظ",
             "saving": "جاري الحفظ...",
             "updateSuccess": "تم تحديث الملف الشخصي",
             "updateSuccessDesc": "تم تحديث ملفك الشخصي بنجاح.",
@@ -497,13 +509,24 @@
         },
         "clinic": {
             "header": "معلومات العيادة",
+            "description": "إدارة معلومات العيادة والفريق",
+            "basicInfo": {
+                "title": "معلومات أساسية",
+                "description": "المعلومات العامة للعيادة"
+            },
             "name": "اسم العيادة",
             "namePlaceholder": "أدخل اسم العيادة",
             "phone": "رقم الهاتف",
             "phonePlaceholder": "أدخل رقم الهاتف",
             "address": "العنوان",
             "addressPlaceholder": "أدخل عنوان العيادة",
+            "staffCount": {
+                "label": "عدد الموظفين",
+                "placeholder": "مثال: 5",
+                "description": "إجمالي عدد الموظفين العاملين في عيادتك."
+            },
             "saveChanges": "حفظ التغييرات",
+            "saved": "تم الحفظ",
             "saving": "جاري الحفظ...",
             "updateSuccess": "تم تحديث العيادة",
             "updateSuccessDesc": "تم تحديث معلومات العيادة بنجاح.",

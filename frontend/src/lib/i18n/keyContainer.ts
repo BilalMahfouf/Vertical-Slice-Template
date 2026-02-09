@@ -447,12 +447,19 @@ const i18nKeyContainer = {
     },
     settingsPage: {
         title: 'settingsPage.title',
+        description: 'settingsPage.description',
+        openMenu: 'settingsPage.openMenu',
         tabs: {
             profile: 'settingsPage.tabs.profile',
             clinic: 'settingsPage.tabs.clinic',
         },
         profile: {
             header: 'settingsPage.profile.header',
+            description: 'settingsPage.profile.description',
+            personalInfo: {
+                title: 'settingsPage.profile.personalInfo.title',
+                description: 'settingsPage.profile.personalInfo.description',
+            },
             firstName: 'settingsPage.profile.firstName',
             firstNamePlaceholder: 'settingsPage.profile.firstNamePlaceholder',
             lastName: 'settingsPage.profile.lastName',
@@ -462,8 +469,13 @@ const i18nKeyContainer = {
             email: 'settingsPage.profile.email',
             emailPlaceholder: 'settingsPage.profile.emailPlaceholder',
             emailNote: 'settingsPage.profile.emailNote',
+            preferences: {
+                title: 'settingsPage.profile.preferences.title',
+                description: 'settingsPage.profile.preferences.description',
+            },
             language: 'settingsPage.profile.language',
             saveChanges: 'settingsPage.profile.saveChanges',
+            saved: 'settingsPage.profile.saved',
             saving: 'settingsPage.profile.saving',
             updateSuccess: 'settingsPage.profile.updateSuccess',
             updateSuccessDesc: 'settingsPage.profile.updateSuccessDesc',
@@ -474,13 +486,24 @@ const i18nKeyContainer = {
         },
         clinic: {
             header: 'settingsPage.clinic.header',
+            description: 'settingsPage.clinic.description',
+            basicInfo: {
+                title: 'settingsPage.clinic.basicInfo.title',
+                description: 'settingsPage.clinic.basicInfo.description',
+            },
             name: 'settingsPage.clinic.name',
             namePlaceholder: 'settingsPage.clinic.namePlaceholder',
             phone: 'settingsPage.clinic.phone',
             phonePlaceholder: 'settingsPage.clinic.phonePlaceholder',
             address: 'settingsPage.clinic.address',
             addressPlaceholder: 'settingsPage.clinic.addressPlaceholder',
+            staffCount: {
+                label: 'settingsPage.clinic.staffCount.label',
+                placeholder: 'settingsPage.clinic.staffCount.placeholder',
+                description: 'settingsPage.clinic.staffCount.description',
+            },
             saveChanges: 'settingsPage.clinic.saveChanges',
+            saved: 'settingsPage.clinic.saved',
             saving: 'settingsPage.clinic.saving',
             updateSuccess: 'settingsPage.clinic.updateSuccess',
             updateSuccessDesc: 'settingsPage.clinic.updateSuccessDesc',

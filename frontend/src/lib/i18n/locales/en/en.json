@@ -471,6 +471,7 @@
     "settingsPage": {
         "title": "Settings",
         "description": "Manage your account and clinic preferences",
+        "openMenu": "Open settings menu",
         "tabs": {
             "profile": "Profile",
             "clinic": "Clinic"
@@ -568,6 +569,11 @@
             "countryPlaceholder": "Select country",
             "address": "Address",
             "addressPlaceholder": "Enter clinic address",
+            "staffCount": {
+                "label": "Number of Staff",
+                "placeholder": "e.g. 5",
+                "description": "Total number of staff members working at your clinic."
+            },
             "workingHours": {
                 "title": "Working Hours",
                 "description": "Set your clinic's operating schedule",
@@ -595,6 +601,7 @@
                 "minutes": "{{count}} minutes",
                 "noBuffer": "No buffer"
             },
+            "saved": "Saved",
             "staff": {
                 "title": "Staff & Roles",
                 "description": "Manage your clinic team members",
