@@ -467,5 +467,209 @@
             "markReadFailed": "Action Failed",
             "markReadFailedDesc": "Unable to mark notification as read. Please try again."
         }
+    },
+    "settingsPage": {
+        "title": "Settings",
+        "description": "Manage your account and clinic preferences",
+        "tabs": {
+            "profile": "Profile",
+            "clinic": "Clinic"
+        },
+        "nav": {
+            "profile": "Profile",
+            "profileDesc": "Your personal information",
+            "clinic": "Clinic",
+            "clinicDesc": "Clinic settings & team"
+        },
+        "profile": {
+            "header": "Profile Settings",
+            "description": "Manage your personal information and preferences",
+            "avatar": {
+                "title": "Profile Photo",
+                "description": "This will be displayed on your profile",
+                "upload": "Upload Photo",
+                "remove": "Remove",
+                "change": "Change"
+            },
+            "personalInfo": {
+                "title": "Personal Information",
+                "description": "Your basic account details"
+            },
+            "firstName": "First Name",
+            "firstNamePlaceholder": "Enter your first name",
+            "lastName": "Last Name",
+            "lastNamePlaceholder": "Enter your last name",
+            "fullName": "Full Name",
+            "fullNamePlaceholder": "Enter your full name",
+            "username": "Username",
+            "usernamePlaceholder": "Enter your username",
+            "email": "Email Address",
+            "emailPlaceholder": "Enter your email address",
+            "emailNote": "Changing your email will require verification.",
+            "emailReadOnly": "Contact support to change your email",
+            "phone": "Phone Number",
+            "phonePlaceholder": "Enter your phone number",
+            "phoneOptional": "Optional",
+            "preferences": {
+                "title": "Preferences",
+                "description": "Language and regional settings"
+            },
+            "language": "Language",
+            "languagePlaceholder": "Select language",
+            "timezone": "Timezone",
+            "timezonePlaceholder": "Select timezone",
+            "saveChanges": "Save Changes",
+            "saved": "Saved",
+            "saving": "Saving...",
+            "updateSuccess": "Profile Updated",
+            "updateSuccessDesc": "Your profile has been updated successfully.",
+            "emailUpdateSuccess": "Email Update Initiated",
+            "emailUpdateSuccessDesc": "Your email has been updated successfully.",
+            "updateError": "Update Failed",
+            "updateErrorDesc": "Failed to update your profile. Please try again."
+        },
+        "clinic": {
+            "header": "Clinic Settings",
+            "description": "Manage your clinic information and team",
+            "logo": {
+                "title": "Clinic Logo",
+                "description": "This will be displayed on documents and invoices",
+                "upload": "Upload Logo",
+                "remove": "Remove",
+                "change": "Change"
+            },
+            "basicInfo": {
+                "title": "Basic Information",
+                "description": "Your clinic's public information"
+            },
+            "name": "Clinic Name",
+            "namePlaceholder": "Enter clinic name",
+            "contactInfo": {
+                "title": "Contact Information",
+                "description": "How clients can reach your clinic"
+            },
+            "email": "Contact Email",
+            "emailPlaceholder": "clinic@example.com",
+            "phone": "Phone Number",
+            "phonePlaceholder": "Enter phone number",
+            "addressSection": {
+                "title": "Address",
+                "description": "Your clinic's physical location"
+            },
+            "street": "Street Address",
+            "streetPlaceholder": "123 Main Street",
+            "city": "City",
+            "cityPlaceholder": "Enter city",
+            "state": "State / Province",
+            "statePlaceholder": "Enter state or province",
+            "postalCode": "Postal Code",
+            "postalCodePlaceholder": "Enter postal code",
+            "country": "Country",
+            "countryPlaceholder": "Select country",
+            "address": "Address",
+            "addressPlaceholder": "Enter clinic address",
+            "workingHours": {
+                "title": "Working Hours",
+                "description": "Set your clinic's operating schedule",
+                "closed": "Closed",
+                "open": "Open",
+                "from": "From",
+                "to": "To"
+            },
+            "weekdays": {
+                "monday": "Monday",
+                "tuesday": "Tuesday",
+                "wednesday": "Wednesday",
+                "thursday": "Thursday",
+                "friday": "Friday",
+                "saturday": "Saturday",
+                "sunday": "Sunday"
+            },
+            "appointments": {
+                "title": "Appointment Settings",
+                "description": "Configure default appointment behavior",
+                "defaultDuration": "Default Duration",
+                "defaultDurationPlaceholder": "Select duration",
+                "bufferTime": "Buffer Between Appointments",
+                "bufferTimeDesc": "Add time between appointments for preparation",
+                "minutes": "{{count}} minutes",
+                "noBuffer": "No buffer"
+            },
+            "staff": {
+                "title": "Staff & Roles",
+                "description": "Manage your clinic team members",
+                "invite": "Invite Staff",
+                "inviteDesc": "Add a new team member to your clinic",
+                "name": "Name",
+                "email": "Email",
+                "role": "Role",
+                "status": "Status",
+                "actions": "Actions",
+                "active": "Active",
+                "pending": "Pending",
+                "inactive": "Inactive",
+                "admin": "Admin",
+                "veterinarian": "Veterinarian",
+                "receptionist": "Receptionist",
+                "technician": "Technician",
+                "edit": "Edit",
+                "remove": "Remove",
+                "noStaff": "No staff members yet",
+                "noStaffDesc": "Invite team members to help manage your clinic",
+                "inviteModal": {
+                    "title": "Invite Staff Member",
+                    "description": "Send an invitation to join your clinic",
+                    "emailLabel": "Email Address",
+                    "emailPlaceholder": "colleague@example.com",
+                    "roleLabel": "Role",
+                    "rolePlaceholder": "Select a role",
+                    "send": "Send Invitation",
+                    "sending": "Sending...",
+                    "cancel": "Cancel"
+                },
+                "removeModal": {
+                    "title": "Remove Staff Member",
+                    "description": "Are you sure you want to remove {{name}} from your clinic? They will lose access immediately.",
+                    "confirm": "Remove",
+                    "cancel": "Cancel"
+                }
+            },
+            "integrations": {
+                "title": "Integrations",
+                "description": "Connect external services",
+                "emailReminders": "Email Reminders",
+                "emailRemindersDesc": "Send automatic appointment reminders to clients",
+                "smsReminders": "SMS Reminders",
+                "smsRemindersDesc": "Send text message reminders (additional charges may apply)"
+            },
+            "dangerZone": {
+                "title": "Danger Zone",
+                "description": "Irreversible actions for your clinic",
+                "deactivate": "Deactivate Clinic",
+                "deactivateDesc": "Temporarily disable your clinic. You can reactivate later.",
+                "delete": "Delete Clinic",
+                "deleteDesc": "Permanently delete your clinic and all associated data. This cannot be undone.",
+                "deleteModal": {
+                    "title": "Delete Clinic",
+                    "description": "This action is permanent and cannot be undone. All data including clients, animals, appointments, and records will be permanently deleted.",
+                    "warning": "Type your clinic name to confirm:",
+                    "confirm": "Delete Clinic",
+                    "cancel": "Cancel"
+                }
+            },
+            "saveChanges": "Save Changes",
+            "saved": "Saved",
+            "saving": "Saving...",
+            "updateSuccess": "Clinic Updated",
+            "updateSuccessDesc": "Clinic information has been updated successfully.",
+            "updateError": "Update Failed",
+            "updateErrorDesc": "Failed to update clinic information. Please try again."
+        },
+        "validation": {
+            "required": "This field is required",
+            "invalidEmail": "Please enter a valid email address"
+        },
+        "loading": "Loading...",
+        "loadError": "Failed to load settings. Please try again."
     }
 }

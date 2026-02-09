@@ -4,7 +4,7 @@ import Login from './features/auth/pages/Login';
 import DashboardPage from './features/dashboard/DashboardPage';
 import AnimalPage from './features/animals/AnimalPage';
 import {QueryClientProvider, QueryClient} from '@tanstack/react-query';
-import SettingPage from './features/visits/VisitPage';
+import SettingPage from './features/settings/SettingPage';
 import VisitPage from './features/visits/VisitPage';
 import ClientPage from './features/clients/ClientPage';
 import { Toaster } from './components/ui/sonner';

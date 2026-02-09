@@ -51,7 +51,9 @@ public static class ChangeEmail
             }
 
             var user = await _db.Users
-                .FirstOrDefaultAsync(u => u.Email == command.Email);
+                .FirstOrDefaultAsync(
+                e => e.Id == _currentTenant.UserId,
+                cancellationToken);
             if (user is null)
             {
                 return Result.Failure(UserErrors.UserNotFound(command.Email));
