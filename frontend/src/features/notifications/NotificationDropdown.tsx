@@ -191,7 +191,7 @@ export default function NotificationDropdown() {
     const isRtl = i18n.language === "ar";
 
     const [open, setOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState<"all" | "unread">("all");
+    const [activeTab, setActiveTab] = useState<"all" | "unread">("unread");
 
     // Queries
     const {
