@@ -10,7 +10,7 @@ public class User : Entity
     public string LastName { get; private set; } = null!;
     public string FullName => $"{FirstName} {LastName}";
     public string Email { get; private set; } = null!;
-    public string PasswordHash { get; set; } = null!;
+    public string PasswordHash { get; private set; } = null!;
     public UserRoles Role { get; private set; }
     public bool IsActive { get; private set; }
 
@@ -60,5 +60,26 @@ public class User : Entity
             IsActive = true
         };
         return user;
+    }
+    public void UpdatePassword(string password, string newPasswordHash)
+    {
+        if (password.Length < 6)
+        {
+            throw new DomainException(UserErrors.InvalidPasswordLength);
+        }
+        PasswordHash = newPasswordHash;
+    }
+    public void UpdateProfile(
+        string userName,
+        string firstName,
+        string lastName)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        UserName= userName;
+    }
+    public void UpdateEmail(string email)
+    {
+        Email = email;
     }
 }

@@ -4,6 +4,8 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import NotificationDropdown from '@/features/notifications/NotificationDropdown';
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface TopNavigationProps {
   onToggleSidebar: () => void;
@@ -12,6 +14,11 @@ interface TopNavigationProps {
 export default function TopNavigation({ onToggleSidebar }: TopNavigationProps) {
   const { i18n } = useTranslation();
   const isRtl = i18n.language === 'ar';
+
+const queryClient = useQueryClient();
+    useEffect(()=>{
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },[queryClient])
 
   return (
     <nav className={cn(

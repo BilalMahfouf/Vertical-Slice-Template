@@ -60,7 +60,9 @@ public static class MarkAllNotificationAsRead
             })
             .WithTags($"{nameof(Notification)}s")
             .WithSummary("Mark all notifications as read")
-            .WithDescription("Marks all unread notifications for the current authenticated user as read. Returns success even if no unread notifications exist.");
+            .WithDescription("Marks all unread notifications for the current authenticated user as read. Returns success even if no unread notifications exist.")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
         }
     }
 

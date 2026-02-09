@@ -467,5 +467,77 @@
             "markReadFailed": "فشل الإجراء",
             "markReadFailedDesc": "تعذر تحديد الإشعار كمقروء. يرجى المحاولة مرة أخرى."
         }
+    },
+    "settingsPage": {
+        "title": "الإعدادات",
+        "description": "إدارة إعدادات حسابك والعيادة",
+        "openMenu": "فتح قائمة الإعدادات",
+        "tabs": {
+            "profile": "الملف الشخصي",
+            "clinic": "العيادة"
+        },
+        "profile": {
+            "header": "المعلومات الشخصية",
+            "description": "إدارة معلوماتك الشخصية وتفضيلاتك",
+            "personalInfo": {
+                "title": "المعلومات الشخصية",
+                "description": "تفاصيل حسابك الأساسية"
+            },
+            "firstName": "الاسم الأول",
+            "firstNamePlaceholder": "أدخل اسمك الأول",
+            "lastName": "اسم العائلة",
+            "lastNamePlaceholder": "أدخل اسم عائلتك",
+            "username": "اسم المستخدم",
+            "usernamePlaceholder": "أدخل اسم المستخدم",
+            "email": "البريد الإلكتروني",
+            "emailPlaceholder": "أدخل بريدك الإلكتروني",
+            "emailNote": "تغيير بريدك الإلكتروني سيتطلب التحقق.",
+            "preferences": {
+                "title": "التفضيلات",
+                "description": "اللغة والإعدادات الإقليمية"
+            },
+            "language": "اللغة",
+            "saveChanges": "حفظ التغييرات",
+            "saved": "تم الحفظ",
+            "saving": "جاري الحفظ...",
+            "updateSuccess": "تم تحديث الملف الشخصي",
+            "updateSuccessDesc": "تم تحديث ملفك الشخصي بنجاح.",
+            "emailUpdateSuccess": "بدء تحديث البريد الإلكتروني",
+            "emailUpdateSuccessDesc": "تم تحديث بريدك الإلكتروني بنجاح.",
+            "updateError": "فشل التحديث",
+            "updateErrorDesc": "فشل تحديث ملفك الشخصي. يرجى المحاولة مرة أخرى."
+        },
+        "clinic": {
+            "header": "معلومات العيادة",
+            "description": "إدارة معلومات العيادة والفريق",
+            "basicInfo": {
+                "title": "معلومات أساسية",
+                "description": "المعلومات العامة للعيادة"
+            },
+            "name": "اسم العيادة",
+            "namePlaceholder": "أدخل اسم العيادة",
+            "phone": "رقم الهاتف",
+            "phonePlaceholder": "أدخل رقم الهاتف",
+            "address": "العنوان",
+            "addressPlaceholder": "أدخل عنوان العيادة",
+            "staffCount": {
+                "label": "عدد الموظفين",
+                "placeholder": "مثال: 5",
+                "description": "إجمالي عدد الموظفين العاملين في عيادتك."
+            },
+            "saveChanges": "حفظ التغييرات",
+            "saved": "تم الحفظ",
+            "saving": "جاري الحفظ...",
+            "updateSuccess": "تم تحديث العيادة",
+            "updateSuccessDesc": "تم تحديث معلومات العيادة بنجاح.",
+            "updateError": "فشل التحديث",
+            "updateErrorDesc": "فشل تحديث معلومات العيادة. يرجى المحاولة مرة أخرى."
+        },
+        "validation": {
+            "required": "هذا الحقل مطلوب",
+            "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صالح"
+        },
+        "loading": "جاري التحميل...",
+        "loadError": "فشل تحميل الإعدادات. يرجى المحاولة مرة أخرى."
     }
 }

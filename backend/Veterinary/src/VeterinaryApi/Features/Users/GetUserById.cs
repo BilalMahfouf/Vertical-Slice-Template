@@ -11,7 +11,12 @@ namespace VeterinaryApi.Features.Users;
 public static class GetUserById
 {
     public record GetUserByIdQuery(Guid UserId) : IQuery<Response>;
-    public record Response(Guid Id, string Email, string FullName);
+    public record Response(
+        Guid Id,
+        string UserName,
+        string Email,
+        string FirstName,
+        string LastName);
 
     public class GetUserByIdQueryHandler
         : IQueryHandler<GetUserByIdQuery, Response>
@@ -31,8 +36,10 @@ public static class GetUserById
                 .Where(u => u.Id == query.UserId)
                 .Select(u => new Response(
                     u.Id,
+                    u.UserName,
                     u.Email,
-                    $"{u.FirstName} {u.LastName}"))
+                    u.FirstName,
+                    u.LastName))
                 .AsNoTracking().FirstOrDefaultAsync(cancellationToken);
             if (response is null)
             {

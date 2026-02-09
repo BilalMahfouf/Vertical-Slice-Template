@@ -467,5 +467,77 @@
             "markReadFailed": "Action échouée",
             "markReadFailedDesc": "Impossible de marquer la notification comme lue. Veuillez réessayer."
         }
+    },
+    "settingsPage": {
+        "title": "Paramètres",
+        "description": "Gérez les préférences de votre compte et de la clinique",
+        "openMenu": "Ouvrir le menu des paramètres",
+        "tabs": {
+            "profile": "Profil",
+            "clinic": "Clinique"
+        },
+        "profile": {
+            "header": "Informations personnelles",
+            "description": "Gérez vos informations personnelles et préférences",
+            "personalInfo": {
+                "title": "Informations personnelles",
+                "description": "Les détails de base de votre compte"
+            },
+            "firstName": "Prénom",
+            "firstNamePlaceholder": "Entrez votre prénom",
+            "lastName": "Nom de famille",
+            "lastNamePlaceholder": "Entrez votre nom de famille",
+            "username": "Nom d'utilisateur",
+            "usernamePlaceholder": "Entrez votre nom d'utilisateur",
+            "email": "E-mail",
+            "emailPlaceholder": "Entrez votre adresse e-mail",
+            "emailNote": "Changer votre e-mail nécessitera une vérification.",
+            "preferences": {
+                "title": "Préférences",
+                "description": "Langue et paramètres régionaux"
+            },
+            "language": "Langue",
+            "saveChanges": "Enregistrer les modifications",
+            "saved": "Enregistré",
+            "saving": "Enregistrement...",
+            "updateSuccess": "Profil mis à jour",
+            "updateSuccessDesc": "Votre profil a été mis à jour avec succès.",
+            "emailUpdateSuccess": "Mise à jour de l'e-mail initiée",
+            "emailUpdateSuccessDesc": "Votre e-mail a été mis à jour avec succès.",
+            "updateError": "Échec de la mise à jour",
+            "updateErrorDesc": "Échec de la mise à jour de votre profil. Veuillez réessayer."
+        },
+        "clinic": {
+            "header": "Informations de la clinique",
+            "description": "Gérez les informations de la clinique et l'équipe",
+            "basicInfo": {
+                "title": "Informations de base",
+                "description": "Informations publiques de la clinique"
+            },
+            "name": "Nom de la clinique",
+            "namePlaceholder": "Entrez le nom de la clinique",
+            "phone": "Numéro de téléphone",
+            "phonePlaceholder": "Entrez le numéro de téléphone",
+            "address": "Adresse",
+            "addressPlaceholder": "Entrez l'adresse de la clinique",
+            "staffCount": {
+                "label": "Nombre de personnel",
+                "placeholder": "ex : 5",
+                "description": "Nombre total de personnes travaillant dans votre clinique."
+            },
+            "saveChanges": "Enregistrer les modifications",
+            "saved": "Enregistré",
+            "saving": "Enregistrement...",
+            "updateSuccess": "Clinique mise à jour",
+            "updateSuccessDesc": "Les informations de la clinique ont été mises à jour avec succès.",
+            "updateError": "Échec de la mise à jour",
+            "updateErrorDesc": "Échec de la mise à jour des informations de la clinique. Veuillez réessayer."
+        },
+        "validation": {
+            "required": "Ce champ est obligatoire",
+            "invalidEmail": "Veuillez entrer une adresse e-mail valide"
+        },
+        "loading": "Chargement...",
+        "loadError": "Échec du chargement des paramètres. Veuillez réessayer."
     }
 }
