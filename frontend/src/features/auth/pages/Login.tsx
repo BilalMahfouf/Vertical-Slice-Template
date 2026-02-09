@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -100,6 +100,14 @@ export default function Login() {
                 {t(i18nKeyContainer.signIn)}
               </Button>
             </form>
+            <div className="mt-4 text-center text-sm">
+              <span className="text-muted-foreground">
+                {t(i18nKeyContainer.noAccount)}{" "}
+              </span>
+              <Link to="/register" className="font-medium text-primary hover:underline cursor-pointer">
+                {t(i18nKeyContainer.signUp)}
+              </Link>
+            </div>
           </CardContent>
         </Card>
 

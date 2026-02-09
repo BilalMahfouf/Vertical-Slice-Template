@@ -1,4 +1,6 @@
-﻿using VeterinaryApi.Common.Abstracions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
+using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
@@ -13,30 +15,41 @@ public static class Register
         string Password,
         string UserName,
         string FirstName,
-        string LastName) : ICommand;
+        string LastName) : ICommand<Login.Response>;
 
     public class RegisterCommandHandler
-        : ICommandHandler<RegisterCommand>
+        : ICommandHandler<RegisterCommand, Login.Response>
     {
         private readonly IApplicationDbContext _db;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IJwtProvider _jwtProvider;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public RegisterCommandHandler(
             IApplicationDbContext db,
             IPasswordHasher passwordHasher,
-            IJwtProvider jwtProvider)
+            IJwtProvider jwtProvider,
+            IHttpContextAccessor httpContextAccessor)
         {
             _db = db;
             _passwordHasher = passwordHasher;
             _jwtProvider = jwtProvider;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<Result> Handle(
+        public async Task<Result<Login.Response>> Handle(
             RegisterCommand command,
             CancellationToken cancellationToken = default)
         {
             var hashPassword = _passwordHasher.Hash(command.Password);
+
+            var isEmailInUse = await _db.Users
+                .AnyAsync(u => u.Email == command.Email, cancellationToken);
+            if (isEmailInUse)
+            {
+                return Result<Login.Response>
+                    .Failure(UserErrors.EmailAlreadyInUse(command.Email));
+            }
 
             var user = User.Register(
                 command.UserName,
@@ -45,8 +58,35 @@ public static class Register
                 command.Email,
                 hashPassword);
             _db.Users.Add(user);
+
+            var token = _jwtProvider.GenerateToken(user);
+            var refreshToken = _jwtProvider.GenerateRefreshToken();
+
+            var userSession = new UserSession
+            {
+                UserId = user.Id,
+                Token = refreshToken,
+                TokenType = UserSessionTokenType.Refresh,
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
+            };
+            _db.UserSessions.Add(userSession);
+
             await _db.SaveChangesAsync(cancellationToken);
-            return Result.Success;
+
+            _httpContextAccessor.HttpContext!.Response
+                                      .Cookies.Append(
+                          "refreshToken",
+                          refreshToken,
+                          new CookieOptions
+                          {
+                              HttpOnly = true,
+                              Expires = userSession.ExpiresAt,
+                              SameSite = SameSiteMode.None,
+                              Secure = true,
+                          });
+            var response = new Login.Response(token);
+
+            return Result<Login.Response>.Success(response);
         }
     }
     public class Endpoint : IEndpoint
@@ -55,11 +95,11 @@ public static class Register
         {
             app.MapPost("/auth/register", async (
                 RegisterCommand command,
-                ICommandHandler<RegisterCommand> hander,
+                ICommandHandler<RegisterCommand, Login.Response> hander,
                 CancellationToken cancellationToken = default) =>
             {
                 var result = await hander.Handle(command, cancellationToken);
-                return result.IsSuccess ? Results.Ok() : result.Problem();
+                return result.IsSuccess ? Results.Ok(result.Value) : result.Problem();
             })
             .WithTags("Authentication")
             .WithSummary("Register a new user")
