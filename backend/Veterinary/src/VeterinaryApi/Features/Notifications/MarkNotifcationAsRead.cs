@@ -57,7 +57,10 @@ public static class MarkNotifcationAsRead
             })
             .WithTags($"{nameof(Notification)}s")
             .WithSummary("Mark notification as read")
-            .WithDescription("Marks a specific notification as read by its unique identifier. The notification must belong to the current authenticated user.");
+            .WithDescription("Marks a specific notification as read by its unique identifier. The notification must belong to the current authenticated user.")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
         }
     }
 }

@@ -105,7 +105,7 @@ public static class GetAllNotifications
             // Fetch pageSize + 1 to check if there are more items
             var notifications = await orderedQuery
                 .Take(query.cursorRequest.PageSize + 1)
-                .Select(e => new Response(e.Id, e.Title, e.Body,e.IsRead, e.CreatedOnUtc))
+                .Select(e => new Response(e.Id, e.Title, e.Body, e.IsRead, e.CreatedOnUtc))
                 .ToListAsync(cancellationToken);
 
             if (notifications.Count <= 0)
@@ -187,7 +187,10 @@ public static class GetAllNotifications
             })
             .WithTags($"{nameof(Notification)}s")
             .WithSummary("Get all notifications (cursor pagination)")
-            .WithDescription("Retrieves notifications using cursor-based pagination. Pass 'cursor' from previous response to load more. Use 'type' to filter read/unread.");
+            .WithDescription("Retrieves notifications using cursor-based pagination. Pass 'cursor' from previous response to load more. Use 'type' to filter read/unread.")
+            .Produces<CursorPagedList<Response>>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound);
         }
 
     }

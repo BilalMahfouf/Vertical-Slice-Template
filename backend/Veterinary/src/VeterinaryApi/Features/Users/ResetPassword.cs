@@ -47,7 +47,7 @@ public static class ResetPassword
                 return Result.Failure(UserErrors.InvalidCredentials);
             }
             var newPasswordHash = _passwordHasher.Hash(command.Password);
-            user.PasswordHash = newPasswordHash;
+            user.UpdatePassword(command.Password, newPasswordHash);
             _db.Users.Update(user);
 
             await _db.SaveChangesAsync(cancellationToken);

@@ -23,5 +23,21 @@ public static class UserErrors
         Error.Conflict(
             $"{nameof(User)}.ExpiredRefreshToken",
             "Refresh Token is expired, please login again");
+    public static Error NotFound =>
+                Error.NotFound(
+                    $"{nameof(User)}.NotFound",
+                    $"User is not found");
+    public static Error InvalidPassword =>
+        Error.Conflict(
+            $"{nameof(User)}.InvalidPassword",
+            "The provided password is invalid");
+    public static Error InvalidPasswordLength =>
+        Error.Conflict(
+            $"{nameof(User)}.InvalidPasswordLength",
+            "Password must be at least 6 characters long");
+    public static Error EmailAlreadyInUse(string email) =>
+                Error.Conflict(
+            $"{nameof(User)}.EmailAlreadyInUse",
+            $"Email {email} is already in use");
 }
 
