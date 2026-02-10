@@ -6,6 +6,7 @@ using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain;
 using VeterinaryApi.Domain.Animals;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Animals;
 
@@ -29,15 +30,21 @@ public static class GetAnimalById
     public class GetAnimalByIdQueryHandler : IQueryHandler<Query, Response>
     {
         private readonly IApplicationDbContext _db;
-        public GetAnimalByIdQueryHandler(IApplicationDbContext db)
+        private readonly ICurrentTenant _currentTenant;
+
+        public GetAnimalByIdQueryHandler(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
         public async Task<Result<Response>> Handle(
             Query query,
             CancellationToken cancellationToken)
         {
             var animal = await _db.Animals
+                .ForTenant(_currentTenant.UserId!.Value)
                 .AsNoTracking()
                 .Where(e => e.Id == query.Id)
                 .Select(e => new Response(

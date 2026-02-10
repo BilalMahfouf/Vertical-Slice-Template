@@ -5,6 +5,7 @@ using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Clinics;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clinics;
 
@@ -23,6 +24,7 @@ public static class GetClinicByUserId
                 CancellationToken ct) =>
             {
                 var clinicId = await db.Clinics
+                .ForTenant(currentTenant.UserId!.Value)
                 .Where(e => e.DoctorId == currentTenant.UserId)
                 .Select(e => e.Id)
                 .FirstOrDefaultAsync(ct);

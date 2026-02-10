@@ -5,6 +5,7 @@ using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Visits;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Visits;
 
@@ -35,10 +36,14 @@ public static class GetVisitById
     public class GetVisitByIdQueryHandler : IQueryHandler<Query, Response>
     {
         private readonly IApplicationDbContext _db;
+        private readonly ICurrentTenant _currentTenant;
 
-        public GetVisitByIdQueryHandler(IApplicationDbContext db)
+        public GetVisitByIdQueryHandler(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
 
         public async Task<Result<Response>> Handle(
@@ -46,6 +51,7 @@ public static class GetVisitById
             CancellationToken cancellationToken)
         {
             var visit = await _db.Visits
+                .ForTenant(_currentTenant.UserId!.Value)
                 .AsNoTracking()
                 .Where(e => e.Id == query.Id)
                 .Include(e => e.Appointment)

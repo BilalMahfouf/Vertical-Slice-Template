@@ -6,6 +6,7 @@ using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Animals;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Animals;
 
@@ -18,15 +19,21 @@ public static class GetAnimalsByClientId
         : IQueryHandler<Query, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
-        public GetAnimalsByClientIdQueryHandler(IApplicationDbContext db)
+        private readonly ICurrentTenant _currentTenant;
+
+        public GetAnimalsByClientIdQueryHandler(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
         public async Task<Result<OffSetPagedList<Response>>> Handle(
             Query query,
             CancellationToken cancellationToken = default)
         {
             var animals = await _db.Animals
+                .ForTenant(_currentTenant.UserId!.Value)
                 .AsNoTracking()
                 .Where(e => e.ClientId == query.ClientId)
                 .Select(e => new Response(

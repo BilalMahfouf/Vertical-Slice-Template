@@ -9,6 +9,7 @@ using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain;
 using VeterinaryApi.Domain.Animals;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Animals;
 
@@ -35,23 +36,31 @@ public static class GetAllAnimals
         : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
+        private readonly ICurrentTenant _currentTenant;
 
-        public GetAllAnimalsQueryHandler(IApplicationDbContext db)
+        public GetAllAnimalsQueryHandler(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
 
         public async Task<Result<OffSetPagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
         {
-            var count = await _db.Animals.CountAsync(cancellationToken);
+            var count = await _db.Animals
+                .ForTenant(_currentTenant.UserId!.Value)
+                .CountAsync(cancellationToken);
             if (count <= 0)
             {
                 return Result<OffSetPagedList<Response>>.Failure(
                     AnimalErrors.AnimalsNotFound);
             }
-            var animal = _db.Animals.AsNoTracking();
+            var animal = _db.Animals
+                .ForTenant(_currentTenant.UserId!.Value)
+                .AsNoTracking();
             if (!string.IsNullOrWhiteSpace(query.search))
             {
                 animal = animal.Where(e =>

@@ -5,6 +5,7 @@ using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Appointments;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Appointments;
 
@@ -24,15 +25,21 @@ public static class GetAppointmentById
     public class GetAppointmentByIdQueryHandler : IQueryHandler<Query, Response>
     {
         private readonly IApplicationDbContext _db;
-        public GetAppointmentByIdQueryHandler(IApplicationDbContext db)
+        private readonly ICurrentTenant _currentTenant;
+
+        public GetAppointmentByIdQueryHandler(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
         public async Task<Result<Response>> Handle(
             Query query,
             CancellationToken cancellationToken)
         {
             var appointment = await _db.Appointments
+                .ForTenant(_currentTenant.UserId!.Value)
                 .AsNoTracking()
                 .Where(e => e.Id == query.Id)
                 .Select(e => new Response(

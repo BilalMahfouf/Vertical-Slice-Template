@@ -8,6 +8,7 @@ using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Visits;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Visits;
 
@@ -28,10 +29,14 @@ public class GetVisitsTable
         : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
+        private readonly ICurrentTenant _currentTenant;
 
-        public GetVisitsTableQueryHandler(IApplicationDbContext db)
+        public GetVisitsTableQueryHandler(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
 
 
@@ -40,6 +45,7 @@ public class GetVisitsTable
             CancellationToken cancellationToken = default)
         {
             var count = await _db.Visits
+                .ForTenant(_currentTenant.UserId!.Value)
                   .CountAsync(cancellationToken);
             if (count <= 0)
             {
@@ -47,6 +53,7 @@ public class GetVisitsTable
                     VisitErrors.VisitsNotFound);
             }
             var visit = _db.Visits
+                .ForTenant(_currentTenant.UserId!.Value)
                 .AsNoTracking();
             if (!string.IsNullOrWhiteSpace(query.search))
             {

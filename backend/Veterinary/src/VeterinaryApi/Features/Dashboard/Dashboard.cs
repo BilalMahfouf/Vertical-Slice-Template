@@ -6,6 +6,7 @@ using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Appointments;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Dashboard;
 
@@ -21,20 +22,31 @@ public static class Dashboard
     public sealed class DashboardQuery : IQueryHandler<Query, Response>
     {
         private readonly IApplicationDbContext _db;
+        private readonly ICurrentTenant _currentTenant;
 
-        public DashboardQuery(IApplicationDbContext db)
+        public DashboardQuery(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
 
         public async Task<Result<Response>> Handle(
             Query query,
             CancellationToken cancellationToken = default)
         {
-            var totalAnimals = await _db.Animals.CountAsync(cancellationToken);
-            var totalAppointments = await _db.Appointments.CountAsync(cancellationToken);
-            var totalVisits = await _db.Visits.CountAsync(cancellationToken);
+            var totalAnimals = await _db.Animals
+                .ForTenant(_currentTenant.UserId!.Value)
+                .CountAsync(cancellationToken);
+            var totalAppointments = await _db.Appointments
+                .ForTenant(_currentTenant.UserId!.Value)
+                .CountAsync(cancellationToken);
+            var totalVisits = await _db.Visits
+                .ForTenant(_currentTenant.UserId!.Value)
+                .CountAsync(cancellationToken);
             var completedAppointments = await _db.Appointments
+                .ForTenant(_currentTenant.UserId!.Value)
                 .CountAsync(e => e.Status == AppointmentStatus.Completed,
                 cancellationToken);
 

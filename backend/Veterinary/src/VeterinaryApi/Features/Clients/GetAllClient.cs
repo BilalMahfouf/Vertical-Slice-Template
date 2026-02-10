@@ -8,6 +8,7 @@ using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Clients;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clients;
 
@@ -19,23 +20,31 @@ public static class GetAllClients
         : IQueryHandler<TableRequest<ClientReadResponse>, OffSetPagedList<ClientReadResponse>>
     {
         private readonly IApplicationDbContext _db;
+        private readonly ICurrentTenant _currentTenant;
 
-        public GetAllClientsQueryHandler(IApplicationDbContext db)
+        public GetAllClientsQueryHandler(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
 
         public async Task<Result<OffSetPagedList<ClientReadResponse>>> Handle(
             TableRequest<ClientReadResponse> query,
             CancellationToken cancellationToken = default)
         {
-            var count = await _db.Clients.CountAsync(cancellationToken);
+            var count = await _db.Clients
+                .ForTenant(_currentTenant.UserId!.Value)
+                .CountAsync(cancellationToken);
             if (count <= 0)
             {
                 return Result<OffSetPagedList<ClientReadResponse>>.Failure(
                     ClientErrors.ClientsNotFound);
             }
-            var clients = _db.Clients.AsQueryable();
+            var clients = _db.Clients
+                .ForTenant(_currentTenant.UserId!.Value)
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(query.search))
             {
                 clients = clients.Where(e =>

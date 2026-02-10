@@ -5,6 +5,7 @@ using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Clients;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clients;
 
@@ -22,15 +23,21 @@ public static class GetClientById
     public class GetClientByIdQueryHandler : IQueryHandler<Query, Response>
     {
         private readonly IApplicationDbContext _db;
-        public GetClientByIdQueryHandler(IApplicationDbContext db)
+        private readonly ICurrentTenant _currentTenant;
+
+        public GetClientByIdQueryHandler(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
         public async Task<Result<Response>> Handle(
             Query query,
             CancellationToken cancellationToken)
         {
             var client = await _db.Clients
+                .ForTenant(_currentTenant.UserId!.Value)
                 .AsNoTracking()
                 .Where(e => e.Id == query.Id)
                 .Select(e => new Response(

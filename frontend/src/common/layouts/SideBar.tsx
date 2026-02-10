@@ -1,8 +1,7 @@
-import { LayoutDashboard, Stethoscope, Users, Calendar, Clock, Bell, Settings, LogOut, ChevronRight, Languages } from "lucide-react";
+import { LayoutDashboard, Stethoscope, Users, Calendar, Clock, Settings, LogOut, Languages } from "lucide-react";
 import SideBarLink from "./SideBarLink";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
@@ -74,27 +73,16 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
                 pathname={item.pathname}
                 content={t(item.key)}
                 icon={item.icon}
-                rightIcon={item.rightIcon}
               />
             ))}
           </nav>
 
           {/* User Profile Footer */}
           <div className="p-4 bg-white">
-            <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
-              <Avatar>
-                <AvatarImage src="https://i.pravatar.cc/150?img=47" alt="Dr. Sarah Smith" />
-                <AvatarFallback className="bg-primary text-white">SS</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-slate-900 truncate">Dr. Sarah Smith</p>
-                <p className="text-xs text-slate-500 truncate">{t(i18nKeyContainer.chiefVet)}</p>
-              </div>
-            </div>
-            
+           
             <Button
               variant="ghost"
-              className="w-full justify-start gap-3 text-slate-600 hover:text-red-600 hover:bg-red-50"
+              className="cursor-pointer w-full justify-start gap-3 text-slate-600 hover:text-red-600 hover:bg-red-50"
               onClick={handleLogOut}
             >
               <LogOut className="h-4 w-4" />

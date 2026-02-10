@@ -5,6 +5,7 @@ using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Clients;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clients;
 
@@ -25,13 +26,16 @@ public static class GetClientByName
     {
         private readonly IApplicationDbContext _db;
         private readonly IValidator<Query> _validator;
+        private readonly ICurrentTenant _currentTenant;
 
         public GetClientByNameQueryHandler(
             IApplicationDbContext db,
-            IValidator<Query> validator)
+            IValidator<Query> validator,
+            ICurrentTenant currentTenant)
         {
             _db = db;
             _validator = validator;
+            _currentTenant = currentTenant;
         }
 
         public async Task<Result<ClientReadResponse>> Handle(
@@ -41,6 +45,7 @@ public static class GetClientByName
             _validator.ValidateAndThrow(query);
 
             var client = await _db.Clients
+                .ForTenant(_currentTenant.UserId!.Value)
                 .Where(e => e.FullName.Contains(query.Name))
                 .Select(e => new ClientReadResponse(
                     e.Id,

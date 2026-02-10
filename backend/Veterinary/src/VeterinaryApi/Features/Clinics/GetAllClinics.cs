@@ -9,6 +9,7 @@ using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Clinics;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clinics;
 
@@ -29,23 +30,30 @@ public static class GetAllClinics
         : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
+        private readonly ICurrentTenant _currentTenant;
 
-        public GetAllClinicsQueryHandler(IApplicationDbContext db)
+        public GetAllClinicsQueryHandler(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
 
         public async Task<Result<OffSetPagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
         {
-            var count = await _db.Clinics.CountAsync(cancellationToken);
+            var count = await _db.Clinics
+                .ForTenant(_currentTenant.UserId!.Value)
+                .CountAsync(cancellationToken);
             if (count <= 0)
             {
                 return Result<OffSetPagedList<Response>>.Failure(
                     ClinicErrors.ClinicsNotFound);
             }
             var clinics = _db.Clinics
+                .ForTenant(_currentTenant.UserId!.Value)
                 .Select(e => new Response(
                     e.Id,
                     e.DoctorId,

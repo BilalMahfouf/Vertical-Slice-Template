@@ -8,6 +8,7 @@ using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Appointments;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Appointments;
 
@@ -27,23 +28,31 @@ public static class GetAllAppointments
         : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
+        private readonly ICurrentTenant _currentTenant;
 
-        public GetAllAppointmentsQueryHandler(IApplicationDbContext db)
+        public GetAllAppointmentsQueryHandler(
+            IApplicationDbContext db,
+            ICurrentTenant currentTenant)
         {
             _db = db;
+            _currentTenant = currentTenant;
         }
 
         public async Task<Result<OffSetPagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
         {
-            var count = await _db.Appointments.CountAsync(cancellationToken);
+            var count = await _db.Appointments
+                .ForTenant(_currentTenant.UserId!.Value)
+                .CountAsync(cancellationToken);
             if (count <= 0)
             {
                 return Result<OffSetPagedList<Response>>.Failure(
                     AppointmentErrors.AppointmentsNotFound);
             }
-            var appointment = _db.Appointments.AsNoTracking();
+            var appointment = _db.Appointments
+                .ForTenant(_currentTenant.UserId!.Value)
+                .AsNoTracking();
             if (!string.IsNullOrWhiteSpace(query.search))
             {
                 appointment = appointment.Where(e =>
