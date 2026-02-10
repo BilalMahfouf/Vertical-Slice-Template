@@ -81,9 +81,9 @@ export default function Login() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">{t(i18nKeyContainer.password)}</Label>
-                  <Button variant="link" className=" cursor-pointer p-0 h-auto text-xs font-semibold text-primary">
+                  <Link to="/forgot-password" className="text-xs font-semibold text-primary hover:underline hover:text-primary/80">
                     {t(i18nKeyContainer.forgotPassword)}
-                  </Button>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Lock className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />

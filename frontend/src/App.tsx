@@ -11,6 +11,8 @@ import { Toaster } from './components/ui/sonner';
 import AppointmentPage from './features/appointments/AppointmentPage';
 import RegisterPage from './features/auth/pages/RegisterPage';
 import CreateClinicPage from './features/clinics/pages/CreateClinicPage';
+import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage';
+import ResetPasswordPage from './features/auth/pages/ResetPasswordPage';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +23,14 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPasswordPage />,
   },
   {
     path: '/create-clinic',
