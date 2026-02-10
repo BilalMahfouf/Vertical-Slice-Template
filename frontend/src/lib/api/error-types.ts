@@ -83,6 +83,10 @@ export const ErrorCodes = {
   USER_NOT_FOUND: "User.NotFound",
   USER_INVALID_CREDENTIALS: "User.InvalidCredentials",
   USER_EXPIRED_REFRESH_TOKEN: "User.ExpiredRefreshToken",
+  USER_INVALID_PASSWORD: "User.InvalidPassword",
+  USER_INVALID_PASSWORD_LENGTH: "User.InvalidPasswordLength",
+  USER_EMAIL_ALREADY_IN_USE: "User.EmailAlreadyInUse",
+  USER_INVALID_RESET_TOKEN: "User.InvalidResetToken",
   
   // Generic errors
   VALIDATION_ERROR: "Validation.Error",

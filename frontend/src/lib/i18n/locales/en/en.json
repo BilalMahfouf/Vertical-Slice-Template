@@ -332,6 +332,12 @@
             "markedAllAsRead": "All Notifications Read",
             "markedAllAsReadDesc": "All notifications have been marked as read."
         },
+        "auth": {
+            "resetLinkSent": "Check Your Email",
+            "resetLinkSentDesc": "If an account exists with this email, we have sent a password reset link.",
+            "passwordReset": "Password Reset!",
+            "passwordResetDesc": "Your password has been updated successfully. You can now login."
+        },
         "clientAdded": "Client Added",
         "clientAddedDesc": "The client has been added successfully.",
         "clientUpdated": "Client Updated",
@@ -427,7 +433,15 @@
             "invalidCredentials": "Invalid Credentials",
             "invalidCredentialsDesc": "The email or password you entered is incorrect.",
             "expiredToken": "Session Expired",
-            "expiredTokenDesc": "Your session has expired. Please log in again."
+            "expiredTokenDesc": "Your session has expired. Please log in again.",
+            "invalidPassword": "Invalid Password",
+            "invalidPasswordDesc": "The password you entered is invalid.",
+            "invalidPasswordLength": "Password Too Short",
+            "invalidPasswordLengthDesc": "Password must be at least 6 characters long.",
+            "emailAlreadyInUse": "Email Already In Use",
+            "emailAlreadyInUseDesc": "This email address is already associated with an account.",
+            "invalidResetToken": "Invalid Reset Link",
+            "invalidResetTokenDesc": "The password reset link is invalid or has expired. Please request a new one."
         },
         "validation": "Validation Error",
         "validationDesc": "Please check your input and try again.",
@@ -436,7 +450,13 @@
         "server": "Server Error",
         "serverDesc": "An unexpected server error occurred. Please try again later.",
         "unknown": "Unknown Error",
-        "unknownDesc": "An unexpected error occurred. Please try again."
+        "unknownDesc": "An unexpected error occurred. Please try again.",
+        "notification": {
+            "fetchFailed": "Failed to Load",
+            "fetchFailedDesc": "Unable to load notifications. Please try again.",
+            "markReadFailed": "Action Failed",
+            "markReadFailedDesc": "Unable to mark notification as read. Please try again."
+        }
     },
     "dashboardPage": {
         "title": "Dashboard",
@@ -485,14 +505,6 @@
         "minutesAgo": "{{count}} min ago",
         "hoursAgo": "{{count}}h ago",
         "daysAgo": "{{count}}d ago"
-    },
-    "errors": {
-        "notification": {
-            "fetchFailed": "Failed to Load",
-            "fetchFailedDesc": "Unable to load notifications. Please try again.",
-            "markReadFailed": "Action Failed",
-            "markReadFailedDesc": "Unable to mark notification as read. Please try again."
-        }
     },
     "settingsPage": {
         "title": "Settings",
@@ -627,7 +639,6 @@
                 "minutes": "{{count}} minutes",
                 "noBuffer": "No buffer"
             },
-            "saved": "Saved",
             "staff": {
                 "title": "Staff & Roles",
                 "description": "Manage your clinic team members",
@@ -704,5 +715,32 @@
         },
         "loading": "Loading...",
         "loadError": "Failed to load settings. Please try again."
+    },
+    "auth": {
+        "forgotPassword": {
+            "title": "Forgot Password?",
+            "description": "Enter your email to reset your password",
+            "instructions": "We will send you a reset link to your email address.",
+            "sendLink": "Send Reset Link",
+            "sending": "Sending...",
+            "emailSent": "Check your email",
+            "emailSentMessage": "If an account exists with this email, we have sent a password reset link.",
+            "backToLogin": "Back to login"
+        },
+        "resetPassword": {
+            "title": "Reset Password",
+            "description": "Enter your new password below",
+            "newPassword": "New Password",
+            "confirmPassword": "Confirm Password",
+            "submit": "Reset Password",
+            "submitting": "Resetting...",
+            "success": "Password Reset!",
+            "successMessage": "Your password has been updated. You can now login.",
+            "invalidLink": "Invalid or expired reset link.",
+            "passwordsDoNotMatch": "Passwords do not match",
+            "minLength": "Password must be at least 6 characters",
+            "error": "Reset Failed",
+            "errorMessage": "Unable to reset password. The link may have expired."
+        }
     }
 }

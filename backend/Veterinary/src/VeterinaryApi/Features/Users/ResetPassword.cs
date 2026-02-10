@@ -40,9 +40,11 @@ public static class ResetPassword
             {
                 return Result.Failure(UserErrors.UserNotFound(command.Email));
             }
-            if (!user.Sessions.Any(u => u.Token == command.Token &&
+            var isValidToken = await _db.UserSessions
+                .AnyAsync(u => u.Token == command.Token &&
             u.ExpiresAt > DateTime.UtcNow
-            && u.TokenType == UserSessionTokenType.ResetPassword))
+            && u.TokenType == UserSessionTokenType.ResetPassword);
+            if (!isValidToken)
             {
                 return Result.Failure(UserErrors.InvalidCredentials);
             }

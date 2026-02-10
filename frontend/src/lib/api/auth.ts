@@ -12,6 +12,18 @@ export interface LoginResponse {
   };
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+  clientUri: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  token: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export const authApi = {
   login: async (credentials: LoginCredentials) => {
     const response = await api.post<LoginResponse>('/auth/login', credentials);
@@ -36,5 +48,14 @@ export const authApi = {
   // Manual refresh if needed
   refresh: async () => {
     return tokenManager.refreshAccessToken();
+  },
+
+  forgotPassword: async (data: ForgotPasswordRequest) => {
+    return api.post('/auth/forget-password', data);
+  },
+
+  resetPassword: async (data: ResetPasswordRequest) => {
+    // Backend endpoint has typo: reset-passowrd
+    return api.put('/auth/reset-passowrd', data);
   },
 };

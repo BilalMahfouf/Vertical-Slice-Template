@@ -332,6 +332,12 @@
             "markedAllAsRead": "Toutes les notifications lues",
             "markedAllAsReadDesc": "Toutes les notifications ont été marquées comme lues."
         },
+        "auth": {
+            "resetLinkSent": "Vérifiez votre email",
+            "resetLinkSentDesc": "Si un compte existe avec cet email, nous avons envoyé un lien de réinitialisation.",
+            "passwordReset": "Mot de passe réinitialisé !",
+            "passwordResetDesc": "Votre mot de passe a été mis à jour avec succès. Vous pouvez vous connecter."
+        },
         "clientAdded": "Client ajouté",
         "clientAddedDesc": "Le client a été ajouté avec succès.",
         "clientUpdated": "Client mis à jour",
@@ -427,7 +433,15 @@
             "invalidCredentials": "Identifiants invalides",
             "invalidCredentialsDesc": "L'email ou le mot de passe que vous avez entré est incorrect.",
             "expiredToken": "Session expirée",
-            "expiredTokenDesc": "Votre session a expiré. Veuillez vous reconnecter."
+            "expiredTokenDesc": "Votre session a expiré. Veuillez vous reconnecter.",
+            "invalidPassword": "Mot de passe invalide",
+            "invalidPasswordDesc": "Le mot de passe que vous avez entré est invalide.",
+            "invalidPasswordLength": "Mot de passe trop court",
+            "invalidPasswordLengthDesc": "Le mot de passe doit contenir au moins 6 caractères.",
+            "emailAlreadyInUse": "Email déjà utilisé",
+            "emailAlreadyInUseDesc": "Cette adresse email est déjà associée à un compte.",
+            "invalidResetToken": "Lien de réinitialisation invalide",
+            "invalidResetTokenDesc": "Le lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau."
         },
         "validation": "Erreur de validation",
         "validationDesc": "Veuillez vérifier vos informations et réessayer.",
@@ -436,7 +450,13 @@
         "server": "Erreur serveur",
         "serverDesc": "Une erreur serveur inattendue s'est produite. Veuillez réessayer plus tard.",
         "unknown": "Erreur inconnue",
-        "unknownDesc": "Une erreur inattendue s'est produite. Veuillez réessayer."
+        "unknownDesc": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+        "notification": {
+            "fetchFailed": "Échec du chargement",
+            "fetchFailedDesc": "Impossible de charger les notifications. Veuillez réessayer.",
+            "markReadFailed": "Action échouée",
+            "markReadFailedDesc": "Impossible de marquer la notification comme lue. Veuillez réessayer."
+        }
     },
     "dashboardPage": {
         "title": "Tableau de bord",
@@ -485,14 +505,6 @@
         "minutesAgo": "Il y a {{count}} min",
         "hoursAgo": "Il y a {{count}}h",
         "daysAgo": "Il y a {{count}}j"
-    },
-    "errors": {
-        "notification": {
-            "fetchFailed": "Échec du chargement",
-            "fetchFailedDesc": "Impossible de charger les notifications. Veuillez réessayer.",
-            "markReadFailed": "Action échouée",
-            "markReadFailedDesc": "Impossible de marquer la notification comme lue. Veuillez réessayer."
-        }
     },
     "settingsPage": {
         "title": "Paramètres",
@@ -565,5 +577,32 @@
         },
         "loading": "Chargement...",
         "loadError": "Échec du chargement des paramètres. Veuillez réessayer."
+    },
+    "auth": {
+        "forgotPassword": {
+            "title": "Mot de passe oublié ?",
+            "description": "Entrez votre email pour réinitialiser votre mot de passe",
+            "instructions": "Nous vous enverrons un lien de réinitialisation.",
+            "sendLink": "Envoyer le lien",
+            "sending": "Envoi...",
+            "emailSent": "Vérifiez votre email",
+            "emailSentMessage": "Si un compte existe avec cet email, nous avons envoyé un lien de réinitialisation.",
+            "backToLogin": "Retour à la connexion"
+        },
+        "resetPassword": {
+            "title": "Réinitialiser le mot de passe",
+            "description": "Entrez votre nouveau mot de passe ci-dessous",
+            "newPassword": "Nouveau mot de passe",
+            "confirmPassword": "Confirmer le mot de passe",
+            "submit": "Réinitialiser",
+            "submitting": "Réinitialisation...",
+            "success": "Mot de passe réinitialisé !",
+            "successMessage": "Votre mot de passe a été mis à jour. Vous pouvez vous connecter.",
+            "invalidLink": "Lien invalide ou expiré.",
+            "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+            "minLength": "Le mot de passe doit contenir au moins 6 caractères",
+            "error": "Échec de la réinitialisation",
+            "errorMessage": "Impossible de réinitialiser le mot de passe. Le lien a peut-être expiré."
+        }
     }
 }
