@@ -29,7 +29,7 @@ export const authApi = {
       await api.post('/auth/logout');
     } finally {
       tokenManager.clearTokens();
-     // window.location.href = '/login';
+      window.location.href = '/login';
     }
   },
 
