@@ -27,11 +27,7 @@ export interface ResetPasswordRequest {
 export const authApi = {
   login: async (credentials: LoginCredentials) => {
     const response = await api.post<LoginResponse>('/auth/login', credentials);
-    
-    if(response.status !== 200) {
-        console.log('Login failed with status:', response.status);
-        return false;
-    }
+    // Axios throws on 4xx/5xx, let error propagate to useMutation onError
     tokenManager.setAccessToken(response.data.value.token);
     return true;
   },

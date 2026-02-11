@@ -10,19 +10,24 @@ import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { authApi } from '@/lib/api/auth';
 import { useMutation } from '@tanstack/react-query';
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const { handleApiError } = useToast();
   const isRtl = i18n.language === 'ar';
 
 
   const mutation = useMutation({
-    mutationFn: (authApi.login),
+    mutationFn: authApi.login,
     onSuccess: () => {
         navigate('/dashboard');
+    },
+    onError: (error) => {
+      handleApiError(error);
     },
   });
 
