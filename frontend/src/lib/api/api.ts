@@ -7,7 +7,7 @@ const api = axios.create({
   withCredentials: true, // ensures cookies are sent
   headers:{
     'Content-Type': 'application/json',
-  }
+  },
 });
 
 console.log("API Base URL:", import.meta.env.VITE_API_URL);

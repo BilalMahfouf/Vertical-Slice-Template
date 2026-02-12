@@ -1,6 +1,7 @@
 import api from './api';
 import i18n from '../i18n';
 import i18nKeyContainer from '../i18n/keyContainer';
+import type { AxiosError } from 'axios';
 
 let accessToken: string | null = null;
 let isRefreshing = false;
@@ -78,15 +79,21 @@ api.interceptors.request.use(
 // Response interceptor - handle 401 with token refresh
 api.interceptors.response.use(
   (response) => response, 
-  async (error) => {
-    console.log('Response received:', error.response);
+  async (error: AxiosError) => {
     const originalRequest = error.config;
+    if(!originalRequest) {
+        return Promise.reject(error);
+    }
+    if(originalRequest.skipAuthRefresh) {
+        return Promise.reject(error);
+    }
 
     // If refresh token endpoint itself fails with 401, redirect immediately
     if (error.response?.status === 401 && originalRequest.skipAuthRefresh) {
+        console.log('Refresh token invalid - redirecting to login');
       tokenManager.clearTokens();
       const message = i18n.t(i18nKeyContainer.sessionExpiredMessage);
-      window.confirm(message);
+    //   window.confirm(message);
       window.location.href = '/login';
       return Promise.reject(error);
     }
