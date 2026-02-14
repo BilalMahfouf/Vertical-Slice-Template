@@ -57,6 +57,11 @@ public class VaccinationConfiguration : IEntityTypeConfiguration<Vaccination>
         builder.Property(v => v.GivenAt)
             .HasColumnName("given_at")
             .IsRequired();
+        builder.Property(v => v.DueTo)
+                   .HasColumnName("due_to")
+                   .IsRequired(false);
+
+
 
         builder.Property(v => v.Notes)
             .HasColumnName("notes")

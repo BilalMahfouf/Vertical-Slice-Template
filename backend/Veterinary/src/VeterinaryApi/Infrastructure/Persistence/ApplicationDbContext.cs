@@ -6,6 +6,7 @@ using VeterinaryApi.Domain.Clients;
 using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Domain.Notifications;
 using VeterinaryApi.Domain.Users;
+using VeterinaryApi.Domain.Vaccinations;
 using VeterinaryApi.Domain.Visits;
 using VeterinaryApi.Infrastructure.OutboxMessages;
 using VeterinaryApi.Infrastructure.Persistence.Configurations.Users;
@@ -26,8 +27,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<Animal> Animals { get; set; } = null!;
     public DbSet<Appointment> Appointments { get; set; } = null!;
     public DbSet<Visit> Visits { get; set; } = null!;
-    public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!; 
+    public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
     public DbSet<Notification> Notifications { get; set; } = null!;
+    public DbSet<Vaccination> Vaccinations { get; set; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
