@@ -3,5 +3,11 @@ import "axios";
 declare module "axios" {
   export interface AxiosRequestConfig {
     skipAuthRefresh?: boolean;
+    _retry?: boolean;
+  }
+
+  export interface InternalAxiosRequestConfig {
+    skipAuthRefresh?: boolean;
+    _retry?: boolean;
   }
 }

@@ -47,7 +47,7 @@ export const tokenManager = {
     //   console.log('Refreshing access token...');
       const response = await api.post('/auth/refresh-token', {}, {
         skipAuthRefresh: true
-      } as any);
+      });
     //   console.log('Refresh token response status:', response.status);   
       if(response.status !== 200) {
         return null;
@@ -67,6 +67,10 @@ export const tokenManager = {
 // Request interceptor - attach access token
 api.interceptors.request.use(
   (config) => {
+    // Skip token attachment for endpoints that don't require auth
+    if (config.skipAuthRefresh) {
+      return config;
+    }
     const token = tokenManager.getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -88,16 +92,6 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 
-    // If refresh token endpoint itself fails with 401, redirect immediately
-    if (error.response?.status === 401 && originalRequest.skipAuthRefresh) {
-        console.log('Refresh token invalid - redirecting to login');
-      tokenManager.clearTokens();
-      const message = i18n.t(i18nKeyContainer.sessionExpiredMessage);
-    //   window.confirm(message);
-      window.location.href = '/login';
-      return Promise.reject(error);
-    }
-
     // If 401 and not already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
       console.log('401 Unauthorized - attempting token refresh');
@@ -112,7 +106,7 @@ api.interceptors.response.use(
               originalRequest.headers.Authorization = `Bearer ${token}`;
               resolve(api(originalRequest));
             },
-            (err: any) => {
+            (err: unknown) => {
               reject(err);
             }
           );
