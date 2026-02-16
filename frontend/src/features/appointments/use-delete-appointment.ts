@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import appointmentApi from "./appointment-api";
 import { useAppointmentToast } from "./use-appointment-toast";
+import { isNotFoundError } from "@/lib/api/error-types";
 
 /**
  * Hook for deleting an appointment with toast notifications
  * Handles API call, cache invalidation, and success/error toasts
+ * On 404, invalidates queries to refetch data - use isNotFoundError in onError to close dialog
  */
 export function useDeleteAppointment() {
   const queryClient = useQueryClient();
@@ -19,6 +21,11 @@ export function useDeleteAppointment() {
       appointmentToast.deleted();
     },
     onError: (error) => {
+      // If not found, invalidate queries to refetch (item was already deleted)
+      if (isNotFoundError(error)) {
+        queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        return;
+      }
       // Show error toast with domain-aware message
       appointmentToast.error(error);
     },

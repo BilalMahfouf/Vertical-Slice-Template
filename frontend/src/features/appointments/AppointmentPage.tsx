@@ -84,8 +84,12 @@ export default function AppointmentPage() {
           setDeleteDialogOpen(false);
           setAppointmentToDelete(null);
         },
-        onError: () => {
-          // Keep dialog open on error so user can retry or cancel
+        onError: (error) => {
+          // Close dialog on 404 (item already deleted), otherwise keep open for retry
+          if (isNotFoundError(error)) {
+            setDeleteDialogOpen(false);
+            setAppointmentToDelete(null);
+          }
         },
       });
     }

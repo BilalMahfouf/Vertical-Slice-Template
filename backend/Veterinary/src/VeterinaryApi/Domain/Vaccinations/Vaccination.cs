@@ -22,7 +22,7 @@ public sealed class Vaccination : Entity
         Guid? visitId,
         string name,
         DateTime givenAt,
-        DateTime dueTo,
+        DateTime? dueTo,
         string? notes = null)
     {
         var vaccination = new Vaccination

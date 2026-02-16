@@ -29,7 +29,7 @@ public static class CreateVaccination
         Guid? VisitId,
         string Name,
         DateTime GivenAt,
-        DateTime DueTo,
+        DateTime? DueTo,
         string? Notes) : ICommand<Response>;
 
     /// <summary>

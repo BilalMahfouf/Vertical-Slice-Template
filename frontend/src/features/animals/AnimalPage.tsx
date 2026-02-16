@@ -6,6 +6,7 @@ import AnimalDataTable from "./AnimalDataTable";
 import AddUpdateAnimal from "./add-update-animal";
 import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
 import { useDeleteAnimal } from "./use-delete-animal";
+import { isNotFoundError } from "@/lib/api/error-types";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import type { Animal } from "./animal-api";
 
@@ -46,8 +47,12 @@ export default function AnimalPage() {
                     setDeleteDialogOpen(false);
                     setAnimalToDelete(null);
                 },
-                onError: () => {
-                    // Keep dialog open on error so user can retry or cancel
+                onError: (error) => {
+                    // Close dialog on 404 (item already deleted), otherwise keep open for retry
+                    if (isNotFoundError(error)) {
+                        setDeleteDialogOpen(false);
+                        setAnimalToDelete(null);
+                    }
                 },
             });
         }

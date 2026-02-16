@@ -10,6 +10,8 @@ public class VaccinationConfiguration : IEntityTypeConfiguration<Vaccination>
     {
         builder.ToTable("vaccinations");
 
+        builder.HasQueryFilter(a => !a.IsDeleted);
+
         // Primary Key
         builder.HasKey(v => v.Id);
 

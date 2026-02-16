@@ -45,7 +45,9 @@ public static class DeleteVaccination
             {
                 return Result.Failure(VaccinationErrors.NotFound);
             }
-            _db.Vaccinations.Remove(vaccination);
+            vaccination.Delete();
+
+            _db.Vaccinations.Update(vaccination);
             await _db.SaveChangesAsync(cancellationToken);
             return Result.Success;
         }

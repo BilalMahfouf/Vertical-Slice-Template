@@ -75,9 +75,13 @@ export function useTableQuery<TData>({
     queryKey: [queryKey, requestParams],
     queryFn: () => queryFn(requestParams),
     placeholderData: keepPreviousData,
-    staleTime: 30000, // Consider data fresh for 30 seconds
+    staleTime: 10000, // Consider data fresh for 10 seconds
+     retry: (count:number, error:any) => {
+    const status = error?.status ?? error?.response?.status;
+    if (status === 404) return false;
+    return count < 2;
+  },
   });
-
   // State object for TanStack Table
   const state = useMemo((): TableState => ({
     pagination: {
