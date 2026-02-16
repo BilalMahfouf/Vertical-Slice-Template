@@ -132,7 +132,7 @@ public static class CreateVaccination
         /// </remarks>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/Vaccination", async (
+            app.MapPost("/vaccinations", async (
                 CreateVaccinationCommand command,
                 ICommandHandler<CreateVaccinationCommand, Response> handler,
                 CancellationToken ct = default) =>

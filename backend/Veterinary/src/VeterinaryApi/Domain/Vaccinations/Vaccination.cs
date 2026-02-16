@@ -39,11 +39,12 @@ public sealed class Vaccination : Entity
     public void Update(
          string name,
          DateTime givenAt,
-         DateTime? dueTo = null,
+         DateTime? dueTo,
          string? notes = null)
     {
         Name = name;
         GivenAt = givenAt;
+        DueTo = dueTo;
         Notes = notes;
     }
 
