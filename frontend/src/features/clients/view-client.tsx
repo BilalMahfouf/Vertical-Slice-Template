@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { User, Phone, Building, Calendar } from "lucide-react";
+import { User, Phone, Building, Calendar, Hash } from "lucide-react";
 import clientApi from "./client-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 
@@ -67,6 +67,17 @@ export default function ViewClient({ open, onClose, clientId }: ViewClientProps)
               </div>
             ) : client ? (
               <div className="space-y-4">
+                {/* Client ID */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-slate-700">
+                    {t(i18nKeyContainer.client.clientId)}
+                  </label>
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                    <Hash className="h-4 w-4 text-slate-400" />
+                    <span className="text-slate-900 font-mono text-sm">{client.id}</span>
+                  </div>
+                </div>
+
                 {/* Full Name */}
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-slate-700">

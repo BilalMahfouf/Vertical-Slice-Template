@@ -74,6 +74,10 @@ export const ErrorCodes = {
   VISITS_NOT_FOUND: "Visit.VisitsNotFound",
   VISIT_WITH_APPOINTMENT_ALREADY_EXISTS: "Visit.VisitWithAppointmentlAlreadyExist",
   
+  // Vaccination errors
+  VACCINATION_NOT_FOUND: "Vaccination.VaccinationNotFound",
+  VACCINATIONS_NOT_FOUND: "Vaccination.VaccinationsNotFound",
+  
   // Clinic errors
   CLINIC_NOT_FOUND: "Clinic.ClinicNotFound",
   CLINICS_NOT_FOUND: "Clinic.ClinicsNotFound",
@@ -158,6 +162,15 @@ export function parseApiError(error: unknown): ParsedApiError {
  */
 export function isErrorCode(error: ParsedApiError, code: ErrorCode): boolean {
   return error.code === code;
+}
+
+/**
+ * Check if an error is a 404 Not Found error
+ * Useful for handling cases where a resource was already deleted
+ */
+export function isNotFoundError(error: unknown): boolean {
+  const parsedError = parseApiError(error);
+  return parsedError.type === "notFound" || parsedError.status === 404;
 }
 
 /**

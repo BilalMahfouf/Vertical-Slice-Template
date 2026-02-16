@@ -63,6 +63,10 @@
         "visit": {
             "title": "Supprimer la visite",
             "description": "Êtes-vous sûr de vouloir supprimer cette visite ? Cette action est irréversible et supprimera définitivement le dossier de visite."
+        },
+        "vaccination": {
+            "title": "Supprimer la vaccination",
+            "description": "Êtes-vous sûr de vouloir supprimer cet enregistrement de vaccination ? Cette action est irréversible."
         }
     },
     "table": {
@@ -289,7 +293,67 @@
         "noAppointmentsHint": "Entrez un ID de rendez-vous valide pour créer une visite à partir d'un rendez-vous existant.",
         "switchToClientMode": "Sélectionner un client manuellement",
         "appointmentNotFound": "Rendez-vous introuvable",
-        "appointmentInvalidStatus": "Ce rendez-vous n'est pas disponible pour les visites (doit être confirmé ou reprogrammé)"
+        "appointmentInvalidStatus": "Ce rendez-vous n'est pas disponible pour les visites (doit être confirmé ou reprogrammé)",
+        "tabVisits": "Visites"
+    },
+    "vaccination": {
+        "title": "Vaccinations",
+        "vaccinationId": "ID de vaccination",
+        "description": "Consultez et gérez tous les enregistrements de vaccination.",
+        "addVaccination": "Ajouter une vaccination",
+        "addTitle": "Nouvelle vaccination",
+        "addDescription": "Enregistrer une nouvelle vaccination pour un patient.",
+        "updateTitle": "Modifier la vaccination",
+        "updateDescription": "Mettez à jour les informations de vaccination ci-dessous.",
+        "viewTitle": "Détails de la vaccination",
+        "viewDescription": "Voir les informations complètes de la vaccination.",
+        "update": "Modifier la vaccination",
+        "updating": "Mise à jour en cours...",
+        "create": "Créer la vaccination",
+        "creating": "Création en cours...",
+        "delete": "Supprimer",
+        "deleteDialogTitle": "Supprimer la vaccination",
+        "deleteDialogDescription": "Êtes-vous sûr de vouloir supprimer définitivement cet enregistrement de vaccination ? Cette action est irréversible.",
+        "vaccineName": "Nom du vaccin",
+        "vaccineNamePlaceholder": "ex. Rage, Maladie de Carré, Parvovirose",
+        "givenAt": "Date d'administration",
+        "nextDueDate": "Prochaine échéance",
+        "animal": "Animal",
+        "client": "Client",
+        "notes": "Notes",
+        "notesPlaceholder": "Notes supplémentaires sur cette vaccination...",
+        "noNotes": "Aucune note disponible",
+        "visitInfo": "Visite associée",
+        "noVisitLinked": "Aucune visite associée",
+        "modeVisit": "À partir d'une visite",
+        "modeVisitDesc": "Lier la vaccination à une visite existante",
+        "modeClient": "Sélectionner un client",
+        "modeClientDesc": "Sélectionner directement le client et l'animal",
+        "searchVisit": "Rechercher une visite",
+        "searchVisitPlaceholder": "Entrez l'ID de la visite...",
+        "visitFound": "Visite trouvée",
+        "visitNotFound": "Visite introuvable",
+        "useThisVisit": "Utiliser cette visite",
+        "step1Title": "Sélectionner la source",
+        "step1Description": "Choisissez de lier à une visite ou de sélectionner un client",
+        "step2Title": "Détails de la vaccination",
+        "step2Description": "Entrez les informations de vaccination",
+        "next": "Suivant",
+        "back": "Retour",
+        "searchPlaceholder": "Rechercher des vaccinations...",
+        "noVaccinations": "Aucune vaccination trouvée.",
+        "visitsTab": "Visites",
+        "vaccinationsTab": "Vaccinations",
+        "tabVaccinations": "Vaccinations",
+        "dueTo": "Prochaine date d'échéance",
+        "noDueDate": "Aucune date d'échéance définie",
+        "overdue": "En retard",
+        "dueSoon": "Bientôt échu",
+        "dueWithinMonth": "Échu dans le mois",
+        "dueLater": "Non urgent",
+        "clientInfo": "Informations du client",
+        "animalInfo": "Informations de l'animal",
+        "relatedVisit": "Visite associée"
     },
     "toast": {
         "client": {
@@ -325,6 +389,14 @@
             "updatedDesc": "Les informations de la visite ont été mises à jour avec succès.",
             "deleted": "Visite supprimée",
             "deletedDesc": "La visite a été supprimée avec succès."
+        },
+        "vaccination": {
+            "created": "Vaccination créée",
+            "createdDesc": "La vaccination a été enregistrée avec succès.",
+            "updated": "Vaccination mise à jour",
+            "updatedDesc": "Les informations de vaccination ont été mises à jour avec succès.",
+            "deleted": "Vaccination supprimée",
+            "deletedDesc": "La vaccination a été supprimée avec succès."
         },
         "notification": {
             "markedAsRead": "Notification lue",
@@ -418,6 +490,14 @@
             "cancelProblemDesc": "Seuls les rendez-vous confirmés ou reprogrammés peuvent être annulés.",
             "operationFailed": "Échec de l'opération visite",
             "operationFailedDesc": "Impossible de terminer l'opération visite. Veuillez réessayer."
+        },
+        "vaccination": {
+            "notFound": "Vaccination introuvable",
+            "notFoundDesc": "La vaccination demandée n'a pas été trouvée.",
+            "listNotFound": "Aucune vaccination trouvée",
+            "listNotFoundDesc": "Aucune vaccination correspondant à vos critères n'a été trouvée.",
+            "operationFailed": "Échec de l'opération vaccination",
+            "operationFailedDesc": "Impossible de terminer l'opération vaccination. Veuillez réessayer."
         },
         "clinic": {
             "notFound": "Clinique introuvable",

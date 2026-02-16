@@ -96,7 +96,6 @@ const visitApi = {
    * @returns Created visit ID (GUID)
    */
   createVisit: async (data: CreateVisitRequest): Promise<string> => {
-    console.log("Creating visit with data:", data);
     const response = await api.post<{ id: string }>('/visits', data);
     if (response.status !== 201) {
       throw new Error('Failed to create visit');

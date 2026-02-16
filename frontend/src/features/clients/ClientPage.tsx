@@ -7,6 +7,7 @@ import AddClient from "./add-client";
 import ViewClient from "./view-client";
 import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
 import { useDeleteClient } from "./use-delete-client";
+import { isNotFoundError } from "@/lib/api/error-types";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import type { Client } from "./client-api";
 
@@ -44,8 +45,12 @@ export default function ClientPage() {
                     setDeleteDialogOpen(false);
                     setClientToDelete(null);
                 },
-                onError: () => {
-                    // Keep dialog open on error so user can retry or cancel
+                onError: (error) => {
+                    // Close dialog on 404 (item already deleted), otherwise keep open for retry
+                    if (isNotFoundError(error)) {
+                        setDeleteDialogOpen(false);
+                        setClientToDelete(null);
+                    }
                 },
             });
         }

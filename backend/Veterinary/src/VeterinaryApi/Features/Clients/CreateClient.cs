@@ -7,6 +7,7 @@ using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Clients;
 using VeterinaryApi.Domain.Clinics;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clients;
 
@@ -49,7 +50,9 @@ public static class CreateClient
                     ClinicErrors.ClinicNotFound());
             }
             var fullName = $"{command.firstName} {command.lastName}";
-            var isDuplicate = await _db.Clients.AsNoTracking()
+            var isDuplicate = await _db.Clients
+                .ForTenant(_currentUser.UserId!.Value)
+                .AsNoTracking()
                 .AnyAsync(e =>
                     e.ClinicId == clinic.Id &&
                     e.FullName == fullName &&
@@ -62,7 +65,9 @@ public static class CreateClient
                         fullName,
                         command.phone));
             }
-            var isExistWithSameName = await _db.Clients.AsNoTracking()
+            var isExistWithSameName = await _db.Clients
+                .ForTenant(_currentUser.UserId!.Value)
+                .AsNoTracking()
                 .AnyAsync(e =>
                     e.ClinicId == clinic.Id &&
                     e.FullName == fullName,

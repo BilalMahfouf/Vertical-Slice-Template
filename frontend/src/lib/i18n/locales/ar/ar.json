@@ -63,6 +63,10 @@
         "visit": {
             "title": "حذف الزيارة",
             "description": "هل أنت متأكد أنك تريد حذف هذه الزيارة؟ لا يمكن التراجع عن هذا الإجراء وسيتم حذف سجل الزيارة نهائياً."
+        },
+        "vaccination": {
+            "title": "حذف التطعيم",
+            "description": "هل أنت متأكد أنك تريد حذف سجل التطعيم هذا؟ لا يمكن التراجع عن هذا الإجراء."
         }
     },
     "table": {
@@ -289,7 +293,67 @@
         "noAppointmentsHint": "أدخل معرف موعد صالح لإنشاء زيارة من موعد موجود.",
         "switchToClientMode": "اختر العميل يدوياً بدلاً من ذلك",
         "appointmentNotFound": "لم يتم العثور على الموعد",
-        "appointmentInvalidStatus": "هذا الموعد غير متاح للزيارات (يجب أن يكون مؤكداً أو معاد جدولته)"
+        "appointmentInvalidStatus": "هذا الموعد غير متاح للزيارات (يجب أن يكون مؤكداً أو معاد جدولته)",
+        "tabVisits": "الزيارات"
+    },
+    "vaccination": {
+        "title": "التطعيمات",
+        "vaccinationId": "معرف التطعيم",
+        "description": "عرض وإدارة جميع سجلات التطعيم.",
+        "addVaccination": "إضافة تطعيم",
+        "addTitle": "تطعيم جديد",
+        "addDescription": "تسجيل تطعيم جديد لمريض.",
+        "updateTitle": "تحديث التطعيم",
+        "updateDescription": "قم بتحديث معلومات التطعيم أدناه.",
+        "viewTitle": "تفاصيل التطعيم",
+        "viewDescription": "عرض معلومات التطعيم الكاملة.",
+        "update": "تحديث التطعيم",
+        "updating": "جاري التحديث...",
+        "create": "إنشاء التطعيم",
+        "creating": "جاري الإنشاء...",
+        "delete": "حذف",
+        "deleteDialogTitle": "حذف التطعيم",
+        "deleteDialogDescription": "هل أنت متأكد أنك تريد حذف سجل التطعيم هذا نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
+        "vaccineName": "اسم اللقاح",
+        "vaccineNamePlaceholder": "مثال: داء الكلب، السعار، البارفو",
+        "givenAt": "تاريخ الإعطاء",
+        "nextDueDate": "الموعد القادم",
+        "animal": "الحيوان",
+        "client": "العميل",
+        "notes": "ملاحظات",
+        "notesPlaceholder": "ملاحظات إضافية حول هذا التطعيم...",
+        "noNotes": "لا توجد ملاحظات متاحة",
+        "visitInfo": "الزيارة المرتبطة",
+        "noVisitLinked": "لا توجد زيارة مرتبطة",
+        "modeVisit": "من زيارة",
+        "modeVisitDesc": "ربط التطعيم بزيارة موجودة",
+        "modeClient": "اختيار عميل",
+        "modeClientDesc": "اختيار العميل والحيوان مباشرة",
+        "searchVisit": "البحث عن زيارة",
+        "searchVisitPlaceholder": "أدخل معرف الزيارة...",
+        "visitFound": "تم العثور على الزيارة",
+        "visitNotFound": "لم يتم العثور على الزيارة",
+        "useThisVisit": "استخدام هذه الزيارة",
+        "step1Title": "اختيار المصدر",
+        "step1Description": "اختر الربط من زيارة أو اختيار عميل",
+        "step2Title": "تفاصيل التطعيم",
+        "step2Description": "أدخل معلومات التطعيم",
+        "next": "التالي",
+        "back": "رجوع",
+        "searchPlaceholder": "البحث في التطعيمات...",
+        "noVaccinations": "لم يتم العثور على تطعيمات.",
+        "visitsTab": "الزيارات",
+        "vaccinationsTab": "التطعيمات",
+        "tabVaccinations": "التطعيمات",
+        "dueTo": "تاريخ الاستحقاق التالي",
+        "noDueDate": "لم يتم تحديد تاريخ استحقاق",
+        "overdue": "متأخر",
+        "dueSoon": "مستحق قريباً",
+        "dueWithinMonth": "مستحق خلال الشهر",
+        "dueLater": "غير عاجل",
+        "clientInfo": "معلومات العميل",
+        "animalInfo": "معلومات الحيوان",
+        "relatedVisit": "الزيارة المرتبطة"
     },
     "toast": {
         "client": {
@@ -325,6 +389,14 @@
             "updatedDesc": "تم تحديث معلومات الزيارة بنجاح.",
             "deleted": "تم حذف الزيارة",
             "deletedDesc": "تم حذف الزيارة بنجاح."
+        },
+        "vaccination": {
+            "created": "تم إنشاء التطعيم",
+            "createdDesc": "تم تسجيل التطعيم بنجاح.",
+            "updated": "تم تحديث التطعيم",
+            "updatedDesc": "تم تحديث معلومات التطعيم بنجاح.",
+            "deleted": "تم حذف التطعيم",
+            "deletedDesc": "تم حذف التطعيم بنجاح."
         },
         "notification": {
             "markedAsRead": "تم قراءة الإشعار",
@@ -418,6 +490,14 @@
             "cancelProblemDesc": "يمكن إلغاء المواعيد المؤكدة أو المعاد جدولتها فقط.",
             "operationFailed": "فشلت عملية الزيارة",
             "operationFailedDesc": "تعذر إكمال عملية الزيارة. يرجى المحاولة مرة أخرى."
+        },
+        "vaccination": {
+            "notFound": "التطعيم غير موجود",
+            "notFoundDesc": "لم يتم العثور على التطعيم المطلوب.",
+            "listNotFound": "لم يتم العثور على تطعيمات",
+            "listNotFoundDesc": "لم يتم العثور على تطعيمات تطابق معاييرك.",
+            "operationFailed": "فشلت عملية التطعيم",
+            "operationFailedDesc": "تعذر إكمال عملية التطعيم. يرجى المحاولة مرة أخرى."
         },
         "clinic": {
             "notFound": "العيادة غير موجودة",

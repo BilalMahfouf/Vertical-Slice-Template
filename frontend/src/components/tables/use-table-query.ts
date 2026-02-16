@@ -2,6 +2,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useState, useCallback, useMemo } from "react";
 import type { SortingState } from "@tanstack/react-table";
 import type { TableRequest, PagedList, TableState } from "./types";
+import { isNotFoundError } from "@/lib/api/error-types";
 
 interface UseTableQueryOptions<TData> {
   /** Unique query key for caching */
@@ -71,12 +72,32 @@ export function useTableQuery<TData>({
   }, [pageIndex, pageSize, sorting, globalFilter]);
 
   // Query with automatic caching and background updates
-  const { data, isLoading, isFetching, error, refetch } = useQuery({
+  const { data: queryData, isLoading, isFetching, error, refetch } = useQuery({
     queryKey: [queryKey, requestParams],
     queryFn: () => queryFn(requestParams),
     placeholderData: keepPreviousData,
-    staleTime: 30000, // Consider data fresh for 30 seconds
+    staleTime: 10000, // Consider data fresh for 10 seconds
+    retry: (count: number, err: unknown) => {
+      // Don't retry on 404
+      if (isNotFoundError(err)) return false;
+      return count < 2;
+    },
   });
+
+  // Return empty data on 404 instead of keeping previous data
+  const data = useMemo(() => {
+    if (error && isNotFoundError(error)) {
+      return { 
+        item: [], 
+        totalCount: 0, 
+        page: 1, 
+        pageSize, 
+        hasNextPage: false, 
+        hasPreviousPage: false 
+      } as PagedList<TData>;
+    }
+    return queryData;
+  }, [queryData, error, pageSize]);
 
   // State object for TanStack Table
   const state = useMemo((): TableState => ({
