@@ -76,7 +76,6 @@ const vaccinationApi = {
    */
   createVaccination: async (data: CreateVaccinationRequest): Promise<string> => {
     const response = await api.post<{ id: string }>('/vaccinations', data);
-    console.log('Create response:', response);
     if (response.status !== 201 && response.status !== 200) {
       throw new Error('Failed to create vaccination');
     }
@@ -90,7 +89,6 @@ const vaccinationApi = {
    */
   updateVaccination: async (id: string, data: UpdateVaccinationRequest): Promise<void> => {
     const response = await api.put(`/vaccinations/${id}`, data);
-    console.log('Update response:', response);
     if (response.status !== 200 && response.status !== 204) {
       throw new Error('Failed to update vaccination');
     }

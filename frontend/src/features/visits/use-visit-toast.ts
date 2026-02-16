@@ -47,7 +47,7 @@ export function useVisitToast() {
     // Map visit-specific error codes to i18n keys
     let titleKey: string;
     let descKey: string;
-    console.log("Parsed visit error:", parsedError);
+
     switch (parsedError.code) {
       case ErrorCodes.VISIT_NOT_FOUND:
         titleKey = i18nKeyContainer.errors.visit.notFound;

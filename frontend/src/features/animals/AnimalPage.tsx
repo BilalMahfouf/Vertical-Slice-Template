@@ -31,7 +31,6 @@ export default function AnimalPage() {
     };
 
     const handleView = (animal: Animal) => {
-        console.log("View animal:", animal);
         // TODO: Implement view functionality
     };
 

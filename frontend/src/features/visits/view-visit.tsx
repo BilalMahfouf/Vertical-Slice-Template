@@ -51,7 +51,6 @@ export default function ViewVisit({ open, onClose, visitId }: ViewVisitProps) {
     },
     enabled: open && !!visitId,
   });
-  console.log("ViewVisit - fetched visit data:", visit);
 
   /**
    * Format date to localized string

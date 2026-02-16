@@ -14,6 +14,7 @@ import AddUpdateVaccination from "@/features/vaccinations/add-vaccination";
 import ViewVaccination from "@/features/vaccinations/view-vaccination";
 import { useDeleteVaccination } from "@/features/vaccinations/use-delete-vaccination";
 import { type VaccinationTableResponse } from "@/features/vaccinations/vaccination-api";
+import { isNotFoundError } from "@/lib/api/error-types";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 
 export default function VisitPage() {
@@ -89,6 +90,12 @@ export default function VisitPage() {
         onSuccess: () => {
           handleCloseDelete();
         },
+        onError: (error) => {
+          // Close dialog on 404 (item already deleted), otherwise keep open for retry
+          if (isNotFoundError(error)) {
+            handleCloseDelete();
+          }
+        },
       });
     }
   };
@@ -138,6 +145,12 @@ export default function VisitPage() {
       deleteVaccination(vaccinationToDelete.id, {
         onSuccess: () => {
           handleCloseDeleteVaccination();
+        },
+        onError: (error) => {
+          // Close dialog on 404 (item already deleted), otherwise keep open for retry
+          if (isNotFoundError(error)) {
+            handleCloseDeleteVaccination();
+          }
         },
       });
     }
