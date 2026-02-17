@@ -16,24 +16,31 @@ namespace VeterinaryApi.Features.Prescriptions;
 
 public static class CreatePricription
 {
+    public sealed record Request(
+         string? PatientFullName = null,
+        string? AnimalType = null,
+        string? PatientAge = null,
+        string? PatientWeight = null,
+        List<string>? Medicines = null
+            );
     public sealed record Command(
+        bool isEmpty = false,
         string? PatientFullName = null,
         string? AnimalType = null,
         string? PatientAge = null,
         string? PatientWeight = null,
-        string? Date = null,
         List<string>? Medicines = null
     ) : ICommand<Response>;
 
     public sealed record PdfData(
         string CabinetName,
         string DoctorName,
+        string? Phone = null,
         string? PatientFullName = null,
         string? AnimalType = null,
         string? PatientAge = null,
         string? PatientWeight = null,
         string? Date = null,
-        string? Phone = null,
         List<string>? Medicines = null
         );
 
@@ -99,17 +106,25 @@ public static class CreatePricription
 
             var template = Handlebars.Compile(templateContent);
             var date = GetDateInFrench(DateTime.Now);
-            var pdfParam = new PdfData(
-                data.ClinicName,
-                data.DoctorName,
-                command.PatientFullName,
-                command.AnimalType,
-                command.PatientAge,
-                command.PatientWeight,
-                date,
-                data.ClinicPhone,
-                command.Medicines);
-
+            PdfData pdfParam;
+            if (command.isEmpty)
+            {
+                pdfParam = new PdfData(
+                    data.ClinicName, data.DoctorName, data.ClinicPhone);
+            }
+            else
+            {
+                pdfParam = new PdfData(
+                    data.ClinicName,
+                    data.DoctorName,
+                    data.ClinicPhone,
+                    command.PatientFullName,
+                    command.AnimalType,
+                    command.PatientAge,
+                    command.PatientWeight,
+                    date,
+                    command.Medicines);
+            }
             var html = template(pdfParam);
             if (html is null)
             {
@@ -141,10 +156,40 @@ public static class CreatePricription
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/prescriptions", async (
-                 CreatePricription.Command command,
+                 CreatePricription.Request request,
                 [FromServices] ICommandHandler<Command, Response> handler,
                 CancellationToken ct = default) =>
             {
+                var command = new Command(
+                    false,
+                    request.PatientFullName,
+                    request.AnimalType,
+                    request.PatientAge,
+                    request.PatientWeight,
+                    request.Medicines);
+                var result = await handler.Handle(command, ct);
+                if (result.IsSuccess)
+                {
+                    return Results.File(
+                        result.Value.PdfData,
+                        "application/pdf",
+                        "prescription.pdf");
+                }
+                return result.Problem();
+            }).WithTags("Prescriptions")
+            .RequireAuthorization();
+        }
+    }
+
+    public sealed class Endpoint1 : IEndpoint
+    {
+        public void AddRoutes(IEndpointRouteBuilder app)
+        {
+            app.MapGet("/prescriptions/empty", async (
+                ICommandHandler<CreatePricription.Command, Response> handler,
+                CancellationToken ct = default) =>
+            {
+                var command = new Command(true);
                 var result = await handler.Handle(command, ct);
                 if (result.IsSuccess)
                 {
