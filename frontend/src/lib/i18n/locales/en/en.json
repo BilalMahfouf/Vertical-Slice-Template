@@ -822,5 +822,26 @@
             "error": "Reset Failed",
             "errorMessage": "Unable to reset password. The link may have expired."
         }
+    },
+    "prescription": {
+        "title": "Generate Prescription",
+        "description": "Fill in the details to generate a prescription PDF",
+        "patientFullName": "Patient Full Name",
+        "animalType": "Animal Type",
+        "patientAge": "Patient Age",
+        "patientWeight": "Patient Weight",
+        "date": "Date",
+        "medicines": "Medicines",
+        "medicineName": "Medicine Name",
+        "addMedicine": "Add Medicine",
+        "removeMedicine": "Remove",
+        "noMedicines": "No medicines added yet",
+        "maxMedicines": "Maximum 10 medicines allowed",
+        "getFullPrescription": "Get Full Prescription",
+        "getEmptyPrescription": "Get Empty Prescription",
+        "generating": "Generating...",
+        "downloading": "Downloading...",
+        "successMessage": "Prescription generated successfully",
+        "errorMessage": "Failed to generate prescription"
     }
 }
