@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 // import { toast } from "sonner";
-import { PawPrint, Lock, Mail } from "lucide-react";
+import { PawPrint, Lock, Mail, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { authApi } from '@/lib/api/auth';
@@ -101,7 +101,12 @@ export default function Login() {
                   />
                 </div>
               </div>
-              <Button type="submit" className="w-full cursor-pointer bg-primary text-white h-11 font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+              <Button 
+                type="submit" 
+                className="w-full cursor-pointer bg-primary text-white h-11 font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
                 {t(i18nKeyContainer.signIn)}
               </Button>
             </form>

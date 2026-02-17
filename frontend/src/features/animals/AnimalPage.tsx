@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimalDataTable from "./AnimalDataTable";
 import AddUpdateAnimal from "./add-update-animal";
+import ViewAnimal from "./view-animal";
 import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
 import { useDeleteAnimal } from "./use-delete-animal";
 import { isNotFoundError } from "@/lib/api/error-types";
@@ -13,6 +14,7 @@ import type { Animal } from "./animal-api";
 export default function AnimalPage() {
     const [addAnimalOpen, setAddAnimalOpen] = useState(false);
     const [editAnimalId, setEditAnimalId] = useState<string | null>(null);
+    const [viewAnimalId, setViewAnimalId] = useState<string | null>(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [animalToDelete, setAnimalToDelete] = useState<Animal | null>(null);
     
@@ -31,7 +33,7 @@ export default function AnimalPage() {
     };
 
     const handleView = (animal: Animal) => {
-        // TODO: Implement view functionality
+        setViewAnimalId(animal.id);
     };
 
     const handleDelete = (animal: Animal) => {
@@ -106,6 +108,11 @@ export default function AnimalPage() {
                 description={t(i18nKeyContainer.deleteDialog.animal.description)}
                 itemName={animalToDelete?.name}
                 isLoading={isDeleting}
+            />
+            <ViewAnimal
+                open={!!viewAnimalId}
+                onClose={() => setViewAnimalId(null)}
+                animalId={viewAnimalId || ""}
             />
         </div>
     );

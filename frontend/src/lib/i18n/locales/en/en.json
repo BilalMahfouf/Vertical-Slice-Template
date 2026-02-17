@@ -88,6 +88,8 @@
         "addDescription": "Enter the animal's information below",
         "updateTitle": "Update Animal",
         "updateDescription": "Update the animal's information below",
+        "viewTitle": "Animal Details",
+        "viewDescription": "View complete animal information",
         "adding": "Adding...",
         "updating": "Updating...",
         "cancel": "Cancel",
@@ -128,7 +130,11 @@
         "clientFound": "Client found",
         "clientNotFound": "Client not found",
         "clientInfo": "Client Information",
-        "animalInfo": "Animal Information"
+        "animalInfo": "Animal Information",
+        "animalId": "Animal ID",
+        "registeredOn": "Registered On",
+        "close": "Close",
+        "noData": "Not available"
     },
     "appointment": {
         "title": "Appointments",

@@ -88,6 +88,8 @@
         "addDescription": "Entrez les informations de l'animal ci-dessous",
         "updateTitle": "Modifier l'animal",
         "updateDescription": "Mettez à jour les informations de l'animal ci-dessous",
+        "viewTitle": "Détails de l'animal",
+        "viewDescription": "Voir les informations complètes de l'animal",
         "adding": "Ajout en cours...",
         "updating": "Mise à jour en cours...",
         "cancel": "Annuler",
@@ -128,7 +130,11 @@
         "clientFound": "Client trouvé",
         "clientNotFound": "Client non trouvé",
         "clientInfo": "Informations du client",
-        "animalInfo": "Informations de l'animal"
+        "animalInfo": "Informations de l'animal",
+        "animalId": "ID de l'animal",
+        "registeredOn": "Enregistré le",
+        "close": "Fermer",
+        "noData": "Non disponible"
     },
     "appointment": {
         "title": "Rendez-vous",

@@ -88,6 +88,8 @@
         "addDescription": "أدخل معلومات الحيوان أدناه",
         "updateTitle": "تحديث الحيوان",
         "updateDescription": "قم بتحديث معلومات الحيوان أدناه",
+        "viewTitle": "تفاصيل الحيوان",
+        "viewDescription": "عرض معلومات الحيوان الكاملة",
         "adding": "جاري الإضافة...",
         "updating": "جاري التحديث...",
         "cancel": "إلغاء",
@@ -128,7 +130,11 @@
         "clientFound": "تم العثور على العميل",
         "clientNotFound": "لم يتم العثور على العميل",
         "clientInfo": "معلومات العميل",
-        "animalInfo": "معلومات الحيوان"
+        "animalInfo": "معلومات الحيوان",
+        "animalId": "معرف الحيوان",
+        "registeredOn": "تاريخ التسجيل",
+        "close": "إغلاق",
+        "noData": "غير متوفر"
     },
     "appointment": {
         "title": "المواعيد",
