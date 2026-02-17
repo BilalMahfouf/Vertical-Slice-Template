@@ -684,5 +684,26 @@
             "error": "Échec de la réinitialisation",
             "errorMessage": "Impossible de réinitialiser le mot de passe. Le lien a peut-être expiré."
         }
+    },
+    "prescription": {
+        "title": "Générer une ordonnance",
+        "description": "Remplissez les détails pour générer une ordonnance PDF",
+        "patientFullName": "Nom complet du patient",
+        "animalType": "Type d'animal",
+        "patientAge": "Âge du patient",
+        "patientWeight": "Poids du patient",
+        "date": "Date",
+        "medicines": "Médicaments",
+        "medicineName": "Nom du médicament",
+        "addMedicine": "Ajouter un médicament",
+        "removeMedicine": "Supprimer",
+        "noMedicines": "Aucun médicament ajouté",
+        "maxMedicines": "Maximum 10 médicaments autorisés",
+        "getFullPrescription": "Obtenir l'ordonnance complète",
+        "getEmptyPrescription": "Obtenir une ordonnance vide",
+        "generating": "Génération...",
+        "downloading": "Téléchargement...",
+        "successMessage": "Ordonnance générée avec succès",
+        "errorMessage": "Échec de la génération de l'ordonnance"
     }
 }

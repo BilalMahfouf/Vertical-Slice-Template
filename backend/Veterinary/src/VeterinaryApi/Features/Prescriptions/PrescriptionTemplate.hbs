@@ -35,7 +35,7 @@
         width: 100%;
         border-bottom: 3px double #005f9e; /* Professional heavy line */
         padding-bottom: 15px;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
 
     .header-left {
@@ -66,7 +66,7 @@
     }
 
     .arabic-text {
-        font-family: 'Courier New', Courier, monospace; /* Fallback for Arabic if specific font not available */
+        font-family: 'Courier New', Courier, monospace; 
         direction: rtl; 
     }
 
@@ -75,7 +75,7 @@
        ---------------------------------------------------- */
     .doc-title {
         text-align: center;
-        margin: 20px 0 30px 0;
+        margin: 10px 0 20px 0;
     }
 
     .doc-title h1 {
@@ -84,10 +84,10 @@
         color: #005f9e;
         font-weight: 900;
         text-transform: uppercase;
-/*        border: 2px solid #333;*/
         display: inline-block;
         padding: 5px 20px;
-/*        border-radius: 4px;*/
+        letter-spacing: 2px;
+/*        border-bottom: 2px solid #005f9e;*/
     }
     
     .doc-title span {
@@ -99,40 +99,38 @@
 
     /* ----------------------------------------------------
        INFO GRID (Patient Details)
-       Using tables ensures alignment in PDF generators
        ---------------------------------------------------- */
     .info-table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 30px;
+        margin-bottom: 20px; 
         font-size: 11pt;
     }
 
     .info-table td {
-        padding: 8px 5px;
-        vertical-align: bottom;
+        padding: 5px 5px;
+        vertical-align: middle;
     }
 
     .label {
         font-weight: bold;
         color: #444;
         white-space: nowrap;
-        width: 1%;
+        width: 120px; 
     }
 
     .value {
-/*        border-bottom: 1px dotted #000;*/
         font-weight: 600;
         color: #000;
         padding-left: 10px;
-        width: 45%; 
-        font-family: 'Courier New', monospace; /* Looks like typed data */
+        width: auto; 
+        font-family: 'Courier New', monospace; 
     }
 
     .label-ar {
         text-align: right;
         direction: rtl;
-        width: 1%;
+        width: 100px;
         white-space: nowrap;
         font-weight: bold;
     }
@@ -143,7 +141,7 @@
     .rx-section {
         margin-top: 10px;
         position: relative;
-        min-height: 500px; /* Ensure space for content */
+        min-height: 450px; 
     }
 
     .rx-header {
@@ -154,11 +152,10 @@
         margin-bottom: 15px;
     }
 
-    /* Numbered list styling without relying on <ol> padding quirks */
     .med-table {
         width: 100%;
         border-collapse: separate;
-        border-spacing: 0 15px; /* Space between rows */
+        border-spacing: 0 15px; 
     }
 
     .med-number {
@@ -185,7 +182,7 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        padding: 0 20mm 20mm 20mm; /* Match body padding */
+        padding: 0 20mm 20mm 20mm;
         box-sizing: border-box;
     }
 
@@ -240,39 +237,44 @@
         </tr>
     </table>
 
-    <!-- Title -->
-    <div class="doc-title">
-        <h1>ORDONNANCE</h1>
-        <!--<span class="arabic-text">وصفة طبية</span>-->
-    </div>
-
     <!-- Patient Info Grid -->
     <table class="info-table">
+        <!-- Row 1 -->
         <tr>
-            <!-- Row 1 -->
             <td class="label">Date:</td>
             <td class="value">{{date}}</td>
             <td class="label-ar">التاريخ</td>
-            
-            <td width="20"></td> <!-- Spacer -->
-
+        </tr>
+        <!-- Row 2 -->
+        <tr>
             <td class="label">Propriétaire:</td>
             <td class="value">{{patientFullName}}</td>
             <td class="label-ar">المالك</td>
         </tr>
+        <!-- Row 3 -->
         <tr>
-            <!-- Row 2 -->
             <td class="label">Espèce:</td>
             <td class="value">{{animalType}}</td>
             <td class="label-ar">النوع</td>
-
-             <td width="20"></td> <!-- Spacer -->
-
-            <td class="label">Poids/Age:</td>
-            <td class="value">{{patientWeight}} / {{patientAge}}</td>
-            <td class="label-ar">الوزن/العمر</td>
+        </tr>
+        <!-- Row 4 -->
+        <tr>
+            <td class="label">Poids:</td>
+            <td class="value">{{patientWeight}}</td>
+            <td class="label-ar">الوزن</td>
+        </tr>
+        <!-- Row 5 -->
+        <tr>
+            <td class="label">Age:</td>
+            <td class="value">{{patientAge}}</td>
+            <td class="label-ar">العمر</td>
         </tr>
     </table>
+
+    <!-- Title -->
+    <div class="doc-title">
+        <h1>ORDONNANCE</h1>
+    </div>
 
     <!-- Medicines -->
     <div class="rx-section">
@@ -281,7 +283,6 @@
         <table class="med-table">
             {{#each medicines}}
             <tr>
-                <!-- Use CSS counter if index isn't available, but simple bullet is safer -->
                 <td class="med-number">.</td> 
                 <td class="med-content">{{this}}</td>
             </tr>

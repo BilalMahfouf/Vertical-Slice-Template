@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Stethoscope, Syringe } from "lucide-react";
+import { Plus, Stethoscope, Syringe, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
@@ -16,6 +16,7 @@ import { useDeleteVaccination } from "@/features/vaccinations/use-delete-vaccina
 import { type VaccinationTableResponse } from "@/features/vaccinations/vaccination-api";
 import { isNotFoundError } from "@/lib/api/error-types";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
+import GetPrescriptionDialog from "@/features/prescriptions/get-prescription-dialog";
 
 export default function VisitPage() {
   // Tab state
@@ -38,6 +39,9 @@ export default function VisitPage() {
   // Selected vaccination for view/edit/delete
   const [selectedVaccinationId, setSelectedVaccinationId] = useState<string | null>(null);
   const [vaccinationToDelete, setVaccinationToDelete] = useState<VaccinationTableResponse | null>(null);
+
+  // Prescription dialog state
+  const [prescriptionDialogOpen, setPrescriptionDialogOpen] = useState(false);
   
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
@@ -183,6 +187,16 @@ export default function VisitPage() {
               {t(i18nKeyContainer.visit.addVisit)}
             </Button>
           )}
+          {activeTab === "visits" && (
+            <Button
+              variant="outline"
+              className="gap-2  w-full sm:w-auto cursor-pointer transition-colors border-slate-200 hover:bg-slate-100 focus:bg-slate-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-50"
+              onClick={() => setPrescriptionDialogOpen(true)}
+            >
+              <FileText className="h-4 w-4" />
+              {t(i18nKeyContainer.prescription.title)}
+            </Button>
+          )}
           {activeTab === "vaccinations" && (
             <Button
               className="gap-2 cursor-pointer w-full sm:w-auto"
@@ -283,6 +297,12 @@ export default function VisitPage() {
         description={t(i18nKeyContainer.deleteDialog.vaccination.description)}
         itemName={vaccinationToDelete?.vaccinationName}
         isLoading={isDeletingVaccination}
+      />
+
+      {/* Prescription Dialog */}
+      <GetPrescriptionDialog
+        open={prescriptionDialogOpen}
+        onClose={() => setPrescriptionDialogOpen(false)}
       />
     </div>
   );

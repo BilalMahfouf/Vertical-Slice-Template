@@ -684,5 +684,26 @@
             "error": "فشلت العملية",
             "errorMessage": "تعذر إعادة تعيين كلمة المرور. ربما انتهت صلاحية الرابط."
         }
+    },
+    "prescription": {
+        "title": "إنشاء وصفة طبية",
+        "description": "املأ التفاصيل لإنشاء ملف PDF للوصفة الطبية",
+        "patientFullName": "الاسم الكامل للمريض",
+        "animalType": "نوع الحيوان",
+        "patientAge": "عمر المريض",
+        "patientWeight": "وزن المريض",
+        "date": "التاريخ",
+        "medicines": "الأدوية",
+        "medicineName": "اسم الدواء",
+        "addMedicine": "إضافة دواء",
+        "removeMedicine": "حذف",
+        "noMedicines": "لم تتم إضافة أي أدوية بعد",
+        "maxMedicines": "الحد الأقصى 10 أدوية",
+        "getFullPrescription": "الحصول على الوصفة الكاملة",
+        "getEmptyPrescription": "الحصول على وصفة فارغة",
+        "generating": "جاري الإنشاء...",
+        "downloading": "جاري التحميل...",
+        "successMessage": "تم إنشاء الوصفة الطبية بنجاح",
+        "errorMessage": "فشل في إنشاء الوصفة الطبية"
     }
 }

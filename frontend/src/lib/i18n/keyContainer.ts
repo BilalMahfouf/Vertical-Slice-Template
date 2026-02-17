@@ -672,6 +672,27 @@ const i18nKeyContainer = {
         animalInfo: 'vaccination.animalInfo',
         relatedVisit: 'vaccination.relatedVisit',
     },
+    prescription: {
+        title: 'prescription.title',
+        description: 'prescription.description',
+        patientFullName: 'prescription.patientFullName',
+        animalType: 'prescription.animalType',
+        patientAge: 'prescription.patientAge',
+        patientWeight: 'prescription.patientWeight',
+        date: 'prescription.date',
+        medicines: 'prescription.medicines',
+        medicineName: 'prescription.medicineName',
+        addMedicine: 'prescription.addMedicine',
+        removeMedicine: 'prescription.removeMedicine',
+        noMedicines: 'prescription.noMedicines',
+        maxMedicines: 'prescription.maxMedicines',
+        getFullPrescription: 'prescription.getFullPrescription',
+        getEmptyPrescription: 'prescription.getEmptyPrescription',
+        generating: 'prescription.generating',
+        downloading: 'prescription.downloading',
+        successMessage: 'prescription.successMessage',
+        errorMessage: 'prescription.errorMessage',
+    },
 };
 
 export default i18nKeyContainer;
