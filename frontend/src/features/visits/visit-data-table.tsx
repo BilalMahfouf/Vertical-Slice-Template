@@ -6,7 +6,7 @@ import {
   type RowAction,
 } from "@/components/tables";
 import visitApi, { type VisitTableResponse } from "./visit-api";
-import { Calendar, User, PawPrint, Eye, Pencil, Trash2 } from "lucide-react";
+import { Calendar, User, PawPrint, Eye, Pencil, Trash2, DollarSign} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { cn } from "@/lib/utils";
@@ -21,37 +21,93 @@ interface VisitDataTableProps {
  * Visit Type Badge Component
  * Displays visit type with color-coded badge styling
  */
-function VisitTypeBadge({ visitType }: { visitType: string }) {
-  const { t } = useTranslation();
-  const normalizedType = visitType.toLowerCase();
+// function VisitTypeBadge({ visitType }: { visitType: string }) {
+//   const { t } = useTranslation();
+//   const normalizedType = visitType.toLowerCase();
 
-  // Configuration for different visit types with corresponding colors
-  const typeConfig: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-    clinic: {
-      bg: "bg-blue-50",
-      text: "text-blue-700",
-      dot: "bg-blue-500",
-      label: t(i18nKeyContainer.visit.clinic),
+//   // Configuration for different visit types with corresponding colors
+//   const typeConfig: Record<string, { bg: string; text: string; dot: string; label: string }> = {
+//     clinic: {
+//       bg: "bg-blue-50",
+//       text: "text-blue-700",
+//       dot: "bg-blue-500",
+//       label: t(i18nKeyContainer.visit.clinic),
+//     },
+//     field: {
+//       bg: "bg-green-50",
+//       text: "text-green-700",
+//       dot: "bg-green-500",
+//       label: t(i18nKeyContainer.visit.field),
+//     },
+//     emergency: {
+//       bg: "bg-red-50",
+//       text: "text-red-700",
+//       dot: "bg-red-500",
+//       label: t(i18nKeyContainer.visit.emergency),
+//     },
+//   };
+
+//   const config = typeConfig[normalizedType] || {
+//     bg: "bg-slate-50",
+//     text: "text-slate-700",
+//     dot: "bg-slate-400",
+//     label: visitType,
+//   };
+
+//   return (
+//     <span
+//       className={cn(
+//         "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+//         config.bg,
+//         config.text
+//       )}
+//     >
+//       <span className={cn("h-1.5 w-1.5 rounded-full", config.dot)} />
+//       {config.label}
+//     </span>
+//   );
+// }
+
+/**
+ * Payment Status Badge Component
+ * Displays payment status with color-coded badge styling
+ */
+function PaymentStatusBadge({ paymentStatus }: { paymentStatus: string }) {
+  const { t } = useTranslation();
+  const normalizedStatus = paymentStatus.toLowerCase();
+
+  const statusConfig: Record<string, { bg: string; text: string; dot: string; label: string }> = {
+    pending: {
+      bg: "bg-amber-50",
+      text: "text-amber-700",
+      dot: "bg-amber-500",
+      label: t(i18nKeyContainer.visit.paymentStatusPending),
     },
-    field: {
+    paid: {
       bg: "bg-green-50",
       text: "text-green-700",
       dot: "bg-green-500",
-      label: t(i18nKeyContainer.visit.field),
+      label: t(i18nKeyContainer.visit.paymentStatusPaid),
     },
-    emergency: {
-      bg: "bg-red-50",
-      text: "text-red-700",
-      dot: "bg-red-500",
-      label: t(i18nKeyContainer.visit.emergency),
+    partiallypaid: {
+      bg: "bg-blue-50",
+      text: "text-blue-700",
+      dot: "bg-blue-500",
+      label: t(i18nKeyContainer.visit.paymentStatusPartiallyPaid),
+    },
+    refunded: {
+      bg: "bg-slate-50",
+      text: "text-slate-700",
+      dot: "bg-slate-400",
+      label: t(i18nKeyContainer.visit.paymentStatusRefunded),
     },
   };
 
-  const config = typeConfig[normalizedType] || {
+  const config = statusConfig[normalizedStatus] || {
     bg: "bg-slate-50",
     text: "text-slate-700",
     dot: "bg-slate-400",
-    label: visitType,
+    label: paymentStatus,
   };
 
   return (
@@ -132,19 +188,7 @@ export default function VisitDataTable({
         );
       },
     },
-    {
-      // Visit Type Column - Displays color-coded badge
-      accessorKey: "visitType",
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t(i18nKeyContainer.visit.visitType)}
-          enableSorting={true}
-        />
-      ),
-      cell: ({ row }) => <VisitTypeBadge visitType={row.original.visitType} />,
-    },
-    {
+   {
       // Animal Column - Displays animal name and species with paw icon
       accessorKey: "animalName",
       header: ({ column }) => (
@@ -192,6 +236,44 @@ export default function VisitDataTable({
           </div>
         </div>
       ),
+    },
+    {
+      // Payment Amount Column - Displays formatted payment amount
+      accessorKey: "paymentAmount",
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t(i18nKeyContainer.visit.paymentAmount)}
+          enableSorting={true}
+        />
+      ),
+      cell: ({ row }) => {
+        const amount = row.original.paymentAmount;
+        const formattedAmount = new Intl.NumberFormat(i18n.language, {
+          style: "currency",
+          currency: "DZD",
+          minimumFractionDigits: 2,
+        }).format(amount);
+
+        return (
+          <div className="flex items-center gap-2">
+            <DollarSign className="h-4 w-4 text-slate-400" />
+            <span className="font-medium text-slate-900">{formattedAmount}</span>
+          </div>
+        );
+      },
+    },
+    {
+      // Payment Status Column - Displays color-coded badge
+      accessorKey: "paymentStatus",
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t(i18nKeyContainer.visit.paymentStatus)}
+          enableSorting={true}
+        />
+      ),
+      cell: ({ row }) => <PaymentStatusBadge paymentStatus={row.original.paymentStatus} />,
     },
     {
       // Actions Column - Edit and Delete actions

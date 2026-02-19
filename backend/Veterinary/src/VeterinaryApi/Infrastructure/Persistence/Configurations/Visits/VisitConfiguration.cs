@@ -32,6 +32,16 @@ public class VisitConfiguration : IEntityTypeConfiguration<Visit>
             .HasColumnName("owner_id")
             .IsRequired();
 
+        builder.Property(v => v.PaymentAmount)
+                   .HasColumnName("payment_amount")
+                   .IsRequired();
+
+        builder.Property(v => v.PaymentStatus)
+                   .HasColumnName("payment_status")
+                   .IsRequired();
+
+
+
         builder.HasOne(v => v.Owner)
             .WithMany()
             .HasForeignKey(v => v.OwnerId)

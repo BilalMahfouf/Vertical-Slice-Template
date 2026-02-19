@@ -13,6 +13,8 @@ import {
   Pill,
   CalendarClock,
   Hash,
+  DollarSign,
+  CreditCard,
 } from "lucide-react";
 import visitApi from "./visit-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
@@ -155,6 +157,47 @@ export default function ViewVisit({ open, onClose, visitId }: ViewVisitProps) {
       text: "text-slate-700",
       dot: "bg-slate-400",
       label: status,
+    };
+  };
+
+  /**
+   * Get payment status badge configuration
+   */
+  const getPaymentStatusBadge = (paymentStatus: string) => {
+    const normalizedStatus = paymentStatus.toLowerCase();
+
+    const statusConfig: Record<string, { bg: string; text: string; dot: string; label: string }> = {
+      pending: {
+        bg: "bg-amber-50",
+        text: "text-amber-700",
+        dot: "bg-amber-500",
+        label: t(i18nKeyContainer.visit.paymentStatusPending),
+      },
+      paid: {
+        bg: "bg-green-50",
+        text: "text-green-700",
+        dot: "bg-green-500",
+        label: t(i18nKeyContainer.visit.paymentStatusPaid),
+      },
+      partiallypaid: {
+        bg: "bg-blue-50",
+        text: "text-blue-700",
+        dot: "bg-blue-500",
+        label: t(i18nKeyContainer.visit.paymentStatusPartiallyPaid),
+      },
+      refunded: {
+        bg: "bg-slate-50",
+        text: "text-slate-700",
+        dot: "bg-slate-400",
+        label: t(i18nKeyContainer.visit.paymentStatusRefunded),
+      },
+    };
+
+    return statusConfig[normalizedStatus] || {
+      bg: "bg-slate-50",
+      text: "text-slate-700",
+      dot: "bg-slate-400",
+      label: paymentStatus,
     };
   };
 
@@ -428,6 +471,57 @@ export default function ViewVisit({ open, onClose, visitId }: ViewVisitProps) {
                         {t(i18nKeyContainer.visit.noNotes)}
                       </p>
                     )}
+                  </div>
+                </div>
+
+                {/* Payment Information Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 flex items-center gap-2">
+                    <CreditCard className="h-4 w-4" />
+                    {t(i18nKeyContainer.visit.paymentInfo)}
+                  </h3>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Payment Amount */}
+                    <div className="space-y-1.5 flex flex-col gap-0.5">
+                      <label className="text-sm font-medium text-slate-700">
+                        {t(i18nKeyContainer.visit.paymentAmount)}
+                      </label>
+                      <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                        <DollarSign className="h-4 w-4 text-slate-400" />
+                        <span className="text-slate-900 font-medium">
+                          {new Intl.NumberFormat(i18n.language, {
+                            style: "currency",
+                            currency: "DZD",
+                            minimumFractionDigits: 2,
+                          }).format(visit.paymentAmount)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Payment Status */}
+                    <div className="space-y-1.5 flex flex-col gap-0.5">
+                      <label className="text-sm font-medium text-slate-700">
+                        {t(i18nKeyContainer.visit.paymentStatus)}
+                      </label>
+                      <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                        {(() => {
+                          const statusBadge = getPaymentStatusBadge(visit.paymentStatus);
+                          return (
+                            <span
+                              className={cn(
+                                "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium",
+                                statusBadge.bg,
+                                statusBadge.text
+                              )}
+                            >
+                              <span className={cn("h-2 w-2 rounded-full", statusBadge.dot)} />
+                              {statusBadge.label}
+                            </span>
+                          );
+                        })()}
+                      </div>
+                    </div>
                   </div>
                 </div>
 

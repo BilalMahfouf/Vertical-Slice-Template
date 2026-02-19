@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Stethoscope, ArrowLeft, ArrowRight, Loader2, Calendar, User } from "lucide-react";
 import visitApi, {
   VisitType,
+  PaymentStatus,
   type CreateVisitRequest,
   type UpdateVisitRequest,
 } from "./visit-api";
@@ -78,6 +79,23 @@ const getVisitTypeValue = (visitType: string): number => {
   }
 };
 
+// Map payment status string to enum value
+const getPaymentStatusValue = (paymentStatus: string): number => {
+  const normalizedStatus = paymentStatus.toLowerCase();
+  switch (normalizedStatus) {
+    case "pending":
+      return PaymentStatus.Pending;
+    case "paid":
+      return PaymentStatus.Paid;
+    case "partiallypaid":
+      return PaymentStatus.PartiallyPaid;
+    case "refunded":
+      return PaymentStatus.Refunded;
+    default:
+      return PaymentStatus.Pending;
+  }
+};
+
 export default function AddUpdateVisit({
   open,
   onClose,
@@ -110,6 +128,8 @@ export default function AddUpdateVisit({
     diagnosis: "",
     treatment: "",
     notes: "",
+    paymentAmount: 0,
+    paymentStatus: PaymentStatus.Pending,
   });
 
   const { t, i18n } = useTranslation();
@@ -149,6 +169,8 @@ export default function AddUpdateVisit({
       diagnosis: "",
       treatment: "",
       notes: "",
+      paymentAmount: 0,
+      paymentStatus: PaymentStatus.Pending,
     });
   };
 
@@ -163,6 +185,8 @@ export default function AddUpdateVisit({
           diagnosis: parseArrayToString(existingVisit.diagnosis),
           treatment: parseArrayToString(existingVisit.treatment),
           notes: existingVisit.notes || "",
+          paymentAmount: existingVisit.paymentAmount || 0,
+          paymentStatus: getPaymentStatusValue(existingVisit.paymentStatus),
         });
         setCurrentStep(STEP_DETAILS);
       }
@@ -225,6 +249,8 @@ export default function AddUpdateVisit({
             diagnosis: parseStringToArray(formData.diagnosis),
             treatment: parseStringToArray(formData.treatment),
             notes: formData.notes.trim() || null,
+            paymentAmount: formData.paymentAmount,
+            paymentStatus: formData.paymentStatus,
           }
         : {
             // Client mode: use selected client/animal
@@ -235,6 +261,8 @@ export default function AddUpdateVisit({
             diagnosis: parseStringToArray(formData.diagnosis),
             treatment: parseStringToArray(formData.treatment),
             notes: formData.notes.trim() || null,
+            paymentAmount: formData.paymentAmount,
+            paymentStatus: formData.paymentStatus,
           };
       return visitApi.createVisit(request);
     },
@@ -259,6 +287,8 @@ export default function AddUpdateVisit({
         diagnosis: parseStringToArray(formData.diagnosis),
         treatment: parseStringToArray(formData.treatment),
         notes: formData.notes.trim() || null,
+        paymentAmount: formData.paymentAmount,
+        paymentStatus: formData.paymentStatus,
       };
       return visitApi.updateVisit(visitId!, request);
     },

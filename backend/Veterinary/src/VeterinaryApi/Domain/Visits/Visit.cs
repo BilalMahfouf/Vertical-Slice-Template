@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic;
+using System.Diagnostics;
 using VeterinaryApi.Domain.Animals;
 using VeterinaryApi.Domain.Appointments;
 using VeterinaryApi.Domain.Clients;
@@ -18,6 +19,9 @@ public class Visit : Entity
     public List<string>? Diagnosis { get; private set; }
     public List<string>? Treatment { get; private set; }
     public string? Notes { get; private set; }
+
+    public decimal PaymentAmount { get; private set; }
+    public PaymentStatus PaymentStatus { get; private set; }
     public Animal Animal { get; private set; } = null!;
     public Client Owner { get; private set; } = null!;
     public Appointment? Appointment { get; private set; }
@@ -35,7 +39,9 @@ public class Visit : Entity
         List<string>? diagnosis,
         List<string>? treatment,
         string? followUpNotes,
-        DateTime? appointmentDate = null
+        DateTime? appointmentDate = null,
+        decimal paymentAmount = 0,
+        PaymentStatus paymentStatus = PaymentStatus.Pending
         )
     {
         if (appointmentDate.HasValue)
@@ -46,7 +52,11 @@ public class Visit : Entity
                     AppointmentErrors.OutDatedAppointment(appointmentDate.Value));
             }
         }
+
+
         var visit = new Visit();
+
+        visit.ValidatePaymentAmount(paymentAmount);
 
         visit.AnimalId = animalId;
         visit.OwnerId = ownerId;
@@ -59,8 +69,19 @@ public class Visit : Entity
 
         visit.Notes = string.IsNullOrWhiteSpace(followUpNotes) ? null : followUpNotes.Trim();
 
+        visit.PaymentAmount = paymentAmount;
+        visit.PaymentStatus = paymentStatus;
+
         return visit;
     }
+    private void ValidatePaymentAmount(decimal paymentAmount)
+    {
+        if (paymentAmount < MinPaymentAmount)
+        {
+            throw new DomainException(VisitErrors.InvalidPaymentAmount);
+        }
+    }
+    internal static decimal MinPaymentAmount = 0;
     private List<string>? GetStrings(List<string>? strList)
     {
         return strList?
@@ -69,13 +90,29 @@ public class Visit : Entity
                 .ToList();
     }
 
+    private void UpdatePayment(decimal paymentAmount,PaymentStatus paymentStatus)
+    {
+        ValidatePaymentAmount(paymentAmount);
+        if(paymentStatus is PaymentStatus.Paid)
+        {
+            throw new DomainException(VisitErrors.PaymentAlreadyPayed);
+        }
+
+        PaymentAmount = paymentAmount;
+        PaymentStatus = paymentStatus;
+    }
     public void UpdateDetails(
         VisitType visitType,
         List<string>? symptoms,
         List<string>? diagnosis,
         List<string>? treatment,
-        string? followUpNotes)
+        string? followUpNotes,
+        decimal paymentAmount,
+        PaymentStatus paymentStatus)
     {
+
+        UpdatePayment(paymentAmount, paymentStatus);
+        
         VisitType = visitType;
         Symptoms = GetStrings(symptoms);
         Diagnosis = GetStrings(diagnosis);

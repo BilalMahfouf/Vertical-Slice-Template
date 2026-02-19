@@ -329,6 +329,15 @@ const i18nKeyContainer = {
         appointmentInvalidStatus: 'visit.appointmentInvalidStatus',
         // Tabs
         tabVisits: 'visit.tabVisits',
+        // Payment
+        paymentAmount: 'visit.paymentAmount',
+        paymentStatus: 'visit.paymentStatus',
+        paymentInfo: 'visit.paymentInfo',
+        selectPaymentStatus: 'visit.selectPaymentStatus',
+        paymentStatusPending: 'visit.paymentStatusPending',
+        paymentStatusPaid: 'visit.paymentStatusPaid',
+        paymentStatusPartiallyPaid: 'visit.paymentStatusPartiallyPaid',
+        paymentStatusRefunded: 'visit.paymentStatusRefunded',
     },
     toast: {
         client: {

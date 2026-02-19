@@ -23,7 +23,9 @@ public class GetVisitsTable
     string AnimalSpecies,
     Guid OwnerId,
     string OwnerName,
-    DateTime VisitDate);
+    DateTime VisitDate,
+    decimal PaymentAmount,
+    string PaymentStatus);
 
     public class GetVisitsTableQueryHandler
         : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
@@ -70,7 +72,9 @@ public class GetVisitsTable
                                 e.Animal.Species,
                                 e.OwnerId,
                                 e.Owner.FullName,
-                                e.CreatedOnUtc));
+                                e.CreatedOnUtc,
+                                e.PaymentAmount,
+                                e.PaymentStatus.ToString()));
             Expression<Func<Response, object>> orderSelector = query.SortColumn?
                             .ToLower() switch
             {

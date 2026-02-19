@@ -31,6 +31,8 @@ public static class GetVisitById
         List<string>? Treatment,
         string? Notes,
         DateTime CreatedOnUtc,
+        decimal PaymentAmount,
+        string PaymentStatus,
         DateTime? UpdatedOnUtc = null);
 
     public class GetVisitByIdQueryHandler : IQueryHandler<Query, Response>
@@ -72,7 +74,9 @@ public static class GetVisitById
                     e.Diagnosis,
                     e.Treatment,
                     e.Notes,
-                    e.CreatedOnUtc))
+                    e.CreatedOnUtc,
+                    e.PaymentAmount,
+                    e.PaymentStatus.ToString()))
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (visit is null)

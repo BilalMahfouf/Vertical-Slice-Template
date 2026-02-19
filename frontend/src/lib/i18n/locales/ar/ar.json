@@ -300,7 +300,15 @@
         "switchToClientMode": "اختر العميل يدوياً بدلاً من ذلك",
         "appointmentNotFound": "لم يتم العثور على الموعد",
         "appointmentInvalidStatus": "هذا الموعد غير متاح للزيارات (يجب أن يكون مؤكداً أو معاد جدولته)",
-        "tabVisits": "الزيارات"
+        "tabVisits": "الزيارات",
+        "paymentAmount": "مبلغ الدفع",
+        "paymentStatus": "حالة الدفع",
+        "paymentInfo": "معلومات الدفع",
+        "selectPaymentStatus": "اختر حالة الدفع",
+        "paymentStatusPending": "قيد الانتظار",
+        "paymentStatusPaid": "مدفوع",
+        "paymentStatusPartiallyPaid": "مدفوع جزئياً",
+        "paymentStatusRefunded": "مسترد"
     },
     "vaccination": {
         "title": "التطعيمات",

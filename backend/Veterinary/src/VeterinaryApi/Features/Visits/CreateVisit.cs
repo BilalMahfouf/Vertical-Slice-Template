@@ -22,6 +22,8 @@ public static class CreateVisit
         List<string>? Symptoms,
         List<string>? Diagnosis,
         List<string>? Treatment,
+        PaymentStatus PaymentStatus,
+        decimal PaymentAmount,
         string? Notes) : ICommand<Response>;
     public sealed record Response(Guid Id);
 
@@ -65,7 +67,9 @@ public static class CreateVisit
                 command.Diagnosis,
                 command.Treatment,
                 command.Notes,
-                appointment.AppointmentDate);
+                appointment.AppointmentDate,
+                command.PaymentAmount,
+                command.PaymentStatus);
 
             appointment.Complete();
 
@@ -119,7 +123,10 @@ public static class CreateVisit
                    command.Symptoms,
                    command.Diagnosis,
                    command.Treatment,
-                   command.Notes);
+                   command.Notes,
+                   null,
+                   command.PaymentAmount,
+                   command.PaymentStatus);
             }
             _db.Visits.Add(visit);
             await _db.SaveChangesAsync(cancellationToken);

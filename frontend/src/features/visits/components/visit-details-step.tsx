@@ -17,11 +17,14 @@ import {
   Pill,
   User,
   PawPrint,
+  DollarSign,
+  CreditCard,
 } from "lucide-react";
 import { type Client } from "@/features/clients/client-api";
 import { type ClientAnimal } from "@/features/animals/animal-api";
-import { VisitType } from "../visit-api";
+import { VisitType, PaymentStatus } from "../visit-api";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
+import { Input } from "@/components/ui/input";
 
 export interface VisitFormData {
   visitType: number;
@@ -29,6 +32,8 @@ export interface VisitFormData {
   diagnosis: string;
   treatment: string;
   notes: string;
+  paymentAmount: number;
+  paymentStatus: number;
 }
 
 interface VisitDetailsStepProps {
@@ -64,6 +69,34 @@ const visitTypeOptions = [
   },
 ];
 
+// Payment status options with styling
+const paymentStatusOptions = [
+  {
+    value: PaymentStatus.Pending,
+    labelKey: "visit.paymentStatusPending",
+    color: "bg-amber-100 text-amber-700 border-amber-200",
+    badgeColor: "bg-amber-100 text-amber-700",
+  },
+  {
+    value: PaymentStatus.Paid,
+    labelKey: "visit.paymentStatusPaid",
+    color: "bg-green-100 text-green-700 border-green-200",
+    badgeColor: "bg-green-100 text-green-700",
+  },
+  {
+    value: PaymentStatus.PartiallyPaid,
+    labelKey: "visit.paymentStatusPartiallyPaid",
+    color: "bg-blue-100 text-blue-700 border-blue-200",
+    badgeColor: "bg-blue-100 text-blue-700",
+  },
+  {
+    value: PaymentStatus.Refunded,
+    labelKey: "visit.paymentStatusRefunded",
+    color: "bg-slate-100 text-slate-700 border-slate-200",
+    badgeColor: "bg-slate-100 text-slate-700",
+  },
+];
+
 export default function VisitDetailsStep({
   formData,
   onFormDataChange,
@@ -75,6 +108,10 @@ export default function VisitDetailsStep({
 
   const selectedTypeOption = visitTypeOptions.find(
     (opt) => opt.value === formData.visitType
+  );
+
+  const selectedPaymentStatusOption = paymentStatusOptions.find(
+    (opt) => opt.value === formData.paymentStatus
   );
 
   return (
@@ -266,6 +303,90 @@ export default function VisitDetailsStep({
           className="min-h-20 w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
           dir={isRtl ? "rtl" : "ltr"}
         />
+      </div>
+
+      {/* Payment Information Section */}
+      <div className="rounded-lg border border-slate-200 p-4 space-y-4">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+          {t(i18nKeyContainer.visit.paymentInfo)}
+        </p>
+
+        {/* Payment Amount */}
+        <div className="space-y-3 flex flex-col gap-1">
+          <Label
+            htmlFor="paymentAmount"
+            className="text-sm font-medium text-slate-700 mb-1"
+          >
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4 text-slate-400" />
+              {t(i18nKeyContainer.visit.paymentAmount)}
+              <span className="text-red-500">*</span>
+            </div>
+          </Label>
+          <Input
+            id="paymentAmount"
+            type="number"
+            min="0"
+            step="0.01"
+            value={formData.paymentAmount}
+            onChange={(e) =>
+              onFormDataChange({ paymentAmount: parseFloat(e.target.value) || 0 })
+            }
+            className="h-11 border-slate-200"
+            dir={isRtl ? "rtl" : "ltr"}
+          />
+        </div>
+
+        {/* Payment Status */}
+        <div className="space-y-3 flex flex-col gap-1">
+          <Label className="text-sm font-medium text-slate-700 mb-1">
+            <div className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4 text-slate-400" />
+              {t(i18nKeyContainer.visit.paymentStatus)}
+              <span className="text-red-500">*</span>
+            </div>
+          </Label>
+          <Select
+            value={formData.paymentStatus ? formData.paymentStatus.toString() : ""}
+            onValueChange={(value) =>
+              onFormDataChange({ paymentStatus: parseInt(value) })
+            }
+            dir={isRtl ? "rtl" : "ltr"}
+          >
+            <SelectTrigger className="h-11 border-slate-200 cursor-pointer">
+              <SelectValue placeholder={t(i18nKeyContainer.visit.selectPaymentStatus)}>
+                {selectedPaymentStatusOption && (
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className={`${selectedPaymentStatusOption.badgeColor} border-0 font-medium`}
+                    >
+                      {t(selectedPaymentStatusOption.labelKey)}
+                    </Badge>
+                  </div>
+                )}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="bg-white border-0 shadow-lg">
+              {paymentStatusOptions.map((option) => (
+                <SelectItem
+                  key={option.value}
+                  value={option.value.toString()}
+                  className="cursor-pointer hover:bg-slate-100 focus:bg-slate-100"
+                >
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className={`${option.badgeColor} border-0 font-medium`}
+                    >
+                      {t(option.labelKey)}
+                    </Badge>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   );

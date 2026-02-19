@@ -2,6 +2,13 @@ import type { PagedList, TableRequest } from "@/components/tables";
 import api from "@/lib/api/api";
 import { getTableRequsestParams } from "@/lib/utils";
 
+export enum PaymentStatus {
+  Pending = 1,
+  Paid = 2,
+  PartiallyPaid = 3,
+  Refunded = 4,
+}
+
 export type VisitTableResponse = {
   id: string;
   visitType: string;
@@ -11,6 +18,8 @@ export type VisitTableResponse = {
   ownerId: string;
   ownerName: string;
   visitDate: string; // ISO 8601 datetime string
+  paymentAmount: number;
+  paymentStatus: string;
 }
 
 
@@ -33,6 +42,8 @@ export type VisitResponse = {
   notes: string | null;
   createdOnUtc: string; // ISO 8601 datetime string
   updatedOnUtc: string | null; // ISO 8601 datetime string
+  paymentAmount: number;
+  paymentStatus: string;
 }
 
 export interface CreateVisitRequest {
@@ -44,6 +55,8 @@ export interface CreateVisitRequest {
   diagnosis?: string[] | null;
   treatment?: string[] | null;
   notes?: string | null;
+  paymentAmount: number;
+  paymentStatus: number;
 }
 
 export interface UpdateVisitRequest {
@@ -52,6 +65,8 @@ export interface UpdateVisitRequest {
   diagnosis?: string[] | null;
   treatment?: string[] | null;
   notes?: string | null;
+  paymentAmount: number;
+  paymentStatus: number;
 }
 
 

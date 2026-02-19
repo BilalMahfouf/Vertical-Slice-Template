@@ -300,7 +300,15 @@
         "switchToClientMode": "Select client manually instead",
         "appointmentNotFound": "Appointment not found",
         "appointmentInvalidStatus": "This appointment is not available for visits (must be Confirmed or Rescheduled)",
-        "tabVisits": "Visits"
+        "tabVisits": "Visits",
+        "paymentAmount": "Payment Amount",
+        "paymentStatus": "Payment Status",
+        "paymentInfo": "Payment Information",
+        "selectPaymentStatus": "Select payment status",
+        "paymentStatusPending": "Pending",
+        "paymentStatusPaid": "Paid",
+        "paymentStatusPartiallyPaid": "Partially Paid",
+        "paymentStatusRefunded": "Refunded"
     },
     "vaccination": {
         "title": "Vaccinations",

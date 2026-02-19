@@ -16,7 +16,9 @@ public static class UpdateVisit
         List<string>? Symptoms,
         List<string>? Diagnosis,
         List<string>? Treatment,
-        string? FollowUpNotes);
+        string? FollowUpNotes,
+        decimal PaymentAmount,
+        PaymentStatus PaymentStatus);
     public sealed record Response(Guid Id);
 
     public sealed record UpdateVisitCommand(
@@ -25,7 +27,9 @@ public static class UpdateVisit
         List<string>? Symptoms,
         List<string>? Diagnosis,
         List<string>? Treatment,
-        string? FollowUpNotes) : ICommand<Response>;
+        string? FollowUpNotes,
+        decimal PaymentAmount,
+        PaymentStatus PaymentStatus) : ICommand<Response>;
 
     public sealed class Validator : AbstractValidator<UpdateVisitCommand>
     {
@@ -35,6 +39,9 @@ public static class UpdateVisit
                 .NotEmpty();
 
             RuleFor(x => x.VisitType)
+                .IsInEnum();
+
+            RuleFor(x => x.PaymentStatus)
                 .IsInEnum();
 
             RuleFor(x => x.FollowUpNotes)
@@ -72,7 +79,9 @@ public static class UpdateVisit
                 command.Symptoms,
                 command.Diagnosis,
                 command.Treatment,
-                command.FollowUpNotes);
+                command.FollowUpNotes,
+                command.PaymentAmount,
+                command.PaymentStatus);
             _db.Visits.Update(visit);
             await _db.SaveChangesAsync(cancellationToken);
             return Result<Response>.Success(
@@ -96,7 +105,9 @@ public static class UpdateVisit
                     request.Symptoms,
                     request.Diagnosis,
                     request.Treatment,
-                    request.FollowUpNotes);
+                    request.FollowUpNotes,
+                    request.PaymentAmount,
+                    request.PaymentStatus);
                 var result = await handler.Handle(command, cancellationToken);
                 return result.IsSuccess
                     ? Results.Ok(result.Value)

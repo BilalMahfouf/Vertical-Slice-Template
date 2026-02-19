@@ -21,4 +21,11 @@ public static class VisitErrors
         => Error.Conflict(
             $"Visit.{nameof(VisitWithAppointmentlAlreadyExist)}",
             $"The Appointment with id {appointmentId} already have a visit");
+
+    public static Error InvalidPaymentAmount
+        => Error.Conflict($"{nameof(Visit)}s.{nameof(InvalidPaymentAmount)}",
+            $"The payment amount must be greater then {Visit.MinPaymentAmount}");
+    public static Error PaymentAlreadyPayed
+        => Error.Conflict($"{nameof(Visit)}s.{nameof(PaymentAlreadyPayed)}",
+            "This payment is already payed");
 }
