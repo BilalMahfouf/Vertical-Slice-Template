@@ -49,10 +49,8 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           <div className="p-6 bg-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                  <Stethoscope className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-xl font-bold text-slate-900">VetiCloud</span>
+                <img src="/logo.jpg" alt="AviaMind Vet" className="w-12 h-12 rounded-xl object-cover shadow-lg" />
+                <span className="text-xl font-bold text-slate-900">AviaMind Vet</span>
               </div>
               <Button
                 variant="ghost"
