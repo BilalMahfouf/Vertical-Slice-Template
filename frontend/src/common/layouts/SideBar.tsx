@@ -25,7 +25,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
   const mutation = useMutation({
     mutationFn: authApi.logout,
     onSuccess: ()=>{
-        navigate('/login');
+        navigate('/');
     }
   })
 
