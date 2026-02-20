@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Lock, PawPrint, ArrowLeft, AlertCircle } from "lucide-react";
+import { Lock, ArrowLeft, AlertCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,10 +70,8 @@ export default function ResetPasswordPage() {
       <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4" dir={isRtl ? "rtl" : "ltr"}>
         <div className="w-full max-w-md">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-xl shadow-primary/20 mb-4 rotate-3">
-              <PawPrint className="w-10 h-10 text-white -rotate-3" />
-            </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">VetiCloud</h1>
+            <img src="/logo.jpg" alt="AviaMind Vet" className="w-16 h-16 rounded-2xl object-cover shadow-xl shadow-primary/20 mb-4" />
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">AviaMind Vet</h1>
           </div>
 
           <Card className="border-slate-200 shadow-2xl shadow-slate-200/50">
@@ -107,10 +105,8 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden px-4" dir={isRtl ? "rtl" : "ltr"}>
       <div className="w-full max-w-md z-10">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-xl shadow-primary/20 mb-4 rotate-3">
-            <PawPrint className="w-10 h-10 text-white -rotate-3" />
-          </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">VetiCloud</h1>
+          <img src="/logo.jpg" alt="AviaMind Vet" className="w-16 h-16 rounded-2xl object-cover shadow-xl shadow-primary/20 mb-4" />
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">AviaMind Vet</h1>
           <p className="text-slate-500 font-medium mt-1">Clinic management, redefined.</p>
         </div>
 
@@ -184,7 +180,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <p className="mt-8 text-center text-sm text-slate-400 font-medium">
-          © 2025 VetiCloud Inc. Built for professionals.
+          © 2026 AviaMind Vet. Built for professionals.
         </p>
       </div>
     </div>

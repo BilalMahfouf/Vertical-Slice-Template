@@ -2,12 +2,14 @@ import type { PagedList, TableRequest } from "@/components/tables";
 import api from "@/lib/api/api";
 import { getTableRequsestParams } from "@/lib/utils";
 
-export enum PaymentStatus {
-  Pending = 1,
-  Paid = 2,
-  PartiallyPaid = 3,
-  Refunded = 4,
-}
+export const PaymentStatus = {
+  Pending: 1,
+  Paid: 2,
+  PartiallyPaid: 3,
+  Refunded: 4,
+} as const;
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
 
 export type VisitTableResponse = {
   id: string;

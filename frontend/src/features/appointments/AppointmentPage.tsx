@@ -8,6 +8,7 @@ import ViewAppointment from "./view-appointment";
 import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
 import { useCancelAppointment } from "./use-cancel-appointment";
 import { useDeleteAppointment } from "./use-delete-appointment";
+import { isNotFoundError } from "@/lib/api/error-types";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import type { Appointment } from "./appointment-api";
 
