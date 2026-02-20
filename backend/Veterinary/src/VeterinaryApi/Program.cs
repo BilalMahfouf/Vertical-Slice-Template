@@ -75,10 +75,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.ApplyMigrations();
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+app.ApplyMigrations();
+
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();

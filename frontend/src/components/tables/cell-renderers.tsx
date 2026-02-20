@@ -11,7 +11,7 @@ interface StatusBadgeProps {
   className?: string;
 }
 
-const statusVariantMap: Record<string, StatusVariant> = {
+const statusVariantMap: Record<string, StatusVarian> = {
   // Common status mappings
   active: "success",
   inactive: "secondary",
