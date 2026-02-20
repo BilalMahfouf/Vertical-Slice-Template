@@ -28,8 +28,5 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Copy the certificate from your project directly
-COPY ./certificates/aspnetapp.pfx ./certificates/aspnetapp.pfx
-
 
 ENTRYPOINT ["dotnet", "VeterinaryApi.dll"]
