@@ -53,6 +53,7 @@ builder.Services.Scan(scan => scan.FromAssembliesOf(typeof(Program))
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddCarter();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -63,6 +64,19 @@ builder.Services.AddCors(options =>
             .AllowCredentials()
     );
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalHost", policy =>
+        policy
+            .WithOrigins("https://localhost")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
+});
+
+
 
 builder.Services.AddAuthorization();
 
@@ -81,6 +95,7 @@ if (app.Environment.IsDevelopment())
 
 app.ApplyMigrations();
 
+app.UseCors("AllowLocalHost");
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
