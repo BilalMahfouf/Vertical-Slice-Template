@@ -58,7 +58,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
         policy
-            .WithOrigins("https://veterinary-app-nu.vercel.app/")
+            .WithOrigins("https://veterinary-app-nu.vercel.app")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()
