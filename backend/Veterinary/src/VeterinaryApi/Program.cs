@@ -58,7 +58,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
         policy
-            .WithOrigins("https://veterinary-app-nu.vercel.app")
+            .WithOrigins(
+              "https://veterinary-app-nu.vercel.app",
+              "http://localhost"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()
@@ -95,10 +98,11 @@ if (app.Environment.IsDevelopment())
 
 app.ApplyMigrations();
 
-app.UseCors("AllowLocalHost");
-app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
+
+
+app.UseCors("AllowFrontend");
 
 app.UseExceptionHandler();
 
