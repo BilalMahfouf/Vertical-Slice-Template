@@ -44,16 +44,13 @@ export const tokenManager = {
   refreshAccessToken: async (): Promise<string | null> => {
     try {
       // refreshToken is sent automatically via httpOnly cookie
-    //   console.log('Refreshing access token...');
       const response = await api.post('/auth/refresh-token', {}, {
         skipAuthRefresh: true
       });
-    //   console.log('Refresh token response status:', response.status);   
       if(response.status !== 200) {
         return null;
       }
       const newAccessToken = response.data.value.token;
-      console.log('Access token refreshed.');
       
       tokenManager.setAccessToken(newAccessToken);
       return newAccessToken;
@@ -94,11 +91,9 @@ api.interceptors.response.use(
 
     // If 401 and not already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
-      console.log('401 Unauthorized - attempting token refresh');
       originalRequest._retry = true;
       
       if (isRefreshing) {
-        console.log('Token refresh already in progress, queuing request');
         // Queue this request until refresh completes
         return new Promise((resolve, reject) => {
           addRefreshSubscriber(
@@ -113,7 +108,6 @@ api.interceptors.response.use(
         });
       }
 
-      console.log('Refreshing token for 401 response');
       isRefreshing = true;
 
       try {

@@ -101,9 +101,9 @@ const animalColumns: DataTableColumn<Animal>[] = [
     header: () => <span className="text-xs font-medium uppercase tracking-wide text-slate-500">Actions</span>,
     cell: ({ row }) => {
       const actions: RowAction<Animal>[] = [
-        { label: "View details", onClick: () => console.log("View", row.original), icon: Eye },
-        { label: "Edit", onClick: () => console.log("Edit", row.original), icon: Edit },
-        { label: "Delete", onClick: () => console.log("Delete", row.original), icon: Trash2, variant: "destructive", separator: true },
+        { label: "View details", onClick: () => {}, icon: Eye },
+        { label: "Edit", onClick: () => {}, icon: Edit },
+        { label: "Delete", onClick: () => {}, icon: Trash2, variant: "destructive", separator: true },
       ];
       return <DataTableRowActions row={row.original} actions={actions} />;
     },
@@ -199,8 +199,8 @@ const visitColumns: DataTableColumn<Visit>[] = [
     id: "actions",
     cell: ({ row }) => {
       const actions: RowAction<Visit>[] = [
-        { label: "View details", onClick: () => console.log("View", row.original), icon: Eye },
-        { label: "Edit", onClick: () => console.log("Edit", row.original), icon: Edit },
+        { label: "View details", onClick: () => {}, icon: Eye },
+        { label: "Edit", onClick: () => {}, icon: Edit },
       ];
       return <DataTableRowActions row={row.original} actions={actions} />;
     },
@@ -490,9 +490,9 @@ const clinicColumns: DataTableColumn<Clinic>[] = [
     id: "actions",
     cell: ({ row }) => {
       const actions: RowAction<Clinic>[] = [
-        { label: "View details", onClick: () => console.log("View", row.original), icon: Eye },
-        { label: "Edit", onClick: () => console.log("Edit", row.original), icon: Edit },
-        { label: "Delete", onClick: () => console.log("Delete", row.original), icon: Trash2, variant: "destructive", separator: true },
+        { label: "View details", onClick: () => {}, icon: Eye },
+        { label: "Edit", onClick: () => {}, icon: Edit },
+        { label: "Delete", onClick: () => {}, icon: Trash2, variant: "destructive", separator: true },
       ];
       return <DataTableRowActions row={row.original} actions={actions} />;
     },

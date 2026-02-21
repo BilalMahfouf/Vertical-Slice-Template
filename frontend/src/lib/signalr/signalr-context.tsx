@@ -20,11 +20,9 @@ function buildConnection(): HubConnection | null{
 
     let accessToken = getValidAccessToken();
     if (!accessToken) {
-        console.log("refresh access Token");
         accessToken = getValidAccessToken();
     }
     if(!accessToken) {
-        console.log("no access token available, SignalR connection will not be established");
         return null;
     }
  const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
@@ -37,7 +35,6 @@ function buildConnection(): HubConnection | null{
     .withAutomaticReconnect([ 2000, 10000, 30000]) // Custom retry delays: immediate, 2s, 10s, 30s
     .configureLogging(LogLevel.Warning)
     .build();
-    console.log("SignalR connection instance created with URL:", hubUrl);
     return connection;
 
 }
@@ -65,8 +62,6 @@ export const SignalRProvider = ({ children }: PropsWithChildren) => {
     const foo = ()=>{
         if(!connection) return;
     connection.on("ReceiveNotification", (data: { notification?: { title?: string; body?: string } }) => {
-        console.log("Received notification via SignalR:", data);
-      console.log("Invalidating notifications query...");
       queryClient.invalidateQueries({ queryKey: ["notifications","unread"] });
 
       // Show toast notification
@@ -84,8 +79,7 @@ export const SignalRProvider = ({ children }: PropsWithChildren) => {
       console.warn("SignalR reconnecting...", error);
     });
 
-    connection.onreconnected((connectionId) => {
-      console.log("SignalR reconnected:", connectionId);
+    connection.onreconnected(() => {
     });
 
     connection.onclose((error) => {
@@ -94,8 +88,8 @@ export const SignalRProvider = ({ children }: PropsWithChildren) => {
 
     // 3. Start connection
     connection.start()
-      .then(() => console.log("SignalR Connected"))
-      .catch((err) => console.error("SignalR Connection Error:", err));
+      .then(() => {})
+      .catch(() => {});
 
     // 4. Cleanup on unmount
     return () => {

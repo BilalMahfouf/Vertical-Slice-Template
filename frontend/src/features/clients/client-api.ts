@@ -22,12 +22,10 @@ export type CreateClientRequest = {
 const clientApi ={
     getAllClients: async (request: TableRequest) : Promise<PagedList<Client>> => {
        const params = getTableRequsestParams(request);
-       console.log("fetching with params",params);
         const result = await api.get<PagedList<Client>>('/clients',{params});
         if(result.status !== 200) {
             throw new Error('Failed to fetch clients');
         }
-        console.log("data: ",result.data);
         return result.data; 
     },
     addClient: async (client:CreateClientRequest): Promise<string> => {

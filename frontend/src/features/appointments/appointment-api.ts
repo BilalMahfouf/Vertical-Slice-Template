@@ -46,7 +46,6 @@ const appointmentApi = {
     return response.data;
   },
   createAppointment: async (data: CreateAppointmentRequest): Promise<string> => {
-    console.log("Creating appointment with data:", data);
     const response = await api.post<{ id: string }>('/appointments', data);
     if (response.status !== 201) {
       throw new Error('Failed to create appointment');
