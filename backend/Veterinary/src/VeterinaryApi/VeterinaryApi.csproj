@@ -11,6 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Features\Prescriptions\PrescriptionTemplate.hbs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Features\Prescriptions\PrescriptionTemplate.hbs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Carter" Version="10.0.0" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />

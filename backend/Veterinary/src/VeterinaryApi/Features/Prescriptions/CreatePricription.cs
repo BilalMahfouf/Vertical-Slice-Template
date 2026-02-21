@@ -135,7 +135,8 @@ public static class CreatePricription
 
             using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
             {
-                Headless = true
+                Headless = true,
+                Args = new[] { "--no-sandbox", "--disable-setuid-sandbox" }
             });
 
             using var page = await browser.NewPageAsync();

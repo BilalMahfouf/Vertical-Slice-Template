@@ -25,6 +25,28 @@ RUN dotnet publish "./VeterinaryApi.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
+
+# Switch to root to install Chrome dependencies for Puppeteer PDF generation
+USER root
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a writable directory for Puppeteer browser cache
+RUN mkdir -p /home/app/.cache/puppeteer && chown -R $APP_UID:$APP_UID /home/app
+
+# Switch back to non-root user
+USER $APP_UID
+
+# Tell Puppeteer where to store its cache
+ENV PUPPETEER_CACHE_DIR=/home/app/.cache/puppeteer
+
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "VeterinaryApi.dll"]
