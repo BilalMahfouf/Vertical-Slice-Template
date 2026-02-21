@@ -47,6 +47,9 @@ USER $APP_UID
 # Tell Puppeteer where to store its cache
 ENV PUPPETEER_CACHE_DIR=/home/app/.cache/puppeteer
 
+# Use the system-installed Chrome - skip runtime download entirely
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "VeterinaryApi.dll"]

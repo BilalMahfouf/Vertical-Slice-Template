@@ -16,7 +16,7 @@ export function useNotifications(filterType: "all" | "unread" = "all") {
 
     return useInfiniteQuery({
         queryKey: ["notifications", filterType],
-        refetchInterval: 5 * 1000, // Refetch every 5 seconds to get new notifications
+        refetchInterval: 30 * 1000, // Refetch every 30 seconds to get new notifications
         queryFn: async ({ pageParam }) => {
             try {
                 const params: GetNotificationsParams = {

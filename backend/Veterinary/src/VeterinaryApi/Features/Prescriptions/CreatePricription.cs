@@ -99,10 +99,23 @@ public static class CreatePricription
                     .Failure(ClinicErrors.ClinicsNotFound);
             }
 
-            var templatePath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-               "Features", "Prescriptions", "PrescriptionTemplate.hbs");
-            var templateContent = await File.ReadAllTextAsync(templatePath);
+            var templateContent = string.Empty;
+            var assembly = typeof(CreatePricription).Assembly;
+            var resourceName = "VeterinaryApi.Features.Prescriptions.PrescriptionTemplate.hbs";
+            var resourceStream = assembly.GetManifestResourceStream(resourceName);
+            if (resourceStream is not null)
+            {
+                using var reader = new StreamReader(resourceStream);
+                templateContent = await reader.ReadToEndAsync(cancellationToken);
+            }
+            else
+            {
+                // fallback for local development
+                var templatePath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "Features", "Prescriptions", "PrescriptionTemplate.hbs");
+                templateContent = await File.ReadAllTextAsync(templatePath, cancellationToken);
+            }
 
             var template = Handlebars.Compile(templateContent);
             var date = GetDateInFrench(DateTime.Now);
@@ -130,12 +143,18 @@ public static class CreatePricription
             {
 
             }
-            var browserFetcher = new BrowserFetcher();
-            await browserFetcher.DownloadAsync();
+            var executablePath = Environment.GetEnvironmentVariable("PUPPETEER_EXECUTABLE_PATH");
+            if (string.IsNullOrEmpty(executablePath))
+            {
+                // Local dev: download Chromium if not already present
+                var browserFetcher = new BrowserFetcher();
+                await browserFetcher.DownloadAsync();
+            }
 
             using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
             {
                 Headless = true,
+                ExecutablePath = string.IsNullOrEmpty(executablePath) ? null : executablePath,
                 Args = new[] { "--no-sandbox", "--disable-setuid-sandbox" }
             });
 
