@@ -4,8 +4,10 @@ using VeterinaryApi.Domain.Notifications;
 
 namespace VeterinaryApi.Infrastructure.Persistence.Configurations.Notifications;
 
+/// <summary>EF Core fluent configuration for the <see cref="Notification"/> entity, mapping to the <c>notifications</c> table.</summary>
 public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
 {
+    /// <summary>Configures soft-delete global query filter, table mapping, and column mappings.</summary>
     public void Configure(EntityTypeBuilder<Notification> builder)
     {
         builder.HasQueryFilter(n => !n.IsDeleted);

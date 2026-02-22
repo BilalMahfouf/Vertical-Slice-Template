@@ -8,18 +8,27 @@ using VeterinaryApi.Domain.Visits;
 
 namespace VeterinaryApi.Features.Visits;
 
+/// <summary>Vertical slice for soft-deleting a visit record by its unique identifier.</summary>
 public static class DeleteVisit
 {
+    /// <summary>Command carrying the target visit identifier for soft-deletion.</summary>
+    /// <param name="Id">The unique identifier of the visit to soft-delete.</param>
     public sealed record DeleteVisitCommand(Guid Id) : ICommand;
 
+    /// <summary>Handles the <see cref="DeleteVisitCommand"/> by soft-deleting the visit entity.</summary>
     public sealed class DeleteVisitCommandHandler
                 : ICommandHandler<DeleteVisitCommand>
     {
         private readonly IApplicationDbContext _db;
+
+        /// <summary>Initializes the handler with the application database context.</summary>
         public DeleteVisitCommandHandler(IApplicationDbContext db)
         {
             _db = db;
         }
+
+        /// <summary>Loads the visit, calls <c>Visit.Delete()</c>, and persists the change.</summary>
+        /// <returns>A successful result, or <c>VisitErrors.VisitNotFound</c>.</returns>
         public async Task<Result> Handle(
             DeleteVisitCommand command,
             CancellationToken cancellationToken = default)
@@ -37,8 +46,10 @@ public static class DeleteVisit
             return Result.Success;
         }
     }
+    /// <summary>Carter endpoint that maps <c>DELETE /visits/{id}</c>. Requires authorization.</summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the delete-visit route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapDelete("/visits/{id:guid}",

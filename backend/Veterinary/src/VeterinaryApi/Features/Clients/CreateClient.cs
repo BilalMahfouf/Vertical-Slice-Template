@@ -90,8 +90,10 @@ public static class CreateClient
             return Result<Response>.Success(new Response(client.Id));
         }
     }
+    /// <summary>Carter endpoint that maps <c>POST /clients</c>. Requires authorization.</summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the create-client route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/clients", [Authorize] async (

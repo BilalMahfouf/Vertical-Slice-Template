@@ -9,14 +9,23 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Notifications;
 
+/// <summary>
+/// Vertical slice for marking a single notification as read by its identifier.
+/// Note: the filename <c>MarkNotifcationAsRead.cs</c> contains a typo (‘Notifcation’ → ‘Notification’).
+/// </summary>
 public static class MarkNotifcationAsRead
 {
+    /// <summary>Command carrying the target notification identifier.</summary>
+    /// <param name="NotificationId">The unique identifier of the notification to mark as read.</param>
     public sealed record Command(Guid NotificationId) : ICommand;
 
+    /// <summary>Handles the <see cref="Command"/> by loading the notification and marking it as read.</summary>
     public sealed class MarkNotificationAsReadCommandHandler : ICommandHandler<Command>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
+
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public MarkNotificationAsReadCommandHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -24,6 +33,9 @@ public static class MarkNotifcationAsRead
             _db = db;
             _currentTenant = currentTenant;
         }
+
+        /// <summary>Loads the notification, calls <c>Notification.MarkAsRead()</c>, and persists.</summary>
+        /// <returns>A successful result, or <c>NotificationErrors.NotFound</c>.</returns>
         public async Task<Result> Handle(
             Command command,
             CancellationToken cancellationToken = default)
@@ -42,8 +54,10 @@ public static class MarkNotifcationAsRead
             return Result.Success;
         }
     }
+    /// <summary>Carter endpoint that maps <c>PATCH /notifications/{notificationId}/mark-as-read</c>. Requires authorization.</summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the mark-single-notification-as-read route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPatch("/notifications/{notificationId:guid}/mark-as-read", [Authorize] async (

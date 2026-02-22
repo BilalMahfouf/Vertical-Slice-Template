@@ -4,8 +4,10 @@ using VeterinaryApi.Domain.Visits;
 
 namespace VeterinaryApi.Infrastructure.Persistence.Configurations.Visits;
 
+/// <summary>EF Core fluent configuration for the <see cref="Visit"/> entity, mapping to the <c>visits</c> table.</summary>
 public class VisitConfiguration : IEntityTypeConfiguration<Visit>
 {
+    /// <summary>Configures soft-delete global query filter, table mapping, primary key, column mappings, and navigation relationships.</summary>
     public void Configure(EntityTypeBuilder<Visit> builder)
     {
         builder.HasQueryFilter(v => !v.IsDeleted);

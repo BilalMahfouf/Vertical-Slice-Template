@@ -10,20 +10,36 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Dashboard;
 
+/// <summary>
+/// Vertical slice for the dashboard summary cards endpoint.
+/// Aggregates four counts (animals, appointments, visits, completed appointments) in a single request.
+/// </summary>
 public static class Dashboard
 {
+    /// <summary>Empty marker query for the dashboard statistics request.</summary>
     public sealed record Query : IQuery<Response>;
+
+    /// <summary>Response DTO with four aggregated counts used to populate dashboard cards.</summary>
+    /// <param name="TotalAnimals">Total number of animals in the tenant's clinic.</param>
+    /// <param name="TotalAppointments">Total number of appointments in the tenant's clinic.</param>
+    /// <param name="TotalVisits">Total number of visits in the tenant's clinic.</param>
+    /// <param name="CompletedAppointments">Number of appointments with status <c>Completed</c>.</param>
     public sealed record Response(
         int TotalAnimals,
         int TotalAppointments,
         int TotalVisits,
         int CompletedAppointments);
 
+    /// <summary>
+    /// Handles the <see cref="Query"/> by executing four tenant-scoped count queries
+    /// and returning the aggregated response.
+    /// </summary>
     public sealed class DashboardQuery : IQueryHandler<Query, Response>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
 
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public DashboardQuery(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -32,6 +48,7 @@ public static class Dashboard
             _currentTenant = currentTenant;
         }
 
+        /// <summary>Runs four <c>CountAsync</c> calls scoped to the current tenant and composes the response.</summary>
         public async Task<Result<Response>> Handle(
             Query query,
             CancellationToken cancellationToken = default)
@@ -58,8 +75,10 @@ public static class Dashboard
             return Result<Response>.Success(response);
         }
     }
+    /// <summary>Carter endpoint that maps <c>GET /dashboard/cards</c>. Requires authorization.</summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the dashboard statistics route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/dashboard/cards", [Authorize] async (

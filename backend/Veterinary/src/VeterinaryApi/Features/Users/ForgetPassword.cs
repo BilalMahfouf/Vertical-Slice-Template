@@ -9,20 +9,38 @@ using VeterinaryApi.Domain.Users;
 
 namespace VeterinaryApi.Features.Users;
 
+/// <summary>
+/// Vertical slice for initiating a password reset flow.
+/// Looks up the user by email, creates a short-lived <see cref="UserSession"/> with type
+/// <see cref="UserSessionTokenType.ResetPassword"/> (15-minute expiry), and emails the user
+/// a reset link containing the token.
+/// </summary>
 public static class ForgetPassword
 {
+    /// <summary>
+    /// Command to request a password reset email.
+    /// Implements the non-generic <see cref="ICommand"/> (no return value).
+    /// </summary>
+    /// <param name="Email">The email address of the account to reset.</param>
+    /// <param name="ClientUri">The front-end URL base used to construct the reset link embedded in the email.</param>
     public record ForgetPasswordCommand(string Email, string ClientUri)
         : ICommand;
+
+    /// <summary>Empty response record (unused; kept for potential future extension).</summary>
     public record Response();
 
+    /// <summary>
+    /// Handles the <see cref="ForgetPasswordCommand"/> by generating a reset token,
+    /// persisting a short-lived session, and sending a password reset email.
+    /// </summary>
     public class ForgetPasswordCommandHandler
         : ICommandHandler<ForgetPasswordCommand>
     {
-
         private readonly IApplicationDbContext _db;
         private readonly IJwtProvider _jwtProvider;
         private readonly IEmailService _emailService;
 
+        /// <summary>Initializes the handler with database, JWT, and email services.</summary>
         public ForgetPasswordCommandHandler(
             IApplicationDbContext db,
             IJwtProvider jwtProvider,
@@ -33,6 +51,19 @@ public static class ForgetPassword
             _emailService = emailService;
         }
 
+        /// <summary>
+        /// Executes the forget-password flow:
+        /// <list type="number">
+        ///   <item>Looks up the user by <paramref name="command"/>.Email.</item>
+        ///   <item>Returns <c>UserErrors.UserNotFound</c> if the email is not registered.</item>
+        ///   <item>Generates a JWT as the reset token (shares the JWT infrastructure for convenience).</item>
+        ///   <item>Creates a <see cref="UserSession"/> with <see cref="UserSessionTokenType.ResetPassword"/> and 15-minute expiry.</item>
+        ///   <item>Builds a reset link via <c>Utility.GenerateResponseLink</c> and sends an HTML email.</item>
+        /// </list>
+        /// </summary>
+        /// <param name="command">The forget-password command with email and client URI.</param>
+        /// <param name="cancellationToken">Token for cooperative cancellation.</param>
+        /// <returns>A successful result, or a failure if the email is not found.</returns>
         public async Task<Result> Handle(
             ForgetPasswordCommand command,
             CancellationToken cancellationToken = default)
@@ -66,8 +97,13 @@ public static class ForgetPassword
             return Result.Success;
         }
     }
+    /// <summary>
+    /// Carter endpoint that maps <c>POST /auth/forget-password</c>.
+    /// Returns <c>200 OK</c> on success or Problem Details on failure.
+    /// </summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the forget-password route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/auth/forget-password", async (

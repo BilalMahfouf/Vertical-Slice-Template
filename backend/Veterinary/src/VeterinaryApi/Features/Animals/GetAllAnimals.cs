@@ -13,9 +13,13 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Animals;
 
+/// <summary>
+/// Vertical slice for retrieving a paginated, filterable, and sortable list of animals
+/// belonging to the currently authenticated tenant.
+/// </summary>
 public static class GetAllAnimals
 {
-
+    /// <summary>Read-model DTO representing a single animal row in the results table.</summary>
     public record Response(
         Guid Id,
         Guid ClinicId,
@@ -32,12 +36,18 @@ public static class GetAllAnimals
         DateTime CreatedOnUtc,
         string status);
 
+    /// <summary>
+    /// Handles <see cref="TableRequest{T}"/> for the animals list.
+    /// Applies tenant scoping, optional full-text search, and offset pagination.
+    /// ⚠️ Warning: sorting is applied in-memory after <c>ToListAsync</c>.
+    /// </summary>
     public class GetAllAnimalsQueryHandler
         : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
 
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public GetAllAnimalsQueryHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -46,6 +56,10 @@ public static class GetAllAnimals
             _currentTenant = currentTenant;
         }
 
+        /// <summary>
+        /// Projects tenant-scoped animals to <see cref="Response"/> DTOs, applies search and sort,
+        /// and paginates.
+        /// </summary>
         public async Task<Result<OffSetPagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
@@ -127,8 +141,13 @@ public static class GetAllAnimals
             return Result<OffSetPagedList<Response>>.Success(result);
         }
     }
+    /// <summary>
+    /// Carter endpoint that maps <c>GET /animals</c>.
+    /// Requires authorization. Accepts optional query params for pagination, search, and sorting.
+    /// </summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the get-all-animals route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/animals", [Authorize] async (

@@ -3,8 +3,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace VeterinaryApi.Infrastructure.OutboxMessages;
 
+/// <summary>EF Core fluent configuration for the <see cref="OutboxMessage"/> entity, mapping to the <c>outbox_messages</c> table.</summary>
 public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
+    /// <summary>Configures columns, primary key, and a partial index for unprocessed messages efficient polling.</summary>
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
         builder.ToTable("outbox_messages");

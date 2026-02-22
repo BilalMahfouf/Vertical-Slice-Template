@@ -10,8 +10,12 @@ using VeterinaryApi.Domain.Animals;
 
 namespace VeterinaryApi.Features.Animals;
 
+/// <summary>
+/// Vertical slice for updating an existing animal's details.
+/// </summary>
 public static class UpdateAnimal
 {
+    /// <summary>HTTP request body DTO for the update-animal endpoint.</summary>
     public record Request(
         string Name,
         string Species,
@@ -22,6 +26,10 @@ public static class UpdateAnimal
         string? MicrochipNumber,
         AnimalStatus status);
 
+    /// <summary>
+    /// Command carrying the updated animal values plus the target ID.
+    /// Implements the non-generic <see cref="ICommand"/> (no return value).
+    /// </summary>
     public record UpdateAnimalCommand(
         Guid Id,
         string Name,
@@ -33,13 +41,21 @@ public static class UpdateAnimal
         string? MicrochipNumber,
         AnimalStatus status) : ICommand;
 
+    /// <summary>Handles the <see cref="UpdateAnimalCommand"/> by loading the animal and applying updates.</summary>
     public class UpdateAnimalCommandHandler : ICommandHandler<UpdateAnimalCommand>
     {
         private readonly IApplicationDbContext _db;
+
+        /// <summary>Initializes the handler with the application database context.</summary>
         public UpdateAnimalCommandHandler(IApplicationDbContext db)
         {
             _db = db;
         }
+
+        /// <summary>
+        /// Loads the animal, calls <c>Animal.UpdateDetails()</c>, and persists.
+        /// </summary>
+        /// <returns>A successful result, or <c>AnimalErrors.AnimalNotFound</c>.</returns>
         public async Task<Result> Handle(
             UpdateAnimalCommand command,
             CancellationToken cancellationToken)
@@ -67,8 +83,10 @@ public static class UpdateAnimal
             return Result.Success;
         }
     }
+    /// <summary>Carter endpoint that maps <c>PUT /animals/{id}</c>. Requires authorization.</summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the update-animal route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPut("/animals/{id:guid}", [Authorize] async (

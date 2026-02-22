@@ -4,8 +4,10 @@ using VeterinaryApi.Domain.Users;
 
 namespace VeterinaryApi.Infrastructure.Persistence.Configurations.Users;
 
+/// <summary>EF Core fluent configuration for the <see cref="UserSession"/> entity, mapping to the <c>user_sessions</c> table.</summary>
 public class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
 {
+    /// <summary>Configures table mapping, primary key, and all session-related column mappings.</summary>
     public void Configure(EntityTypeBuilder<UserSession> builder)
     {
         builder.ToTable("user_sessions");

@@ -12,16 +12,23 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clients;
 
+/// <summary>
+/// Vertical slice for retrieving a paginated, filterable, and sortable list of clients
+/// belonging to the currently authenticated tenant.
+/// </summary>
 public static class GetAllClients
 {
-
-
+    /// <summary>
+    /// Handles <see cref="TableRequest{T}"/> for the clients list, using <see cref="ClientReadResponse"/> as the row DTO.
+    /// ⚠️ Warning: sorting is applied in-memory after <c>ToListAsync</c>.
+    /// </summary>
     public class GetAllClientsQueryHandler
         : IQueryHandler<TableRequest<ClientReadResponse>, OffSetPagedList<ClientReadResponse>>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
 
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public GetAllClientsQueryHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -30,6 +37,10 @@ public static class GetAllClients
             _currentTenant = currentTenant;
         }
 
+        /// <summary>
+        /// Projects tenant-scoped clients (with animal count) to <see cref="ClientReadResponse"/> DTOs,
+        /// applies optional search filter and in-memory column sort, then paginates.
+        /// </summary>
         public async Task<Result<OffSetPagedList<ClientReadResponse>>> Handle(
             TableRequest<ClientReadResponse> query,
             CancellationToken cancellationToken = default)
@@ -102,8 +113,10 @@ public static class GetAllClients
             return Result<OffSetPagedList<ClientReadResponse>>.Success(result);
         }
     }
+    /// <summary>Carter endpoint that maps <c>GET /clients</c>. Requires authorization.</summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the get-all-clients route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/clients", [Authorize] async (

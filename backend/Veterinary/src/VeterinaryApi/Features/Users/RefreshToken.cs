@@ -11,12 +11,29 @@ using VeterinaryApi.Domain.Users;
 
 namespace VeterinaryApi.Features.Users;
 
+/// <summary>
+/// Vertical slice for rotating authentication tokens.
+/// Validates the existing refresh token, issues a new JWT access token,
+/// rotates the refresh token (prevents replay attacks), and updates the cookie.
+/// </summary>
 public static class RefreshToken
 {
+    /// <summary>
+    /// Command carrying the current refresh token to exchange.
+    /// Implements <see cref="ICommand{TResponse}"/> where the response is <see cref="Response"/>.
+    /// </summary>
+    /// <param name="RefreshToken">The opaque refresh token read from the HTTP-only cookie.</param>
     public record RefreshTokenCommand(string RefreshToken)
         : ICommand<Response>;
+
+    /// <summary>Response DTO containing the newly issued JWT access token.</summary>
+    /// <param name="Token">The new signed JWT access token.</param>
     public record Response(string Token);
 
+    /// <summary>
+    /// Handles the <see cref="RefreshTokenCommand"/> by validating the session,
+    /// generating rotated tokens, updating the persisted session, and refreshing the cookie.
+    /// </summary>
     public sealed class RefreshTokenCommandHandler
         : ICommandHandler<RefreshTokenCommand, Response>
     {
@@ -24,6 +41,7 @@ public static class RefreshToken
         private readonly IJwtProvider _jwtProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        /// <summary>Initializes the handler with required services.</summary>
         public RefreshTokenCommandHandler(
             IApplicationDbContext db,
             IJwtProvider jwtProvider,
@@ -34,6 +52,20 @@ public static class RefreshToken
             _httpContextAccessor = httpContextAccessor;
         }
 
+        /// <summary>
+        /// Executes the token refresh flow:
+        /// <list type="number">
+        ///   <item>Loads the <see cref="UserSession"/> including the associated <see cref="User"/>.</item>
+        ///   <item>Returns <c>UserErrors.InvalidCredentials</c> if the session does not exist.</item>
+        ///   <item>Returns <c>UserErrors.ExpiredRefreshToken</c> if the session has expired.</item>
+        ///   <item>Generates a new JWT access token and a new opaque refresh token.</item>
+        ///   <item>Rotates the session token and persists the update.</item>
+        ///   <item>Writes the new refresh token to the HTTP-only, Secure, SameSite=None cookie (7-day expiry).</item>
+        /// </list>
+        /// </summary>
+        /// <param name="command">The command containing the current refresh token.</param>
+        /// <param name="cancellationToken">Token for cooperative cancellation.</param>
+        /// <returns>A successful result with the new JWT, or a failure result.</returns>
         public async Task<Result<Response>> Handle(
             RefreshTokenCommand command,
             CancellationToken cancellationToken = default)
@@ -68,8 +100,15 @@ public static class RefreshToken
             return Result<Response>.Success(response);
         }
     }
+
+    /// <summary>
+    /// Carter endpoint that maps <c>POST /auth/refresh-token</c>.
+    /// Reads the refresh token from the incoming cookie, exchanges it for a new access token,
+    /// and rotates the cookie. Returns <c>200 OK</c> with the new token, or Problem Details.
+    /// </summary>
     public class Endpoint : ICarterModule
     {
+        /// <summary>Registers the refresh token route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/auth/refresh-token", async (

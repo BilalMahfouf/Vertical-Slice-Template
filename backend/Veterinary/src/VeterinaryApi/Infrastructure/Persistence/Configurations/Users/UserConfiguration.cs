@@ -5,8 +5,10 @@ using VeterinaryApi.Domain.Users;
 
 namespace VeterinaryApi.Infrastructure.Persistence.Configurations.Users;
 
+/// <summary>EF Core fluent configuration for the <see cref="User"/> entity, mapping to the <c>users</c> table.</summary>
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
+    /// <summary>Configures soft-delete global query filter, table mapping, keys, owned types (Email, Name), and relationships.</summary>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("users");

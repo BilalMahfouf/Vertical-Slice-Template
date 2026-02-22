@@ -21,8 +21,26 @@ using VeterinaryApi.Infrastructure.Tenants;
 
 namespace VeterinaryApi.Infrastructure;
 
+/// <summary>
+/// Provides the <see cref="AddInfrastructure"/> extension method that wires up all
+/// infrastructure dependencies for the Veterinary API.
+/// </summary>
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Registers all infrastructure services including:
+    /// <list type="bullet">
+    ///   <item>Password hashing (<see cref="Argon2PasswordHasher"/>)</item>
+    ///   <item>JWT authentication (HMAC-SHA256, read from environment variables)</item>
+    ///   <item>EF Core + Npgsql with <c>AuditInterceptor</c>, <c>InsertOutboxMessagesInterceptors</c>, and <c>TenantInterceptor</c></item>
+    ///   <item>Email service (<c>EmailService</c>)</item>
+    ///   <item>Tenant/current-user service (<c>CurrentUserService</c>)</item>
+    ///   <item>CQRS dispatchers and handlers (auto-scanned)</item>
+    ///   <item>Quartz.NET background job (outbox processor, every 10 seconds)</item>
+    ///   <item>SignalR + <see cref="INotificatioService"/> (<c>NotificationService</c>)</item>
+    ///   <item>Domain event handlers (scanned from the entry assembly)</item>
+    /// </list>
+    /// </summary>
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -68,19 +86,19 @@ public static class DependencyInjection
 
                //SignalR sends token via query string for WebSocket connections
 
-              options.Events = new JwtBearerEvents
-              {
-                  OnMessageReceived = context =>
-                  {
-                      var accessToken = context.Request.Query["access_token"];
-                      var path = context.HttpContext.Request.Path;
-                      if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
-                      {
-                          context.Token = accessToken;
-                      }
-                      return Task.CompletedTask;
-                  }
-              };
+               options.Events = new JwtBearerEvents
+               {
+                   OnMessageReceived = context =>
+                   {
+                       var accessToken = context.Request.Query["access_token"];
+                       var path = context.HttpContext.Request.Path;
+                       if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                       {
+                           context.Token = accessToken;
+                       }
+                       return Task.CompletedTask;
+                   }
+               };
            });
 
         // interceptors config

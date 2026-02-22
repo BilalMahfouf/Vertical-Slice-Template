@@ -6,10 +6,19 @@ using VeterinaryApi.Features.Users;
 
 namespace VeterinaryApi.Features.Auth;
 
+/// <summary>
+/// Vertical slice for the "current user" endpoint.
+/// Delegates to <see cref="GetUserById.GetUserByIdQuery"/> using the authenticated user's tenant ID.
+/// </summary>
 public static class Me
 {
+    /// <summary>
+    /// Endpoint-only slice — no command/query class defined here.
+    /// Maps <c>GET /auth/me</c> to <see cref="GetUserById"/> with the current user's ID.
+    /// </summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the /auth/me route with authorization requirement.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/auth/me", async (

@@ -8,16 +8,35 @@ using VeterinaryApi.Domain.Animals;
 
 namespace VeterinaryApi.Features.Animals;
 
+/// <summary>
+/// Vertical slice for soft-deleting an animal record.
+/// </summary>
 public static class DeleteAnimal
 {
+    /// <summary>
+    /// Command carrying the target animal identifier.
+    /// Implements the non-generic <see cref="ICommand"/> (no return value).
+    /// </summary>
+    /// <param name="Id">The unique identifier of the animal to soft-delete.</param>
     public record DeleteAnimalCommand(Guid Id) : ICommand;
+
+    /// <summary>Handles the <see cref="DeleteAnimalCommand"/> by soft-deleting the animal entity.</summary>
     public class DeleteAnimalCommandHandler : ICommandHandler<DeleteAnimalCommand>
     {
         private readonly IApplicationDbContext _db;
+
+        /// <summary>Initializes the handler with the application database context.</summary>
         public DeleteAnimalCommandHandler(IApplicationDbContext db)
         {
             _db = db;
         }
+
+        /// <summary>
+        /// Loads the animal, calls <c>Animal.Delete()</c> (soft-delete), and persists.
+        /// </summary>
+        /// <param name="command">The delete-animal command.</param>
+        /// <param name="cancellationToken">Token for cooperative cancellation.</param>
+        /// <returns>A successful result, or <c>AnimalErrors.AnimalNotFound</c>.</returns>
         public async Task<Result> Handle(
             DeleteAnimalCommand command,
             CancellationToken cancellationToken)
@@ -35,8 +54,13 @@ public static class DeleteAnimal
             return Result.Success;
         }
     }
+    /// <summary>
+    /// Carter endpoint that maps <c>DELETE /animals/{id}</c>.
+    /// Requires authorization. Returns <c>204 No Content</c> on success or Problem Details.
+    /// </summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the delete-animal route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapDelete("/animals/{id:guid}", [Authorize] async (

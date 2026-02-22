@@ -7,20 +7,36 @@ using VeterinaryApi.Domain.Users;
 
 namespace VeterinaryApi.Features.Users;
 
+/// <summary>
+/// Vertical slice for completing a password reset using a one-time token.
+/// Verifies the reset token against the <see cref="UserSession"/> table and updates the password hash.
+/// </summary>
 public static class ResetPassword
 {
+    /// <summary>
+    /// Command carrying all data required to perform the password reset.
+    /// Implements the non-generic <see cref="ICommand"/> (no return value).
+    /// </summary>
+    /// <param name="Password">The new plain-text password.</param>
+    /// <param name="ConfirmPassword">Must match <paramref name="Password"/>; caller or a validator should enforce equality.</param>
+    /// <param name="Token">The reset token received from the password-reset email link.</param>
+    /// <param name="Email">The email address identifying the account to reset.</param>
     public sealed record ResetPasswordCommand(
         string Password,
         string ConfirmPassword,
         string Token,
         string Email) : ICommand;
 
+    /// <summary>
+    /// Handles the <see cref="ResetPasswordCommand"/> by validating the token and updating the password.
+    /// </summary>
     public sealed class ResetPasswordCommandHandler
         : ICommandHandler<ResetPasswordCommand>
     {
         private readonly IApplicationDbContext _db;
         private readonly IPasswordHasher _passwordHasher;
 
+        /// <summary>Initializes the handler with database and password hashing services.</summary>
         public ResetPasswordCommandHandler(
             IApplicationDbContext db,
             IPasswordHasher passwordHasher)
@@ -29,6 +45,21 @@ public static class ResetPassword
             _passwordHasher = passwordHasher;
         }
 
+        /// <summary>
+        /// Executes the reset-password flow:
+        /// <list type="number">
+        ///   <item>Loads the user by email.</item>
+        ///   <item>Validates the token against <see cref="UserSession"/> rows of type <see cref="UserSessionTokenType.ResetPassword"/> that have not expired.</item>
+        ///   <item>Hashes the new password and calls <c>User.UpdatePassword()</c>.</item>
+        ///   <item>Persists the change. Note: the consumed reset session is not deleted — expired sessions should be cleaned up by a background job.</item>
+        /// </list>
+        /// </summary>
+        /// <param name="command">The reset-password command.</param>
+        /// <param name="cancellationToken">Token for cooperative cancellation.</param>
+        /// <returns>
+        /// A successful result, or a failure with <c>UserErrors.UserNotFound</c> or
+        /// <c>UserErrors.InvalidCredentials</c> if the token is invalid or expired.
+        /// </returns>
         public async Task<Result> Handle(
             ResetPasswordCommand command,
             CancellationToken cancellationToken = default)
@@ -57,8 +88,14 @@ public static class ResetPassword
         }
     }
 
+    /// <summary>
+    /// Carter endpoint that maps <c>PUT /auth/reset-passowrd</c>.
+    /// Note: the route contains a typo (<c>passowrd</c> instead of <c>password</c>).
+    /// Returns <c>200 OK</c> on success or Problem Details on failure.
+    /// </summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the reset-password route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPut("/auth/reset-passowrd", async (

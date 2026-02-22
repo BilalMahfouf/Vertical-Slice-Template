@@ -9,13 +9,20 @@ using VeterinaryApi.Domain.Clients;
 
 namespace VeterinaryApi.Features.Clients;
 
+/// <summary>
+/// Vertical slice for updating an existing client's contact details.
+/// Note: the file is named <c>UpdateClinic.cs</c> but the contained class is <c>UpdateClient</c> — a naming inconsistency.
+/// </summary>
 public static class UpdateClient
 {
+    /// <summary>HTTP request body DTO for the update-client endpoint.</summary>
     public record Request(
         string FirstName,
         string LastName,
         string Phone,
         string? Notes);
+
+    /// <summary>Command carrying the updated client values plus the target ID.</summary>
     public record UpdateClientCommand(
         Guid Id,
         string FirstName,
@@ -23,13 +30,19 @@ public static class UpdateClient
         string Phone,
         string? Notes) : ICommand;
 
+    /// <summary>Handles the <see cref="UpdateClientCommand"/> by loading the client and applying updates.</summary>
     public class UpdateClientCommandHandler : ICommandHandler<UpdateClientCommand>
     {
         private readonly IApplicationDbContext _db;
+
+        /// <summary>Initializes the handler with the application database context.</summary>
         public UpdateClientCommandHandler(IApplicationDbContext db)
         {
             _db = db;
         }
+
+        /// <summary>Loads the client, calls <c>Client.UpdateDetails()</c>, and persists.</summary>
+        /// <returns>A successful result, or <c>ClientErrors.ClientNotFound</c>.</returns>
         public async Task<Result> Handle(
             UpdateClientCommand command,
             CancellationToken cancellationToken)
@@ -53,8 +66,10 @@ public static class UpdateClient
             return Result.Success;
         }
     }
+    /// <summary>Carter endpoint that maps <c>PUT /clients/{id}</c>. Requires authorization.</summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the update-client route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPut("/clients/{id:guid}", [Authorize] async (

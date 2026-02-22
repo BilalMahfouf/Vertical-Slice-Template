@@ -13,10 +13,13 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clinics;
 
+/// <summary>
+/// Vertical slice for retrieving a paginated, filterable, and sortable list of clinics
+/// belonging to the currently authenticated tenant.
+/// </summary>
 public static class GetAllClinics
 {
-
-
+    /// <summary>Read-model DTO representing a single clinic row in the results table.</summary>
     public record Response(
         Guid Id,
         Guid DoctorId,
@@ -26,12 +29,19 @@ public static class GetAllClinics
         string Address,
         int StaffCount,
         DateTime CreatedOnUtc);
+
+    /// <summary>
+    /// Handles <see cref="TableRequest{T}"/> for the clinics list.
+    /// Applies tenant scoping, optional full-text search, in-memory column sort, and offset pagination.
+    /// ⚠️ Warning: sorting is applied in-memory after <c>ToListAsync</c> — avoid for large datasets.
+    /// </summary>
     public class GetAllClinicsQueryHandler
         : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
 
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public GetAllClinicsQueryHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -40,6 +50,18 @@ public static class GetAllClinics
             _currentTenant = currentTenant;
         }
 
+        /// <summary>
+        /// Executes the paginated clinics query:
+        /// <list type="number">
+        ///   <item>Scopes to the current tenant via <c>ForTenant()</c>.</item>
+        ///   <item>Applies optional search filter against clinic name, phone, and doctor name.</item>
+        ///   <item>Sorts results in-memory by the requested column.</item>
+        ///   <item>Paginates via <c>Skip/Take</c>.</item>
+        /// </list>
+        /// </summary>
+        /// <param name="query">Pagination, search, and sort parameters.</param>
+        /// <param name="cancellationToken">Token for cooperative cancellation.</param>
+        /// <returns>A paginated list of clinic DTOs, or <c>ClinicErrors.ClinicsNotFound</c>.</returns>
         public async Task<Result<OffSetPagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
@@ -108,8 +130,14 @@ public static class GetAllClinics
             return Result<OffSetPagedList<Response>>.Success(result);
         }
     }
+    /// <summary>
+    /// Carter endpoint that maps <c>GET /clinics</c>.
+    /// Accepts optional query parameters for pagination, search, and sorting.
+    /// Requires authorization.
+    /// </summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the get-all-clinics route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/clinics", [Authorize] async (

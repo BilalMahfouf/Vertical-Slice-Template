@@ -14,8 +14,14 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Prescriptions;
 
+/// <summary>
+/// Vertical slice for generating a veterinary prescription as a PDF document.
+/// Uses a Handlebars.NET template and PuppeteerSharp (headless Chromium) for rendering.
+/// Note: filename is <c>CreatePricription.cs</c> — a typo for ‘Prescription’.
+/// </summary>
 public static class CreatePricription
 {
+    /// <summary>HTTP request body DTO for a filled prescription. All fields are optional.</summary>
     public sealed record Request(
          string? PatientFullName = null,
         string? AnimalType = null,
@@ -23,6 +29,11 @@ public static class CreatePricription
         string? PatientWeight = null,
         List<string>? Medicines = null
             );
+
+    /// <summary>
+    /// Command that drives PDF generation.
+    /// When <paramref name="isEmpty"/> is <c>true</c> an empty template is rendered (no patient data).
+    /// </summary>
     public sealed record Command(
         bool isEmpty = false,
         string? PatientFullName = null,
@@ -32,6 +43,7 @@ public static class CreatePricription
         List<string>? Medicines = null
     ) : ICommand<Response>;
 
+    /// <summary>Data model passed to the Handlebars template during rendering.</summary>
     public sealed record PdfData(
         string CabinetName,
         string DoctorName,
@@ -44,9 +56,16 @@ public static class CreatePricription
         List<string>? Medicines = null
         );
 
-
+    /// <summary>Response DTO wrapping the raw PDF byte array.</summary>
+    /// <param name="PdfData">The generated prescription PDF as a raw byte array.</param>
     public sealed record Response(byte[] PdfData);
 
+    /// <summary>
+    /// Converts a <see cref="DateTime"/> to a French-language date string
+    /// in the format <c>"day / MonthName / year"</c>.
+    /// </summary>
+    /// <param name="date">The date to convert.</param>
+    /// <returns>A French-formatted date string, e.g. <c>"5 / Mars / 2025"</c>.</returns>
     private static string GetDateInFrench(DateTime date)
     {
         var month = date.Month switch
@@ -68,11 +87,21 @@ public static class CreatePricription
         var stringDate = $"{date.Day} / {month} / {date.Year}";
         return stringDate;
     }
+    /// <summary>
+    /// Handles the <see cref="Command"/> by:
+    /// <list type="number">
+    ///   <item>Loading clinic and doctor details from the tenant's record.</item>
+    ///   <item>Loading the Handlebars template from an embedded resource, falling back to the file system.</item>
+    ///   <item>Rendering the template with <see cref="PdfData"/>.</item>
+    ///   <item>Launching a headless Chromium browser via PuppeteerSharp and exporting an A4 PDF.</item>
+    /// </list>
+    /// </summary>
     public sealed class CommandHandler : ICommandHandler<Command, Response>
     {
         private readonly ICurrentTenant _currentTenant;
         private readonly IApplicationDbContext _db;
 
+        /// <summary>Initializes the handler with tenant context and database services.</summary>
         public CommandHandler(
             ICurrentTenant currentTenant,
             IApplicationDbContext db)
@@ -81,6 +110,10 @@ public static class CreatePricription
             _db = db;
         }
 
+        /// <summary>
+        /// Generates the prescription PDF. Returns <c>ClinicErrors.ClinicsNotFound</c> if the tenant
+        /// has no clinic on record.
+        /// </summary>
         public async Task<Result<Response>> Handle(
             Command command,
             CancellationToken cancellationToken = default)
@@ -171,8 +204,10 @@ public static class CreatePricription
             return Result<Response>.Success(new Response(pdfData));
         }
     }
+    /// <summary>Carter endpoint that maps <c>POST /prescriptions</c>. Accepts a <see cref="Request"/> body and streams the PDF file. Requires authorization.</summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the create-prescription route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/prescriptions", async (
@@ -201,8 +236,10 @@ public static class CreatePricription
         }
     }
 
+    /// <summary>Carter endpoint that maps <c>GET /prescriptions/empty</c>. Returns an empty (unfilled) prescription template PDF. Requires authorization.</summary>
     public sealed class Endpoint1 : IEndpoint
     {
+        /// <summary>Registers the empty-prescription-template route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/prescriptions/empty", async (

@@ -9,10 +9,21 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Visits;
 
+/// <summary>
+/// Vertical slice for retrieving full details of a single visit by identifier,
+/// including animal, client, payment, and optional appointment information.
+/// </summary>
 public static class GetVisitById
 {
+    /// <summary>Query carrying the target visit identifier.</summary>
+    /// <param name="Id">The unique identifier of the visit to retrieve.</param>
     public record Query(Guid Id) : IQuery<Response>;
 
+    /// <summary>
+    /// Rich read-model DTO for a visit detail response.
+    /// Includes 20 fields covering animal info, client info, appointment (optional),
+    /// clinical data, and payment details.
+    /// </summary>
     public record Response(
         Guid Id,
         Guid AnimalId,
@@ -35,11 +46,13 @@ public static class GetVisitById
         string PaymentStatus,
         DateTime? UpdatedOnUtc = null);
 
+    /// <summary>Handles the <see cref="Query"/> with tenant-scoped projection including appointment navigation.</summary>
     public class GetVisitByIdQueryHandler : IQueryHandler<Query, Response>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
 
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public GetVisitByIdQueryHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -48,6 +61,10 @@ public static class GetVisitById
             _currentTenant = currentTenant;
         }
 
+        /// <summary>
+        /// Projects the visit (with <c>Include(e =&gt; e.Appointment)</c>) to a <see cref="Response"/> DTO.
+        /// </summary>
+        /// <returns>A successful result, or <c>VisitErrors.VisitNotFound</c>.</returns>
         public async Task<Result<Response>> Handle(
             Query query,
             CancellationToken cancellationToken)
@@ -87,8 +104,10 @@ public static class GetVisitById
         }
     }
 
+    /// <summary>Carter endpoint that maps <c>GET /visits/{id}</c>. Requires authorization.</summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the get-visit-by-id route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/visits/{id:guid}", [Authorize] async (

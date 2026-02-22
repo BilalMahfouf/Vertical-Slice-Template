@@ -8,9 +8,24 @@ using VeterinaryApi.Domain.Users;
 
 namespace VeterinaryApi.Features.Users;
 
+/// <summary>
+/// Vertical slice for retrieving a single user's public profile by their unique identifier.
+/// </summary>
 public static class GetUserById
 {
+    /// <summary>
+    /// Query carrying the target user's identifier.
+    /// Implements <see cref="IQuery{TResponse}"/> where the response is <see cref="Response"/>.
+    /// </summary>
+    /// <param name="UserId">The unique identifier of the user to retrieve.</param>
     public record GetUserByIdQuery(Guid UserId) : IQuery<Response>;
+
+    /// <summary>Read-model DTO returned for a user profile lookup.</summary>
+    /// <param name="Id">The user's unique identifier.</param>
+    /// <param name="UserName">The user's display username.</param>
+    /// <param name="Email">The user's email address.</param>
+    /// <param name="FirstName">The user's first name.</param>
+    /// <param name="LastName">The user's last name.</param>
     public record Response(
         Guid Id,
         string UserName,
@@ -18,16 +33,27 @@ public static class GetUserById
         string FirstName,
         string LastName);
 
+    /// <summary>
+    /// Handles the <see cref="GetUserByIdQuery"/> with a projection query (no entity tracking).
+    /// </summary>
     public class GetUserByIdQueryHandler
         : IQueryHandler<GetUserByIdQuery, Response>
     {
         private readonly IApplicationDbContext _db;
 
+        /// <summary>Initializes the handler with the application database context.</summary>
         public GetUserByIdQueryHandler(IApplicationDbContext db)
         {
             _db = db;
         }
 
+        /// <summary>
+        /// Projects the user entity to a <see cref="Response"/> DTO.
+        /// Uses <c>AsNoTracking</c> for read performance.
+        /// </summary>
+        /// <param name="query">The query with the target user ID.</param>
+        /// <param name="cancellationToken">Token for cooperative cancellation.</param>
+        /// <returns>A successful result with the user DTO, or <c>UserErrors.UserNotFound</c> if not found.</returns>
         public async Task<Result<Response>> Handle(
             GetUserByIdQuery query,
             CancellationToken cancellationToken = default)
@@ -49,8 +75,15 @@ public static class GetUserById
             return Result<Response>.Success(response);
         }
     }
+
+    /// <summary>
+    /// Carter endpoint that maps <c>GET /users/{userId}</c>.
+    /// Requires authorization via <c>[Authorize]</c> attribute.
+    /// Returns <c>200 OK</c> with the user DTO, or Problem Details if not found.
+    /// </summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the get-user-by-id route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/users/{userId:guid}",

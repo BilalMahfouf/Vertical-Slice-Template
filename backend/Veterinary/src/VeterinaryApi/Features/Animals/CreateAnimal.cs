@@ -102,8 +102,13 @@ public static class CreateAnimal
         }
     }
 
+    /// <summary>
+    /// Carter endpoint that maps <c>POST /animals</c>.
+    /// Requires authorization. Returns <c>201 Created</c> with the animal ID, or Problem Details.
+    /// </summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the create-animal route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/animals", [Authorize] async (

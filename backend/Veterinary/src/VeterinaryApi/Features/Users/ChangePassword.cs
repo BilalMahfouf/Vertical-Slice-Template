@@ -8,12 +8,28 @@ using VeterinaryApi.Domain.Users;
 
 namespace VeterinaryApi.Features.Users;
 
+/// <summary>
+/// Vertical slice for changing the authenticated user's password.
+/// Requires the current password for verification before accepting the new password.
+/// </summary>
 public static class ChangePassword
 {
+    /// <summary>
+    /// Command carrying the current and new passwords.
+    /// Implements the non-generic <see cref="ICommand"/> (no return value).
+    /// </summary>
+    /// <param name="CurrentPassword">The user's existing plain-text password used to verify identity.</param>
+    /// <param name="NewPassword">The new plain-text password to hash and store.</param>
+    /// <param name="ConfirmNewPassword">Must match <paramref name="NewPassword"/>; validation is expected in the caller or a validator.</param>
     public sealed record ChangePasswordCommand(
         string CurrentPassword,
         string NewPassword,
         string ConfirmNewPassword) : ICommand;
+
+    /// <summary>
+    /// Handles the <see cref="ChangePasswordCommand"/> by verifying the current password
+    /// and then updating to the new Argon2 hash.
+    /// </summary>
     public sealed class ChangePasswordCommandHandler
         : ICommandHandler<ChangePasswordCommand>
     {
@@ -21,6 +37,7 @@ public static class ChangePassword
         private readonly ICurrentTenant _currentTenant;
         private readonly IPasswordHasher _passwordHasher;
 
+        /// <summary>Initializes the handler with database, tenant context, and password hashing services.</summary>
         public ChangePasswordCommandHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant,
@@ -31,6 +48,19 @@ public static class ChangePassword
             _passwordHasher = passwordHasher;
         }
 
+        /// <summary>
+        /// Executes the password change flow:
+        /// <list type="number">
+        ///   <item>Resolves the current user ID from <see cref="ICurrentTenant"/>.</item>
+        ///   <item>Loads the user entity from the database.</item>
+        ///   <item>Verifies the <paramref name="command"/>.CurrentPassword against the stored Argon2 hash.</item>
+        ///   <item>Hashes the new password and calls <c>User.UpdatePassword()</c>.</item>
+        ///   <item>Persists the change.</item>
+        /// </list>
+        /// </summary>
+        /// <param name="command">The change-password command.</param>
+        /// <param name="cancellationToken">Token for cooperative cancellation.</param>
+        /// <returns>A successful result, or a failure with <c>UserErrors.NotFound</c> or <c>UserErrors.InvalidPassword</c>.</returns>
         public async Task<Result> Handle(
             ChangePasswordCommand command,
             CancellationToken cancellationToken = default)
@@ -53,8 +83,14 @@ public static class ChangePassword
             return Result.Success;
         }
     }
+
+    /// <summary>
+    /// Carter endpoint that maps <c>POST /change-password</c>.
+    /// Requires authorization. Returns <c>200 OK</c> on success or Problem Details on failure.
+    /// </summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the change-password route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/change-password", async (

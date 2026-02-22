@@ -12,8 +12,16 @@ using VeterinaryApi.Domain.Visits;
 
 namespace VeterinaryApi.Features.Visits;
 
+/// <summary>
+/// Vertical slice for creating a new veterinary visit, supporting two creation paths:
+/// appointment-based (provide <c>AppointmentId</c>) or direct (provide <c>AnimalId</c> + <c>ClientId</c>).
+/// </summary>
 public static class CreateVisit
 {
+    /// <summary>
+    /// Command containing all fields required to create a visit.
+    /// Either <c>AppointmentId</c> OR both <c>AnimalId</c> and <c>ClientId</c> must be provided.
+    /// </summary>
     public sealed record CreateVisitCommand(
         Guid? AnimalId,
         Guid? ClientId,
@@ -25,10 +33,15 @@ public static class CreateVisit
         PaymentStatus PaymentStatus,
         decimal PaymentAmount,
         string? Notes) : ICommand<Response>;
+
+    /// <summary>Response DTO with the newly created visit identifier.</summary>
+    /// <param name="Id">The unique identifier of the created visit.</param>
     public sealed record Response(Guid Id);
 
+    /// <summary>FluentValidation validator ensuring <c>VisitType</c> is a valid enum value.</summary>
     public sealed class Validator : AbstractValidator<CreateVisitCommand>
     {
+        /// <summary>Configures the <c>VisitType</c> enum validation rule.</summary>
         public Validator()
         {
             RuleFor(v => v.VisitType)
@@ -36,11 +49,17 @@ public static class CreateVisit
         }
     }
 
+    /// <summary>
+    /// Handles the <see cref="CreateVisitCommand"/> by choosing the appropriate
+    /// creation path and persisting the new visit.
+    /// </summary>
     public sealed class CreateVisitCommandHandler
         : ICommandHandler<CreateVisitCommand, Response>
     {
         private readonly IApplicationDbContext _db;
         private readonly IValidator<CreateVisitCommand> _validator;
+
+        /// <summary>Initializes the handler with database and validator services.</summary>
         public CreateVisitCommandHandler(
             IApplicationDbContext db,
             IValidator<CreateVisitCommand> validator)
@@ -48,6 +67,12 @@ public static class CreateVisit
             _db = db;
             _validator = validator;
         }
+
+        /// <summary>
+        /// Creates a <see cref="Visit"/> from an existing appointment, loads the appointment with
+        /// its associated animal, marks the appointment as completed, and returns the new visit.
+        /// </summary>
+        /// <returns>The created <see cref="Visit"/>, or <c>null</c> if the appointment was not found.</returns>
         private async Task<Visit?> CreateWithAppointment(CreateVisitCommand command)
         {
             Guid appointmentId = (Guid)command.AppointmentId!;
@@ -75,6 +100,10 @@ public static class CreateVisit
 
             return visit;
         }
+        /// <summary>
+        /// Validates the command, then creates the visit via appointment or direct path.
+        /// Returns <c>AppointmentErrors.NotFound</c> or <c>Error.NotFound/Validation</c> on failure.
+        /// </summary>
         public async Task<Result<Response>> Handle(
             CreateVisitCommand command,
             CancellationToken cancellationToken)
@@ -134,8 +163,10 @@ public static class CreateVisit
             return Result<Response>.Success(new Response(visit.Id));
         }
     }
+    /// <summary>Carter endpoint that maps <c>POST /visits</c>. Requires authorization.</summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the create-visit route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/visits", [Authorize] async (

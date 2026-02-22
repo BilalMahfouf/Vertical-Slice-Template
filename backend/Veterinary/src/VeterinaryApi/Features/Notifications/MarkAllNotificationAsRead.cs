@@ -9,14 +9,21 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Notifications;
 
+/// <summary>
+/// Vertical slice for bulk-marking all unread notifications as read for the current tenant.
+/// </summary>
 public static class MarkAllNotificationAsRead
 {
+    /// <summary>Command with no input — targets all unread notifications of the authenticated user.</summary>
     public sealed record Command() : ICommand;
+
+    /// <summary>Handles the <see cref="Command"/> by iterating and marking all unread notifications.</summary>
     public sealed class MarkAllNotificationAsReadCommandHandler : ICommandHandler<Command>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
 
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public MarkAllNotificationAsReadCommandHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -25,6 +32,10 @@ public static class MarkAllNotificationAsRead
             _currentTenant = currentTenant;
         }
 
+        /// <summary>
+        /// Loads all unread notifications for the tenant, calls <c>Notification.MarkAsRead()</c> on each,
+        /// and persists. Returns success even if there are no unread notifications.
+        /// </summary>
         public async Task<Result> Handle(
             Command command,
             CancellationToken cancellationToken)
@@ -46,8 +57,10 @@ public static class MarkAllNotificationAsRead
             return Result.Success;
         }
     }
+    /// <summary>Carter endpoint that maps <c>PATCH /notifications/mark-all-as-read</c>. Requires authorization.</summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the bulk mark-all-as-read route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPatch("/notifications/mark-all-as-read", [Authorize] async (

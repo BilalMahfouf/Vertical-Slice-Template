@@ -9,10 +9,21 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clinics;
 
+/// <summary>
+/// Vertical slice exposing the clinic associated with the authenticated user.
+/// The route parameter <c>userId</c> is currently ignored —
+/// the authenticated user's ID from <see cref="ICurrentTenant"/> is used instead.
+/// </summary>
 public static class GetClinicByUserId
 {
+    /// <summary>
+    /// Carter endpoint that maps <c>GET /clinics/user/{userId}</c>.
+    /// Resolves the clinic for the current tenant and delegates to <see cref="GetClinicById"/>.
+    /// Requires authorization.
+    /// </summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the get-clinic-by-user route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/clinics/user/{userId:guid}", async (

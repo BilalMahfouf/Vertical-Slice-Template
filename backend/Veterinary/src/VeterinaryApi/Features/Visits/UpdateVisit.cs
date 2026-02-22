@@ -9,8 +9,10 @@ using VeterinaryApi.Domain.Visits;
 
 namespace VeterinaryApi.Features.Visits;
 
+/// <summary>Vertical slice for updating an existing visit's clinical and payment details.</summary>
 public static class UpdateVisit
 {
+    /// <summary>HTTP request body DTO for the update-visit endpoint.</summary>
     public sealed record Request(
         VisitType VisitType,
         List<string>? Symptoms,
@@ -19,8 +21,12 @@ public static class UpdateVisit
         string? FollowUpNotes,
         decimal PaymentAmount,
         PaymentStatus PaymentStatus);
+
+    /// <summary>Response DTO with the updated visit identifier.</summary>
+    /// <param name="Id">The unique identifier of the updated visit.</param>
     public sealed record Response(Guid Id);
 
+    /// <summary>Command merging the route ID with the updated visit fields.</summary>
     public sealed record UpdateVisitCommand(
         Guid Id,
         VisitType VisitType,
@@ -31,8 +37,13 @@ public static class UpdateVisit
         decimal PaymentAmount,
         PaymentStatus PaymentStatus) : ICommand<Response>;
 
+    /// <summary>
+    /// FluentValidation validator with 4 rules: non-empty ID, valid <c>VisitType</c>,
+    /// valid <c>PaymentStatus</c>, and optional <c>FollowUpNotes</c> capped at 2 000 characters.
+    /// </summary>
     public sealed class Validator : AbstractValidator<UpdateVisitCommand>
     {
+        /// <summary>Configures all update-visit validation rules.</summary>
         public Validator()
         {
             RuleFor(x => x.Id)
@@ -49,12 +60,14 @@ public static class UpdateVisit
         }
     }
 
+    /// <summary>Handles the <see cref="UpdateVisitCommand"/> by loading the visit and applying updates.</summary>
     public sealed class UpdateVisitCommandHandler
         : ICommandHandler<UpdateVisitCommand, Response>
     {
         private readonly IApplicationDbContext _db;
         private readonly IValidator<UpdateVisitCommand> _validator;
 
+        /// <summary>Initializes the handler with database and validator services.</summary>
         public UpdateVisitCommandHandler(
             IApplicationDbContext db,
             IValidator<UpdateVisitCommand> validator)
@@ -63,6 +76,10 @@ public static class UpdateVisit
             _validator = validator;
         }
 
+        /// <summary>
+        /// Validates the command, loads the visit, calls <c>Visit.UpdateDetails()</c>, and persists.
+        /// </summary>
+        /// <returns>A successful result with the visit ID, or <c>VisitErrors.VisitNotFound</c>.</returns>
         public async Task<Result<Response>> Handle(UpdateVisitCommand command, CancellationToken cancellationToken = default)
         {
             _validator.ValidateAndThrow(command);
@@ -89,8 +106,10 @@ public static class UpdateVisit
         }
     }
 
+    /// <summary>Carter endpoint that maps <c>PUT /visits/{id}</c>. Requires authorization.</summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the update-visit route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPut("/visits/{id:guid}", [Authorize] async (

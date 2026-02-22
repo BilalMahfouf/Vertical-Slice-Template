@@ -4,8 +4,10 @@ using VeterinaryApi.Domain.Clinics;
 
 namespace VeterinaryApi.Infrastructure.Persistence.Configurations.Clinics;
 
+/// <summary>EF Core fluent configuration for the <see cref="Clinic"/> entity, mapping to the <c>clinics</c> table.</summary>
 public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
 {
+    /// <summary>Configures soft-delete global query filter, table mapping, keys, columns, and relationships.</summary>
     public void Configure(EntityTypeBuilder<Clinic> builder)
     {
         builder.HasQueryFilter(c => !c.IsDeleted);

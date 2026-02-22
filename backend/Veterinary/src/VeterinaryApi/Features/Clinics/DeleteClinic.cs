@@ -8,16 +8,35 @@ using VeterinaryApi.Domain.Clinics;
 
 namespace VeterinaryApi.Features.Clinics;
 
+/// <summary>
+/// Vertical slice for soft-deleting a clinic by its unique identifier.
+/// </summary>
 public static class DeleteClinic
 {
+    /// <summary>
+    /// Command carrying the target clinic identifier.
+    /// Implements the non-generic <see cref="ICommand"/> (no return value).
+    /// </summary>
+    /// <param name="Id">The unique identifier of the clinic to delete.</param>
     public record DeleteClinicCommand(Guid Id) : ICommand;
+
+    /// <summary>Handles the <see cref="DeleteClinicCommand"/> by soft-deleting the clinic entity.</summary>
     public class DeleteClinicCommandHandler : ICommandHandler<DeleteClinicCommand>
     {
         private readonly IApplicationDbContext _db;
+
+        /// <summary>Initializes the handler with the application database context.</summary>
         public DeleteClinicCommandHandler(IApplicationDbContext db)
         {
             _db = db;
         }
+
+        /// <summary>
+        /// Loads the clinic by ID, calls <c>Clinic.Delete()</c> (soft-delete), and persists.
+        /// </summary>
+        /// <param name="command">The delete-clinic command.</param>
+        /// <param name="cancellationToken">Token for cooperative cancellation.</param>
+        /// <returns>A successful result, or <c>ClinicErrors.ClinicNotFound</c>.</returns>
         public async Task<Result> Handle(
             DeleteClinicCommand command,
             CancellationToken cancellationToken)
@@ -35,8 +54,13 @@ public static class DeleteClinic
             return Result.Success;
         }
     }
+    /// <summary>
+    /// Carter endpoint that maps <c>DELETE /clinics/{id}</c>.
+    /// Requires authorization. Returns <c>204 No Content</c> on success or Problem Details.
+    /// </summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the delete-clinic route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapDelete("/clinics/{id:guid}", [Authorize] async (

@@ -12,27 +12,37 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Visits;
 
+/// <summary>
+/// Vertical slice for retrieving a paginated, filterable, and sortable table of visits.
+/// Note: this class is <c>public class</c> (not <c>static</c>), unlike other slice containers.
+/// </summary>
 public class GetVisitsTable
 {
-
+    /// <summary>Row DTO for the visits table view.</summary>
     public record Response(
-    Guid Id,
-    string VisitType,
-    Guid AnimalId,
-    string AnimalName,
-    string AnimalSpecies,
-    Guid OwnerId,
-    string OwnerName,
-    DateTime VisitDate,
-    decimal PaymentAmount,
-    string PaymentStatus);
+        Guid Id,
+        string VisitType,
+        Guid AnimalId,
+        string AnimalName,
+        string AnimalSpecies,
+        Guid OwnerId,
+        string OwnerName,
+        DateTime VisitDate,
+        decimal PaymentAmount,
+        string PaymentStatus);
 
+    /// <summary>
+    /// Handles <see cref="TableRequest{T}"/> for the visits table.
+    /// ⚠️ Warning: sorting is applied in-memory (<c>ToListAsync</c> then <c>AsQueryable</c>).
+    /// Supports search by animal name or owner name.
+    /// </summary>
     public class GetVisitsTableQueryHandler
         : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
 
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public GetVisitsTableQueryHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -41,7 +51,10 @@ public class GetVisitsTable
             _currentTenant = currentTenant;
         }
 
-
+        /// <summary>
+        /// Projects visits to <see cref="Response"/> DTOs, applies optional search/sort,
+        /// and returns an offset-paginated result.
+        /// </summary>
         public async Task<Result<OffSetPagedList<Response>>> Handle(
             TableRequest<Response> query,
             CancellationToken cancellationToken = default)
@@ -115,8 +128,10 @@ public class GetVisitsTable
         }
     }
 
+    /// <summary>Carter endpoint that maps <c>GET /visits</c>. Requires authorization.</summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the get-visits-table route with pagination and search query parameters.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/visits", [Authorize] async (

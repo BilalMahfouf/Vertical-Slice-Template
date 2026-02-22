@@ -4,8 +4,10 @@ using VeterinaryApi.Domain.Vaccinations;
 
 namespace VeterinaryApi.Infrastructure.Persistence.Configurations.Vaccinations;
 
+/// <summary>EF Core fluent configuration for the <see cref="Vaccination"/> entity, mapping to the <c>vaccinations</c> table.</summary>
 public class VaccinationConfiguration : IEntityTypeConfiguration<Vaccination>
 {
+    /// <summary>Configures soft-delete global query filter, table mapping, primary key, base entity properties, and navigation relationships.</summary>
     public void Configure(EntityTypeBuilder<Vaccination> builder)
     {
         builder.ToTable("vaccinations");

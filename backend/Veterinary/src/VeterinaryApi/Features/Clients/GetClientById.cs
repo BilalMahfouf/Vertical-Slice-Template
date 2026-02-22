@@ -9,9 +9,16 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clients;
 
+/// <summary>
+/// Vertical slice for retrieving a single client by unique identifier, scoped to the current tenant.
+/// </summary>
 public static class GetClientById
 {
+    /// <summary>Query carrying the target client identifier.</summary>
+    /// <param name="Id">The unique identifier of the client to retrieve.</param>
     public record Query(Guid Id) : IQuery<Response>;
+
+    /// <summary>Read-model DTO for a client detail lookup.</summary>
     public record Response(
         Guid Id,
         Guid ClinicId,
@@ -20,11 +27,13 @@ public static class GetClientById
         string Phone,
         string? Notes);
 
+    /// <summary>Handles the <see cref="Query"/> with a tenant-scoped, non-tracked projection.</summary>
     public class GetClientByIdQueryHandler : IQueryHandler<Query, Response>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
 
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public GetClientByIdQueryHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -32,6 +41,9 @@ public static class GetClientById
             _db = db;
             _currentTenant = currentTenant;
         }
+
+        /// <summary>Projects the client and clinic to a <see cref="Response"/> DTO.</summary>
+        /// <returns>A successful result, or <c>ClientErrors.ClientNotFound</c>.</returns>
         public async Task<Result<Response>> Handle(
             Query query,
             CancellationToken cancellationToken)
@@ -57,8 +69,10 @@ public static class GetClientById
             return Result<Response>.Success(client);
         }
     }
+    /// <summary>Carter endpoint that maps <c>GET /clients/{id}</c>. Requires authorization.</summary>
     public class Endpoint : IEndpoint
     {
+        /// <summary>Registers the get-client-by-id route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/clients/{id:guid}", [Authorize] async (

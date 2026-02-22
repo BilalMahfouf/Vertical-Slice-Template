@@ -5,8 +5,13 @@ using VeterinaryApi.Domain.Clients;
 namespace VeterinaryApi.Infrastructure.Persistence.Configurations.Clients;
 
 
+/// <summary>
+/// EF Core fluent configuration for the <see cref="Client"/> entity, mapping to the <c>owners</c> table.
+/// Note: the configuration class is named <c>OwnerConfiguration</c> \u2014 a legacy naming inconsistency with the domain entity.
+/// </summary>
 public class OwnerConfiguration : IEntityTypeConfiguration<Client>
 {
+    /// <summary>Configures soft-delete global query filter, table mapping, keys, owned Name type, and relationships.</summary>
     public void Configure(EntityTypeBuilder<Client> builder)
     {
 

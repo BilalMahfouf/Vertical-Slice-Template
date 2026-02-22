@@ -10,17 +10,36 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Animals;
 
+/// <summary>
+/// Vertical slice for retrieving a list of animals belonging to a specific client,
+/// scoped to the currently authenticated tenant.
+/// </summary>
 public static class GetAnimalsByClientId
 {
+    /// <summary>
+    /// Query carrying the client identifier to filter by.
+    /// Implements <see cref="IQuery{TResponse}"/> where the response is a paged list.
+    /// </summary>
+    /// <param name="ClientId">The unique identifier of the client whose animals to retrieve.</param>
     public sealed record Query(Guid ClientId) : IQuery<OffSetPagedList<Response>>;
+
+    /// <summary>Lightweight DTO for listing an animal as part of a client's record.</summary>
+    /// <param name="AnimalId">The animal's unique identifier.</param>
+    /// <param name="Name">The animal's name.</param>
+    /// <param name="Species">The animal's species.</param>
     public sealed record Response(Guid AnimalId, string Name, string Species);
 
+    /// <summary>
+    /// Handles the <see cref="Query"/> by loading all tenant-scoped animals for the given client.
+    /// Returns all animals in a single page (no server-side pagination applied).
+    /// </summary>
     public sealed class GetAnimalsByClientIdQueryHandler
         : IQueryHandler<Query, OffSetPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
 
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public GetAnimalsByClientIdQueryHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -28,6 +47,11 @@ public static class GetAnimalsByClientId
             _db = db;
             _currentTenant = currentTenant;
         }
+
+        /// <summary>
+        /// Projects animals to <see cref="Response"/> DTOs filtered by <paramref name="query"/>.ClientId.
+        /// </summary>
+        /// <returns>A paged list with all results in one page, or <c>AnimalErrors.AnimalsNotFound</c>.</returns>
         public async Task<Result<OffSetPagedList<Response>>> Handle(
             Query query,
             CancellationToken cancellationToken = default)
@@ -54,8 +78,10 @@ public static class GetAnimalsByClientId
             return Result<OffSetPagedList<Response>>.Success(result);
         }
     }
+    /// <summary>Carter endpoint that maps <c>GET /animals/by-client/{clientId}</c>. Requires authorization.</summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the get-animals-by-client route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/animals/by-client/{clientId:guid}", [Authorize] async (

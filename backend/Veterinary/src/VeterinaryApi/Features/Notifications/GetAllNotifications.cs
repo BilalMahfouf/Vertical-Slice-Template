@@ -12,30 +12,48 @@ using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Notifications;
 
+/// <summary>
+/// Vertical slice for retrieving a tenant-scoped list of notifications with cursor-based pagination.
+/// Supports filtering by read/unread status and bidirectional navigation (next/prev).
+/// </summary>
 public static class GetAllNotifications
 {
+    /// <summary>Read-model DTO for a single notification row.</summary>
     public sealed record Response(
         Guid Id,
         string Title,
         string Body,
         bool IsRead,
         DateTime CreatedOnUtc);
+
+    /// <summary>Filter type for the notifications query.</summary>
     public enum Type
     {
+        /// <summary>Return all notifications regardless of read status.</summary>
         All = 1,
+        /// <summary>Return only unread notifications.</summary>
         NotReaded = 2,
     }
+
+    /// <summary>Query carrying cursor pagination parameters and an optional read/unread filter.</summary>
+    /// <param name="cursorRequest">Cursor pagination parameters (size, cursor token, direction).</param>
+    /// <param name="type">Optional filter: <see cref="Type.All"/> or <see cref="Type.NotReaded"/>.</param>
     public sealed record Query(
         CursorRequest<Response> cursorRequest,
         Type? type
         ) : IQuery<CursorPagedList<Response>>;
 
+    /// <summary>
+    /// Handles the <see cref="Query"/> with cursor-based pagination on notifications,
+    /// using <c>CreatedOnUtc</c> + <c>Id</c> as a stable composite cursor.
+    /// </summary>
     public sealed class GetAllNotificationQueryHandler
         : IQueryHandler<Query, CursorPagedList<Response>>
     {
         private readonly IApplicationDbContext _db;
         private readonly ICurrentTenant _currentTenant;
 
+        /// <summary>Initializes the handler with database and tenant context services.</summary>
         public GetAllNotificationQueryHandler(
             IApplicationDbContext db,
             ICurrentTenant currentTenant)
@@ -44,6 +62,11 @@ public static class GetAllNotifications
             _currentTenant = currentTenant;
         }
 
+        /// <summary>
+        /// Applies cursor filter, orders by <c>CreatedOnUtc DESC</c> (or <c>ASC</c> for prev),
+        /// fetches <c>pageSize + 1</c> to detect page boundaries, and builds cursor tokens.
+        /// </summary>
+        /// <returns>A successful cursor-paginated result, or <c>NotificationErrors.NotFound</c>.</returns>
         public async Task<Result<CursorPagedList<Response>>> Handle(
             Query query,
             CancellationToken cancellationToken = default)
@@ -165,8 +188,10 @@ public static class GetAllNotifications
         }
     }
 
+    /// <summary>Carter endpoint that maps <c>GET /notifications</c> with cursor pagination query parameters. Requires authorization.</summary>
     public sealed class Endpoint : IEndpoint
     {
+        /// <summary>Registers the get-all-notifications route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/notifications", [Authorize] async (

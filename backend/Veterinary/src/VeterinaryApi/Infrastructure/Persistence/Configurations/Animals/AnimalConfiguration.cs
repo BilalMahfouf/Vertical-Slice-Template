@@ -4,8 +4,10 @@ using VeterinaryApi.Domain.Animals;
 
 namespace VeterinaryApi.Infrastructure.Persistence.Configurations.Animals;
 
+/// <summary>EF Core fluent configuration for the <see cref="Animal"/> entity, mapping to the <c>animals</c> table.</summary>
 public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 {
+    /// <summary>Configures soft-delete global query filter, table mapping, keys, columns, owned types (Name), and relationships.</summary>
     public void Configure(EntityTypeBuilder<Animal> builder)
     {
 
