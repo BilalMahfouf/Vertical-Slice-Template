@@ -46,4 +46,3 @@ public static class VisitErrors
         => Error.Conflict($"{nameof(Visit)}s.{nameof(PaymentAlreadyPayed)}",
             "This payment is already payed");
 }
-}

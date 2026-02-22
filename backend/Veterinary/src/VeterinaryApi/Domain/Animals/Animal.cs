@@ -174,36 +174,3 @@ public class Animal : Entity
         this.UpdatedOnUtc = DateTime.UtcNow;
     }
 }
-animal.Status = status;
-
-        return animal;
-    }
-
-    public void UpdateDetails(
-        string name,
-        string species,
-        string breed,
-        Gender gender,
-        DateTime? birthDate,
-        string? color,
-        AnimalStatus status,
-        string? microchipNumber = null)
-{
-    ValidateGenderEnum(gender);
-    Name = name.Trim();
-    Species = species.Trim();
-    Breed = string.IsNullOrWhiteSpace(breed) ? null : breed.Trim();
-    Gender = gender;
-    BirthDate = birthDate;
-    Color = string.IsNullOrWhiteSpace(color) ? null : color.Trim();
-    MicrochipNumber = string.IsNullOrWhiteSpace(microchipNumber)
-        ? null : microchipNumber.Trim();
-    UpdateStatus(status);
-}
-private void UpdateStatus(AnimalStatus status)
-{
-    ValidateAnimalStatusEnum(status);
-    this.Status = status;
-    this.UpdatedOnUtc = DateTime.UtcNow;
-}
-}
