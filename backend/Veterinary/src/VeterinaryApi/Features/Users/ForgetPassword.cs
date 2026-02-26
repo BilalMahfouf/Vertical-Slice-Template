@@ -84,16 +84,9 @@ public static class ForgetPassword
                 TokenType = UserSessionTokenType.ResetPassword,
                 ExpiresAt = DateTime.UtcNow.AddMinutes(15)
             };
+            user.ForgetPassword(token, command.ClientUri);
             _db.UserSessions.Add(userSession);
             await _db.SaveChangesAsync(cancellationToken);
-            var link = Utility.GenerateResponseLink(command.Email, token
-                , command.ClientUri);
-            var body = $@"
-                            <p>Click here to reset your password:</p>
-                            <a href=""{link}"">Reset Password</a>";
-
-            var message = new SendEmailRequest(user.Email, "Reset Password", body);
-            await _emailService.SendEmailAsync(message, cancellationToken);
             return Result.Success;
         }
     }
@@ -112,7 +105,7 @@ public static class ForgetPassword
                 CancellationToken cancellationToken = default) =>
             {
                 var result = await handler.Handle(command, cancellationToken);
-                return result.IsSuccess ? Results.Ok() : result.Problem();
+                return result.IsSuccess ? Results.NoContent() : result.Problem();
             })
             .WithTags("Authentication")
             .WithSummary("Request password reset")

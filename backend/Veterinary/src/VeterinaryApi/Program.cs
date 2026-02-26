@@ -8,6 +8,7 @@ using VeterinaryApi.Common.Exceptions;
 using FluentValidation;
 using VeterinaryApi.Common.Extensions;
 using VeterinaryApi.Infrastructure.Notifications;
+using VeterinaryApi.Common;
 
 
 Env.Load();
@@ -86,6 +87,7 @@ builder.Services.AddAuthorization();
 
 
 var app = builder.Build();
+AppSettings.appMode = AppMode.Production;
 
 // Global API prefix
 
@@ -94,6 +96,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+    AppSettings.appMode = AppMode.Dev;
 }
 
 app.ApplyMigrations();

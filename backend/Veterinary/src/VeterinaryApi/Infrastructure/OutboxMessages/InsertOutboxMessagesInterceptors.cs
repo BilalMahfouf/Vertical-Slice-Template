@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Newtonsoft.Json;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Domain.Common;
+using VeterinaryApi.Domain.Users;
 
 namespace VeterinaryApi.Infrastructure.OutboxMessages
 {
@@ -87,6 +88,10 @@ namespace VeterinaryApi.Infrastructure.OutboxMessages
 
             foreach (var @event in events)
             {
+                if(@event is UserForgetPasswordDomainEvent)
+                {
+                    continue;
+                }
                 @event.TenantId = currentTenant.UserId!.Value;
             }
 

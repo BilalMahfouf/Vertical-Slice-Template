@@ -151,4 +151,15 @@ public class User : Entity
     {
         Email = email;
     }
+    public void ForgetPassword(string token, string clientUri)
+    {
+        var @event = new UserForgetPasswordDomainEvent(
+            Id,
+            Email,
+            clientUri,
+            token);
+        @event.TenantId = TenantId;
+
+        RaiseDomainEvent(@event);
+    }
 }
