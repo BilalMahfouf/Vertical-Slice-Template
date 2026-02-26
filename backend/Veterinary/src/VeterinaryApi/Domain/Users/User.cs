@@ -111,7 +111,9 @@ public class User : Entity
             Email = email,
             Role = UserRoles.Doctor,
             IsActive = true
+            
         };
+        user.TenantId = user.Id;
         return user;
     }
 
