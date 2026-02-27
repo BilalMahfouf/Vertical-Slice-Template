@@ -419,10 +419,12 @@
             "markedAllAsReadDesc": "All notifications have been marked as read."
         },
         "auth": {
-            "resetLinkSent": "Check Your Email",
-            "resetLinkSentDesc": "If an account exists with this email, we have sent a password reset link.",
+            "resetLinkSent": "Reset Email Queued",
+            "resetLinkSentDesc": "If an account exists with this email, the reset link will be sent within the next 1–2 minutes.",
             "passwordReset": "Password Reset!",
-            "passwordResetDesc": "Your password has been updated successfully. You can now login."
+            "passwordResetDesc": "Your password has been updated successfully. You can now login.",
+            "resendSuccess": "Email Resent",
+            "resendSuccessDesc": "If an account exists, another reset link will be sent shortly."
         },
         "clientAdded": "Client Added",
         "clientAddedDesc": "The client has been added successfully.",
@@ -819,7 +821,12 @@
             "sending": "Sending...",
             "emailSent": "Check your email",
             "emailSentMessage": "If an account exists with this email, we have sent a password reset link.",
-            "backToLogin": "Back to login"
+            "backToLogin": "Back to login",
+            "successTitle": "Check your email",
+            "successMessage": "If an account exists with this email, a password reset link will be sent within the next 1–2 minutes. Please check your inbox and spam folder.",
+            "resendEmail": "Resend email",
+            "resending": "Resending...",
+            "resendIn": "Resend in {{seconds}}s"
         },
         "resetPassword": {
             "title": "Reset Password",

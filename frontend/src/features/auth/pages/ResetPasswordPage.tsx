@@ -8,6 +8,7 @@ import { Lock, ArrowLeft, AlertCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import LanguageSwitcher from "@/components/ui/language-switcher";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { authApi } from "@/lib/api/auth";
@@ -68,6 +69,10 @@ export default function ResetPasswordPage() {
   if (!token || !email) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4" dir={isRtl ? "rtl" : "ltr"}>
+        <div className="absolute top-6 end-6 z-20">
+          <LanguageSwitcher />
+        </div>
+
         <div className="w-full max-w-md">
           <div className="flex flex-col items-center mb-8">
             <img src="/logo.jpg" alt="AviaMind Vet" className="w-16 h-16 rounded-2xl object-cover shadow-xl shadow-primary/20 mb-4" />
@@ -103,6 +108,10 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden px-4" dir={isRtl ? "rtl" : "ltr"}>
+      <div className="absolute top-6 end-6 z-20">
+        <LanguageSwitcher />
+      </div>
+
       <div className="w-full max-w-md z-10">
         <div className="flex flex-col items-center mb-8">
           <img src="/logo.jpg" alt="AviaMind Vet" className="w-16 h-16 rounded-2xl object-cover shadow-xl shadow-primary/20 mb-4" />

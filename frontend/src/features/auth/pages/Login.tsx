@@ -11,6 +11,7 @@ import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { authApi } from '@/lib/api/auth';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from "@/hooks/use-toast";
+import LanguageSwitcher from "@/components/ui/language-switcher";
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -46,10 +47,10 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden px-4" dir={isRtl ? "rtl" : "ltr"}>
       {/* Background Decorative Elements */}
 
-      {/* Language Switcher - Uncomment when component is created */}
-      {/* <div className="absolute top-6 end-6 z-20">
+      {/* Language Switcher */}
+      <div className="absolute top-6 end-6 z-20">
         <LanguageSwitcher />
-      </div> */}
+      </div>
 
       <div className="w-full max-w-md z-10">
         <div className="flex flex-col items-center mb-8">

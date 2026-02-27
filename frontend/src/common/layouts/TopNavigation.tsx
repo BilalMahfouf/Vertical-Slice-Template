@@ -2,6 +2,7 @@ import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import NotificationDropdown from '@/features/notifications/NotificationDropdown';
+import LanguageSwitcher from '@/components/ui/language-switcher';
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -33,8 +34,9 @@ const queryClient = useQueryClient();
           </Button>
         </div>
 
-        {/* Right Side - Notifications */}
+        {/* Right Side - Language & Notifications */}
         <div className='flex items-center gap-2'>
+          <LanguageSwitcher />
           {/* Notifications */}
           <NotificationDropdown />
         </div>

@@ -419,10 +419,12 @@
             "markedAllAsReadDesc": "Toutes les notifications ont été marquées comme lues."
         },
         "auth": {
-            "resetLinkSent": "Vérifiez votre email",
-            "resetLinkSentDesc": "Si un compte existe avec cet email, nous avons envoyé un lien de réinitialisation.",
+            "resetLinkSent": "Email de réinitialisation en file d'attente",
+            "resetLinkSentDesc": "Si un compte existe avec cet email, le lien de réinitialisation sera envoyé dans les 1 à 2 prochaines minutes.",
             "passwordReset": "Mot de passe réinitialisé !",
-            "passwordResetDesc": "Votre mot de passe a été mis à jour avec succès. Vous pouvez vous connecter."
+            "passwordResetDesc": "Votre mot de passe a été mis à jour avec succès. Vous pouvez vous connecter.",
+            "resendSuccess": "Email renvoyé",
+            "resendSuccessDesc": "Si un compte existe, un autre lien de réinitialisation sera envoyé sous peu."
         },
         "clientAdded": "Client ajouté",
         "clientAddedDesc": "Le client a été ajouté avec succès.",
@@ -681,7 +683,12 @@
             "sending": "Envoi...",
             "emailSent": "Vérifiez votre email",
             "emailSentMessage": "Si un compte existe avec cet email, nous avons envoyé un lien de réinitialisation.",
-            "backToLogin": "Retour à la connexion"
+            "backToLogin": "Retour à la connexion",
+            "successTitle": "Vérifiez votre email",
+            "successMessage": "Si un compte existe avec cet email, un lien de réinitialisation sera envoyé dans les 1 à 2 prochaines minutes. Veuillez vérifier votre boîte de réception et votre dossier spam.",
+            "resendEmail": "Renvoyer l'email",
+            "resending": "Renvoi en cours...",
+            "resendIn": "Renvoyer dans {{seconds}}s"
         },
         "resetPassword": {
             "title": "Réinitialiser le mot de passe",

@@ -61,7 +61,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
               "https://veterinary-app-nu.vercel.app",
-              "http://localhost"
+              "http://localhost",
+              "http://localhost:5173"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()

@@ -385,6 +385,8 @@ const i18nKeyContainer = {
             resetLinkSentDesc: 'toast.auth.resetLinkSentDesc',
             passwordReset: 'toast.auth.passwordReset',
             passwordResetDesc: 'toast.auth.passwordResetDesc',
+            resendSuccess: 'toast.auth.resendSuccess',
+            resendSuccessDesc: 'toast.auth.resendSuccessDesc',
         },
         vaccination: {
             created: 'toast.vaccination.created',
@@ -604,6 +606,11 @@ const i18nKeyContainer = {
             emailSent: 'auth.forgotPassword.emailSent',
             emailSentMessage: 'auth.forgotPassword.emailSentMessage',
             backToLogin: 'auth.forgotPassword.backToLogin',
+            successTitle: 'auth.forgotPassword.successTitle',
+            successMessage: 'auth.forgotPassword.successMessage',
+            resendEmail: 'auth.forgotPassword.resendEmail',
+            resending: 'auth.forgotPassword.resending',
+            resendIn: 'auth.forgotPassword.resendIn',
         },
         resetPassword: {
             title: 'auth.resetPassword.title',
