@@ -26,6 +26,7 @@ public sealed class UserForgetPasswordDomainEventHandler(
         var body = $@"
                             <p>Click here to reset your password:</p>
                             <a href=""{link}"">Reset Password</a>";
+            logger.LogInformation("Generated password reset link for user {UserId}: {Link}", domainEvent.UserId, link);
 
         var message = new SendEmailRequest(domainEvent.Email, "Reset Password", body);
         await emailService.SendEmailAsync(message, cancellationToken);

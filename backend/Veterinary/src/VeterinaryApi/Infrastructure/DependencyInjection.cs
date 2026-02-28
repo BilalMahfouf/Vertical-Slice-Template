@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
+using System.Diagnostics;
 using System.Text;
 using VeterinaryApi.Common;
 using VeterinaryApi.Common.Abstracions;
@@ -110,7 +111,7 @@ public static class DependencyInjection
 
         // ef core config  
         var connectionString = Environment
-            .GetEnvironmentVariable(AppSettings.ProductionConnectionStringName);
+            .GetEnvironmentVariable(AppSettings. DevConnectionStringName);
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
             (sp, options) =>
         {
@@ -121,11 +122,18 @@ public static class DependencyInjection
                 .GetRequiredService<TenantInterceptor>());
         }, ServiceLifetime.Scoped);
 
-        // Email Options config 
+
+                  // Email Options config 
         services.Configure<EmailOptions>(options =>
         {
-            options.Port = configuration.GetValue<int>("EMAIL_CONFIGURATIONS:PORT");
-            options.Host = configuration.GetValue<string>("EMAIL_CONFIGURATIONS:HOST") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_HOST is not set");
+            Console.WriteLine("Configuring EmailOptions from environment variables...");
+            var portString =Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_PORT") ?? throw new InvalidOperationException();
+
+            int.TryParse(portString, out int port);
+            options.Port = port;
+            Console.WriteLine($"EMAIL_CONFIGURATIONS_PORT: {options.Port}");
+            options.Host = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_HOST") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_HOST is not set");
+            Console.WriteLine($"EMAIL_CONFIGURATIONS_HOST: {options.Host}");
             options.Password = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_PASSWORD") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_PASSWORD environment variable is not set");
             options.Email = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_EMAIL") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_EMAIL environment variable is not set");
         });

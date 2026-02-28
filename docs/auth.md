@@ -1,267 +1,759 @@
-# Authentication System Architecture
+# Authentication & Authorization — System Documentation
 
-## Overview
-
-The Veterinary Application uses a **JWT (JSON Web Token) based authentication system** with refresh token rotation for secure user authentication and session management. The system implements a modern token-based approach where short-lived access tokens are paired with longer-lived refresh tokens.
-
----
-
-## High-Level Flow
-
-### 1. **User Login Flow**
-
-```
-User Request: POST /api/v1/auth/login
-    ↓
-[Backend Process]
-    ├─ Query database for user by email
-    ├─ Validate user exists
-    ├─ Hash incoming password and compare with stored hash
-    ├─ Generate JWT access token (15 minutes)
-    ├─ Generate refresh token (7 days)
-    ├─ Store refresh token in database (UserSession)
-    └─ Set refresh token as HTTP-Only cookie
-    ↓
-Response: JWT Access Token to client
-```
-
-**Key Steps:**
-1. **User Lookup**: Find the user in the database by their email address
-2. **Password Verification**: Compare the provided password with the stored hashed password using Argon2
-3. **Token Generation**: 
-   - Access Token: Short-lived JWT (default 15 minutes)
-   - Refresh Token: Long-lived secure token (7 days)
-4. **Session Tracking**: Save the refresh token in the database to track user sessions
-5. **Secure Storage**: Set refresh token as HTTP-Only cookie (prevents JavaScript access)
+> **Applies to:** VeterinaryApi backend (ASP.NET Core + EF Core)
+> **Architecture style:** Vertical Slice (CQRS, Domain Events, Outbox Pattern)
 
 ---
 
-### 2. **Authenticated Request Flow**
+## Table of Contents
 
-```
-Client Request: GET /api/v1/auth/me (with Authorization header)
-    ↓
-[Middleware: JWT Validation]
-    ├─ Extract JWT from Authorization header
-    ├─ Validate JWT signature using secret key
-    ├─ Verify token hasn't expired
-    ├─ Verify issuer and audience match
-    └─ Extract user claims (User ID, Name, etc.)
-    ↓
-[Endpoint Handler]
-    ├─ Access user information via claims
-    ├─ Query database for full user details
-    └─ Return user info
-    ↓
-Response: User data
-```
-
-**Key Points:**
-- JWT carries user identity information as **claims** (User ID, Name, roles)
-- No database lookup needed for token validation—signature verification is cryptographic
-- Tokens are stateless; validation happens on every request
-
----
-
-### 3. **Token Refresh Flow**
-
-```
-Access Token Expired (or about to expire)
-    ↓
-Client Request: POST /api/v1/auth/refresh-token
-    (Refresh token automatically sent via HTTP-Only cookie)
-    ↓
-[Backend Process]
-    ├─ Extract refresh token from cookie
-    ├─ Query database to find matching UserSession
-    ├─ Validate session exists
-    ├─ Check if refresh token hasn't expired (7 days)
-    ├─ Generate new access token
-    ├─ Rotate refresh token (generate new one)
-    ├─ Update session in database with new refresh token
-    └─ Set new refresh token as HTTP-Only cookie
-    ↓
-Response: New access token
-```
-
-**Security Feature - Token Rotation:**
-- Each refresh extends the session with a brand new refresh token
-- Old refresh tokens become invalid after use
-- Prevents token replay attacks
+1. [High-Level Design](#1-high-level-design)
+2. [What We Need (Building Blocks)](#2-what-we-need-building-blocks)
+3. [Entity Relationship Diagram](#3-entity-relationship-diagram)
+4. [Entities — Deep Dive](#4-entities--deep-dive)
+   - [User](#41-user)
+   - [UserSession](#42-usersession)
+   - [UserRoles (enum)](#43-userroles-enum)
+   - [UserSessionTokenType (enum)](#44-usersessiontokentype-enum)
+5. [Low-Level Design — Flow by Flow](#5-low-level-design--flow-by-flow)
+   - [Register](#51-register)
+   - [Login](#52-login)
+   - [Refresh Token (Token Rotation)](#53-refresh-token-token-rotation)
+   - [Logout](#54-logout)
+   - [Get Current User (Me)](#55-get-current-user-me)
+   - [Forget Password](#56-forget-password)
+   - [Reset Password](#57-reset-password)
+   - [Change Password](#58-change-password)
+   - [Change Email](#59-change-email)
+6. [API Endpoint Summary](#6-api-endpoint-summary)
+7. [Security Decisions & Notes](#7-security-decisions--notes)
+8. [Error Codes Reference](#8-error-codes-reference)
 
 ---
 
-## System Architecture Components
+## 1. High-Level Design
 
+```
+┌───────────────────────────────────────────────────────────────────────────┐
+│                              CLIENT (SPA)                                │
+│  Stores: JWT access token (memory)                                       │
+│  Browser auto-sends: refreshToken cookie (HttpOnly, Secure, SameSite)    │
+└──────────────────────────┬────────────────────────────────────────────────┘
+                           │  HTTPS
+                           ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│                          ASP.NET Core API                                │
+│                                                                          │
+│  ┌──────────────┐   ┌──────────────┐   ┌────────────────────────────┐   │
+│  │ JWT Bearer   │──▶│ CurrentUser  │──▶│ Tenant Interceptor         │   │
+│  │ Middleware   │   │ Service      │   │ (stamps TenantId on       │   │
+│  │ (validates   │   │ (reads       │   │  every new entity)         │   │
+│  │  access      │   │  ClaimTypes. │   └────────────────────────────┘   │
+│  │  token)      │   │  NameId)     │                                     │
+│  └──────────────┘   └──────────────┘                                     │
+│                                                                          │
+│  ┌──────────────────────────────────────────────────────────────────┐    │
+│  │                    Auth Feature Slices                            │    │
+│  │  POST /auth/register         – create account + issue tokens     │    │
+│  │  POST /auth/login            – verify creds  + issue tokens      │    │
+│  │  POST /auth/refresh-token    – rotate tokens                     │    │
+│  │  POST /auth/logout           – revoke session + clear cookie     │    │
+│  │  GET  /auth/me               – return current user profile       │    │
+│  │  POST /auth/forget-password  – email reset link                  │    │
+│  │  PUT  /auth/reset-passowrd   – consume token + set new password  │    │
+│  │  POST /change-password       – authenticated password change     │    │
+│  │  PATCH /change-email         – authenticated email change        │    │
+│  └──────────────────────────────────────────────────────────────────┘    │
+│                                                                          │
+│  ┌──────────────────────────────────────────────────────────────────┐    │
+│  │                    Infrastructure Services                        │    │
+│  │  IJwtProvider  ──▶  JwtProvider  (HMAC-SHA256 JWT + random       │    │
+│  │                                   refresh token)                  │    │
+│  │  IPasswordHasher ──▶ Argon2PasswordHasher                        │    │
+│  │  IEmailService   ──▶ EmailService (SMTP)                         │    │
+│  └──────────────────────────────────────────────────────────────────┘    │
+│                                                                          │
+│  ┌──────────────────────────────────────────────────────────────────┐    │
+│  │               PostgreSQL (via EF Core)                            │    │
+│  │  Tables: users, user_sessions                                     │    │
+│  │  Outbox: outbox_messages (domain event publishing)                │    │
+│  └──────────────────────────────────────────────────────────────────┘    │
+└───────────────────────────────────────────────────────────────────────────┘
+```
 
-### Database Layer
+### How it works at a glance
 
-#### **UserSession Entity**
-Stores refresh token information:
-- **UserId**: References the user
-- **Token**: The refresh token value
-- **TokenType**: Identifies token as "Refresh"
-- **ExpiresAt**: When this session/token expires
-
-Purpose: Enables server-side session revocation and token management
+| Concept | Implementation |
+|---|---|
+| **Access token** | Short-lived JWT (configurable, typically 15–60 min). Signed with HMAC-SHA256. Contains `NameIdentifier`, `Name`, `sub`, `jti`, `iat` claims. Sent by the client in `Authorization: Bearer <token>`. |
+| **Refresh token** | 32 cryptographically-random bytes (Base64). Stored server-side in the `user_sessions` table. Delivered to the client as an **HttpOnly, Secure, SameSite=None** cookie named `refreshToken` with a **7-day** expiry. |
+| **Password storage** | **Argon2** (OWASP-recommended). The hash is self-contained (includes salt + params). |
+| **Token rotation** | On every `/auth/refresh-token` call the old token is overwritten with a new one. This prevents replay attacks — a stolen token can only be used once. |
+| **Multi-tenancy** | Each `User` is their own tenant (`TenantId == User.Id`). All owned data (clinics, animals, clients, etc.) is automatically stamped with the user's tenant ID via `TenantInterceptor`. |
+| **Domain events** | The forget-password flow raises a `UserForgetPasswordDomainEvent` which is persisted to the Outbox and processed asynchronously to send the reset email. |
 
 ---
 
-## Request-Response Lifecycle
+## 2. What We Need (Building Blocks)
 
-### Example: Login Request
+To build a production-grade auth system like this one, you need:
 
-**Request:**
-```json
-POST /api/v1/auth/login
+| Category | Component | Purpose |
+|---|---|---|
+| **Domain** | `User` entity | Holds identity, credentials (hashed), role, profile |
+| **Domain** | `UserSession` entity | Persists refresh tokens and password-reset tokens |
+| **Domain** | `UserRoles` enum | Role-based access (Admin, Doctor) |
+| **Domain** | `UserSessionTokenType` enum | Discriminates Refresh vs ResetPassword sessions |
+| **Domain** | `UserErrors` | Centralized typed error definitions |
+| **Domain** | `UserForgetPasswordDomainEvent` | Event raised when a password reset is requested |
+| **Infrastructure** | `IJwtProvider` / `JwtProvider` | Issues JWT access tokens & opaque refresh tokens |
+| **Infrastructure** | `JwtOptions` | Config object (Issuer, Audience, SigningKey, LifeTime) |
+| **Infrastructure** | `IPasswordHasher` / `Argon2PasswordHasher` | Hashes and verifies passwords with Argon2 |
+| **Infrastructure** | `ICurrentTenant` / `CurrentUserService` | Reads authenticated user ID from the JWT claims |
+| **Infrastructure** | `IEmailService` / `EmailService` | Sends password-reset emails via SMTP |
+| **Infrastructure** | `TenantInterceptor` | Auto-stamps `TenantId` on new entities |
+| **Persistence** | `UserConfiguration` | EF Core fluent config for `users` table |
+| **Persistence** | `UserSessionConfiguration` | EF Core fluent config for `user_sessions` table |
+| **Features** | Vertical slices | One file per use-case: Register, Login, Logout, RefreshToken, ForgetPassword, ResetPassword, ChangePassword, ChangeEmail, Me |
+
+---
+
+## 3. Entity Relationship Diagram
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                          users                                │
+├──────────────────────────────────────────────────────────────┤
+│  id              : UUID  (PK, generated at creation)          │
+│  tenant_id       : UUID  (FK → self, = id for doctors)        │
+│  user_name       : VARCHAR(100)  NOT NULL                     │
+│  first_name      : VARCHAR(100)  NOT NULL                     │
+│  last_name       : VARCHAR(100)  NOT NULL                     │
+│  email           : VARCHAR(256)  NOT NULL                     │
+│  password_hash   : VARCHAR(500)  NOT NULL (Argon2)            │
+│  role            : VARCHAR(50)   NOT NULL ('Admin'|'Doctor')  │
+│  is_active       : BOOLEAN       DEFAULT true                 │
+│  is_deleted      : BOOLEAN       (soft-delete flag)           │
+│  deleted_on_utc  : TIMESTAMP     (nullable)                   │
+│  created_on_utc  : TIMESTAMP                                  │
+├──────────────────────────────────────────────────────────────┤
+│  INDEXES                                                      │
+│   ix_users_tenant_id            (tenant_id)                   │
+│   ix_users_tenant_id_email      (tenant_id, email)   UNIQUE   │
+│   ix_users_tenant_id_user_name  (tenant_id, user_name) UNIQUE │
+│  QUERY FILTER: WHERE is_deleted = false                       │
+└──────────────┬───────────────────────────────────────────────┘
+               │  1 ──── * (one user has many sessions)
+               ▼
+┌──────────────────────────────────────────────────────────────┐
+│                      user_sessions                            │
+├──────────────────────────────────────────────────────────────┤
+│  id              : UUID       (PK, generated at creation)     │
+│  user_id         : UUID       (FK → users.id) NOT NULL        │
+│  tenant_id       : UUID       NOT NULL                        │
+│  token           : VARCHAR(1000) NOT NULL                     │
+│  token_type      : TINYINT    NOT NULL (1=Refresh, 2=Reset)   │
+│  expires_at      : TIMESTAMP  (nullable)                      │
+│  created_on_utc  : TIMESTAMP                                  │
+│  is_deleted      : BOOLEAN    (inherited from Entity)         │
+│  deleted_on_utc  : TIMESTAMP  (nullable)                      │
+├──────────────────────────────────────────────────────────────┤
+│  INDEXES                                                      │
+│   ix_user_sessions_user_id    (user_id)                       │
+│   ix_user_sessions_token      (token)                         │
+│   ix_user_sessions_tenant_id  (tenant_id)                     │
+│  ON DELETE: CASCADE (deleting user removes all sessions)      │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Mermaid Diagram
+
+```mermaid
+erDiagram
+    USER {
+        UUID id PK
+        UUID tenant_id FK "= id for doctors"
+        VARCHAR user_name
+        VARCHAR first_name
+        VARCHAR last_name
+        VARCHAR email
+        VARCHAR password_hash
+        VARCHAR role "Admin | Doctor"
+        BOOLEAN is_active
+        BOOLEAN is_deleted
+        TIMESTAMP deleted_on_utc
+        TIMESTAMP created_on_utc
+    }
+
+    USER_SESSION {
+        UUID id PK
+        UUID user_id FK
+        UUID tenant_id
+        VARCHAR token
+        TINYINT token_type "1=Refresh, 2=ResetPassword"
+        TIMESTAMP expires_at
+        TIMESTAMP created_on_utc
+        BOOLEAN is_deleted
+        TIMESTAMP deleted_on_utc
+    }
+
+    USER ||--o{ USER_SESSION : "has many"
+```
+
+---
+
+## 4. Entities — Deep Dive
+
+### 4.1 User
+
+**File:** `Domain/Users/User.cs`
+**Table:** `users`
+
+The `User` entity is the **aggregate root** for authentication. It inherits from the `Entity` base class which provides:
+- `Id` (Guid, auto-generated)
+- `CreatedOnUtc`
+- `IsDeleted` / `DeletedOnUtc` (soft-delete)
+- `TenantId` (multi-tenant isolation)
+- Domain event collection (Outbox pattern)
+
+#### Properties
+
+| Property | Type | Description |
+|---|---|---|
+| `UserName` | `string` | Unique display name within the tenant |
+| `FirstName` | `string` | User's first name |
+| `LastName` | `string` | User's last name |
+| `FullName` | `string` (computed) | `"{FirstName} {LastName}"` |
+| `Email` | `string` | Unique email used for login + notifications |
+| `PasswordHash` | `string` | Argon2-hashed password (never exposed in API responses) |
+| `Role` | `UserRoles` | `Admin` or `Doctor` |
+| `IsActive` | `bool` | Whether the account is enabled |
+| `Sessions` | `IReadOnlyCollection<UserSession>` | Navigation to refresh/reset tokens |
+
+#### Factory Methods
+
+| Method | Description |
+|---|---|
+| `User.Create(firstName, lastName, email, passwordHash, role)` | Admin-level user creation. Sets `TenantId = Id`. |
+| `User.Register(userName, firstName, lastName, email, passwordHash)` | Self-registration. Defaults role to `Doctor`. |
+
+#### Behavior Methods
+
+| Method | Description |
+|---|---|
+| `UpdatePassword(password, newPasswordHash)` | Validates min length (6 chars), then updates hash. Throws `DomainException` on invalid length. |
+| `UpdateProfile(userName, firstName, lastName)` | Updates profile fields. |
+| `UpdateEmail(email)` | Updates email address. |
+| `ForgetPassword(token, clientUri)` | Raises a `UserForgetPasswordDomainEvent` (processed via Outbox → sends email). |
+
+---
+
+### 4.2 UserSession
+
+**File:** `Domain/Users/UserSession.cs`
+**Table:** `user_sessions`
+
+The `UserSession` entity stores **both** refresh tokens and password-reset tokens. The `TokenType` discriminator tells them apart.
+
+| Property | Type | Description |
+|---|---|---|
+| `UserId` | `Guid` | FK to the owning `User` |
+| `Token` | `string` | The opaque token string (Base64 for refresh, JWT for reset) |
+| `TokenType` | `UserSessionTokenType` | `Refresh` (1) or `ResetPassword` (2) |
+| `ExpiresAt` | `DateTime?` | UTC expiration timestamp |
+| `User` | `User` | Navigation property |
+
+**Lifecycle:**
+- **Refresh tokens** — created on login/register, updated (rotated) on refresh, deleted on logout.
+- **Reset tokens** — created on forget-password, validated (not deleted) on reset-password. Should be cleaned up by a background job.
+
+---
+
+### 4.3 UserRoles (enum)
+
+**File:** `Domain/Users/UserRoles.cs`
+
+```csharp
+public enum UserRoles : byte
 {
-  "email": "doctor@clinic.com",
-  "password": "SecurePassword123"
+    Admin  = 1,   // Full administrative access
+    Doctor = 2,   // Veterinary professional (default on self-registration)
 }
 ```
 
-**Processing:**
-1. Endpoint receives `LoginCommand` with email and password
-2. Handler queries `Users` table: `WHERE Email = 'doctor@clinic.com'`
-3. User found → extract hashed password
-4. Password hasher verifies: `Argon2Verify(input_password, stored_hash)`
-5. If valid:
-   - JWT Provider creates access token (15 min)
-   - JWT Provider creates refresh token (random 32 bytes)
-   - New `UserSession` record created in database
-   - Response sets cookie: `refreshToken=<token>; HttpOnly; Secure; SameSite=None`
-6. Return access token in JSON response
-
-**Response:**
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
-Client receives access token and automatically gets refresh token cookie from browser.
+Stored as a `string` in the database (EF conversion). Embedded in the JWT so authorization policies can be enforced per-endpoint without a DB round-trip.
 
 ---
 
-### Example: Protected Resource Request
+### 4.4 UserSessionTokenType (enum)
 
-**Request:**
+**File:** `Domain/Users/UserSession.cs`
+
+```csharp
+public enum UserSessionTokenType : byte
+{
+    Refresh       = 1,   // Used to obtain new JWT access tokens
+    ResetPassword = 2,   // One-time token sent via email for password reset
+}
 ```
-GET /api/v1/auth/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
 
-**Processing:**
-1. JWT Bearer middleware intercepts request
-2. Extracts token from `Authorization` header
-3. Validates:
-   - Signature matches secret key ✓
-   - Token hasn't expired ✓
-   - Issuer/Audience correct ✓
-4. Extract claims: `UserId = "f47ac10b-58cc-4372-a567-0e02b2c3d479"`
-5. Endpoint handler gets `User ID` from claims
-6. Query `GetUserById` with extracted ID
-7. Return user details
+Stored as a `byte` in the database.
 
-**Response:**
+---
+
+## 5. Low-Level Design — Flow by Flow
+
+### 5.1 Register
+
+**Endpoint:** `POST /auth/register`
+**File:** `Features/Users/Register.cs`
+**Authentication required:** No
+
+#### Request Body
+
 ```json
 {
-  "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "email": "vet@example.com",
+  "password": "SecurePass123",
+  "userName": "dr_smith",
   "firstName": "John",
-  "lastName": "Doe",
-  "email": "doctor@clinic.com",
-  "role": "Doctor"
+  "lastName": "Smith"
 }
 ```
 
+#### Flow
+
+```
+Client                          API                               Database
+  │                              │                                    │
+  │  POST /auth/register         │                                    │
+  │─────────────────────────────▶│                                    │
+  │                              │  1. Hash password (Argon2)         │
+  │                              │  2. Check email uniqueness ───────▶│
+  │                              │               ◄───── true/false ───│
+  │                              │  3. User.Register() factory        │
+  │                              │  4. Generate JWT access token      │
+  │                              │  5. Generate refresh token (random)│
+  │                              │  6. Create UserSession             │
+  │                              │     (Refresh, 7-day expiry)        │
+  │                              │  7. SaveChangesAsync ─────────────▶│
+  │                              │               ◄──── persisted ─────│
+  │                              │  8. Set refreshToken cookie        │
+  │  ◄───────────────────────────│     (HttpOnly, Secure, SameSite)   │
+  │  200 OK { token: "eyJ..." }  │                                    │
+  │  + Set-Cookie: refreshToken  │                                    │
+```
+
+#### Error Responses
+
+| Condition | Error Code | HTTP Status |
+|---|---|---|
+| Email already registered | `User.EmailAlreadyInUse` | 409 Conflict |
+
 ---
 
-### Example: Token Refresh
+### 5.2 Login
 
-**Request:**
-```
-POST /api/v1/auth/refresh-token
-Cookie: refreshToken=abc123...def456
-```
+**Endpoint:** `POST /auth/login`
+**File:** `Features/Users/Login.cs`
+**Authentication required:** No
 
-**Processing:**
-1. Extract refresh token from cookie
-2. Query `UserSessions` table for matching token
-3. Session found → check `ExpiresAt > DateTime.Now`
-4. If valid:
-   - Generate new access token (renewed 15 min timer)
-   - Generate new refresh token
-   - Update session record with new refresh token
-   - Response: Set new cookie with updated refresh token
-5. Return new access token
+#### Request Body
 
-**Response:**
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "email": "vet@example.com",
+  "password": "SecurePass123"
 }
-Set-Cookie: refreshToken=new_token...; HttpOnly; Secure; SameSite=None; Expires=...
+```
+
+#### Flow
+
+```
+Client                          API                               Database
+  │                              │                                    │
+  │  POST /auth/login            │                                    │
+  │─────────────────────────────▶│                                    │
+  │                              │  1. Find user by email ───────────▶│
+  │                              │               ◄──── user/null ─────│
+  │                              │  2. Verify password (Argon2)       │
+  │                              │  3. Generate JWT access token      │
+  │                              │  4. Generate refresh token (random)│
+  │                              │  5. Create UserSession             │
+  │                              │     (Refresh, 7-day expiry)        │
+  │                              │  6. SaveChangesAsync ─────────────▶│
+  │                              │               ◄──── persisted ─────│
+  │                              │  7. Set refreshToken cookie        │
+  │  ◄───────────────────────────│                                    │
+  │  200 OK { token: "eyJ..." }  │                                    │
+  │  + Set-Cookie: refreshToken  │                                    │
+```
+
+#### Error Responses
+
+| Condition | Error Code | HTTP Status |
+|---|---|---|
+| Email not found | `User.NotFound` | 404 Not Found |
+| Wrong password | `User.InvalidCredentials` | 401 Unauthorized |
+
+---
+
+### 5.3 Refresh Token (Token Rotation)
+
+**Endpoint:** `POST /auth/refresh-token`
+**File:** `Features/Users/RefreshToken.cs`
+**Authentication required:** No (uses cookie)
+
+The client does **not** send a request body. The refresh token is read from the `refreshToken` HTTP-only cookie automatically.
+
+#### Flow
+
+```
+Client                          API                               Database
+  │                              │                                    │
+  │  POST /auth/refresh-token    │                                    │
+  │  Cookie: refreshToken=abc123 │                                    │
+  │─────────────────────────────▶│                                    │
+  │                              │  1. Read token from cookie         │
+  │                              │  2. Find UserSession by token ────▶│
+  │                              │     (Include User navigation)      │
+  │                              │               ◄─── session/null ───│
+  │                              │  3. Check ExpiresAt > now          │
+  │                              │  4. Generate new JWT access token  │
+  │                              │  5. Generate new refresh token     │
+  │                              │  6. Overwrite session.Token ──────▶│
+  │                              │     (rotation — old token invalid) │
+  │                              │               ◄──── updated ───────│
+  │                              │  7. Set new refreshToken cookie    │
+  │  ◄───────────────────────────│                                    │
+  │  200 OK { token: "eyJ..." }  │                                    │
+  │  + Set-Cookie: refreshToken  │                                    │
+```
+
+**Key security property:** After rotation, the old refresh token is no longer valid. If an attacker stole the old token, their attempt to use it will fail because the token in the DB has been overwritten.
+
+#### Error Responses
+
+| Condition | Error Code | HTTP Status |
+|---|---|---|
+| Token not found in DB | `User.InvalidCredentials` | 401 Unauthorized |
+| Token expired | `User.ExpiredRefreshToken` | 409 Conflict |
+
+---
+
+### 5.4 Logout
+
+**Endpoint:** `POST /auth/logout`
+**File:** `Features/Users/Logout.cs`
+**Authentication required:** No (uses cookie)
+
+#### Flow
+
+```
+Client                          API                               Database
+  │                              │                                    │
+  │  POST /auth/logout           │                                    │
+  │  Cookie: refreshToken=abc123 │                                    │
+  │─────────────────────────────▶│                                    │
+  │                              │  1. Read token from cookie         │
+  │                              │  2. Find UserSession by token ────▶│
+  │                              │               ◄─── session/null ───│
+  │                              │  3. Remove session ───────────────▶│
+  │                              │               ◄──── deleted ───────│
+  │                              │  4. Delete refreshToken cookie     │
+  │  ◄───────────────────────────│                                    │
+  │  200 OK                      │                                    │
+```
+
+#### Error Responses
+
+| Condition | Error Code | HTTP Status |
+|---|---|---|
+| Token not found | `User.InvalidCredentials` | 401 Unauthorized |
+
+---
+
+### 5.5 Get Current User (Me)
+
+**Endpoint:** `GET /auth/me`
+**File:** `Features/Auth/Me.cs`
+**Authentication required:** Yes (`RequireAuthorization()`)
+
+#### Flow
+
+```
+Client                          API                               Database
+  │                              │                                    │
+  │  GET /auth/me                │                                    │
+  │  Authorization: Bearer eyJ.. │                                    │
+  │─────────────────────────────▶│                                    │
+  │                              │  1. JWT middleware validates token  │
+  │                              │  2. CurrentUserService reads       │
+  │                              │     ClaimTypes.NameIdentifier      │
+  │                              │  3. GetUserByIdQuery ─────────────▶│
+  │                              │               ◄──── user ──────────│
+  │  ◄───────────────────────────│                                    │
+  │  200 OK { id, userName,      │                                    │
+  │           email, firstName,  │                                    │
+  │           lastName }         │                                    │
+```
+
+#### Response Body
+
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "userName": "dr_smith",
+  "email": "vet@example.com",
+  "firstName": "John",
+  "lastName": "Smith"
+}
 ```
 
 ---
 
-## Security Design
+### 5.6 Forget Password
 
-### **Access Token (JWT)**
-- **Short-lived** (15 minutes) reduces exposure if compromised
-- **Stateless** validation (no database lookup) for performance
-- **Signed** with secret key—cannot be forged
-- Sent in clear text but only over HTTPS
+**Endpoint:** `POST /auth/forget-password`
+**File:** `Features/Users/ForgetPassword.cs`
+**Authentication required:** No
 
-### **Refresh Token**
-- **Long-lived** (7 days) for user convenience
-- **HTTP-Only cookie** prevents JavaScript access (XSS protection)
-- **Stored in database** enables server-side revocation
-- **Rotated on each use** prevents replay attacks
-- **Secure & SameSite None** flags prevent CSRF
+#### Request Body
 
-### **Password Storage**
-- **Argon2 hashing** with salt—modern cryptographic algorithm
-- Resistant to brute force and GPU attacks
-- Each login performs fresh verification
+```json
+{
+  "email": "vet@example.com",
+  "clientUri": "https://app.example.com/reset-password"
+}
+```
 
-### **Token Validation**
-- **Cryptographic signature** verification (cannot tamper)
-- **Expiration check** prevents old tokens
-- **Issuer/Audience validation** ensures token is for this app
+#### Flow
+
+```
+Client                          API                               Database        Email Service
+  │                              │                                    │                │
+  │  POST /auth/forget-password  │                                    │                │
+  │─────────────────────────────▶│                                    │                │
+  │                              │  1. Find user by email ───────────▶│                │
+  │                              │               ◄──── user/null ─────│                │
+  │                              │  2. Generate JWT as reset token    │                │
+  │                              │  3. Create UserSession             │                │
+  │                              │     (ResetPassword, 15-min expiry) │                │
+  │                              │  4. user.ForgetPassword()          │                │
+  │                              │     → raises DomainEvent           │                │
+  │                              │  5. SaveChangesAsync ─────────────▶│                │
+  │                              │     (entity + outbox message)      │                │
+  │                              │               ◄──── persisted ─────│                │
+  │  ◄───────────────────────────│                                    │                │
+  │  204 No Content              │                                    │                │
+  │                              │          Outbox Job picks up ─────────────────────▶ │
+  │                              │          DomainEventHandler builds │                │
+  │                              │          link and sends email      │   Send email   │
+  │                              │                                    │   with link    │
+  │                              │                                    │────────────────▶│
+```
+
+The reset link is built by `Utility.GenerateResponseLink()`:
+```
+{clientUri}?token={url-encoded-token}&email={url-encoded-email}
+```
+
+For example:
+```
+https://app.example.com/reset-password?token=eyJ...&email=vet%40example.com
+```
+
+#### Error Responses
+
+| Condition | Error Code | HTTP Status |
+|---|---|---|
+| Email not found | `User.NotFound` | 404 Not Found |
 
 ---
 
-## Error Handling
+### 5.7 Reset Password
 
-**Common Authentication Errors:**
+**Endpoint:** `PUT /auth/reset-passowrd` *(note: known typo in the route)*
+**File:** `Features/Users/ResetPassword.cs`
+**Authentication required:** No
 
-1. **User Not Found**
-   - Email doesn't exist in database
-   - Response: 404 Not Found
+#### Request Body
 
-2. **Invalid Credentials**
-   - Password doesn't match hash
-   - Response: 401 Unauthorized
+```json
+{
+  "password": "NewSecurePass456",
+  "confirmPassword": "NewSecurePass456",
+  "token": "eyJ...",
+  "email": "vet@example.com"
+}
+```
 
-3. **Expired Refresh Token**
-   - Session refresh token has exceeded 7-day window
-   - Response: 401 Unauthorized → Must login again
+#### Flow
 
-4. **Invalid JWT in Header**
-   - Token signature doesn't verify
-   - Token has expired
-   - Response: 401 Unauthorized
+```
+Client                          API                               Database
+  │                              │                                    │
+  │  PUT /auth/reset-passowrd    │                                    │
+  │─────────────────────────────▶│                                    │
+  │                              │  1. Find user by email ───────────▶│
+  │                              │               ◄──── user/null ─────│
+  │                              │  2. Validate token against         │
+  │                              │     user_sessions where            │
+  │                              │     token = X AND                  │
+  │                              │     token_type = ResetPassword AND │
+  │                              │     expires_at > UtcNow ──────────▶│
+  │                              │               ◄──── true/false ────│
+  │                              │  3. Hash new password (Argon2)     │
+  │                              │  4. user.UpdatePassword()          │
+  │                              │     (validates min 6 chars)        │
+  │                              │  5. SaveChangesAsync ─────────────▶│
+  │                              │               ◄──── updated ───────│
+  │  ◄───────────────────────────│                                    │
+  │  200 OK                      │                                    │
+```
 
+#### Error Responses
 
-## Summary
+| Condition | Error Code | HTTP Status |
+|---|---|---|
+| Email not found | `User.NotFound` | 404 Not Found |
+| Invalid or expired token | `User.InvalidCredentials` | 401 Unauthorized |
+| Password < 6 characters | `User.InvalidPasswordLength` | 409 Conflict (domain exception) |
 
-The authentication system balances **security** with **user experience**:
+---
 
-- **Access tokens** are short-lived and stateless (performance)
-- **Refresh tokens** are stored and rotated (security & session control)
-- **Passwords** are hashed with modern algorithms (protection at rest)
-- **JWTs** are cryptographically signed (protection in transit)
-- **HTTP-Only cookies** protect refresh tokens (XSS prevention)
+### 5.8 Change Password
 
-This design enables secure single sign-on, token refresh without re-login, and server-side session management for compliance and security monitoring.
+**Endpoint:** `POST /change-password`
+**File:** `Features/Users/ChangePassword.cs`
+**Authentication required:** Yes (`RequireAuthorization()`)
+
+#### Request Body
+
+```json
+{
+  "currentPassword": "OldPass123",
+  "newPassword": "NewPass456",
+  "confirmNewPassword": "NewPass456"
+}
+```
+
+#### Flow
+
+```
+Client                          API                               Database
+  │                              │                                    │
+  │  POST /change-password       │                                    │
+  │  Authorization: Bearer eyJ.. │                                    │
+  │─────────────────────────────▶│                                    │
+  │                              │  1. Get userId from CurrentTenant  │
+  │                              │  2. Load user by ID ──────────────▶│
+  │                              │               ◄──── user/null ─────│
+  │                              │  3. Verify current password        │
+  │                              │     (Argon2)                       │
+  │                              │  4. Hash new password (Argon2)     │
+  │                              │  5. user.UpdatePassword()          │
+  │                              │  6. SaveChangesAsync ─────────────▶│
+  │                              │               ◄──── updated ───────│
+  │  ◄───────────────────────────│                                    │
+  │  200 OK                      │                                    │
+```
+
+#### Error Responses
+
+| Condition | Error Code | HTTP Status |
+|---|---|---|
+| User not found | `User.NotFound` | 404 Not Found |
+| Current password wrong | `User.InvalidPassword` | 409 Conflict |
+| New password < 6 chars | `User.InvalidPasswordLength` | 409 Conflict (domain exception) |
+
+---
+
+### 5.9 Change Email
+
+**Endpoint:** `PATCH /change-email`
+**File:** `Features/Users/ChangeEmail.cs`
+**Authentication required:** Yes (`RequireAuthorization()`)
+
+#### Request Body
+
+```json
+{
+  "email": "newemail@example.com"
+}
+```
+
+#### Flow
+
+```
+Client                          API                               Database
+  │                              │                                    │
+  │  PATCH /change-email         │                                    │
+  │  Authorization: Bearer eyJ.. │                                    │
+  │─────────────────────────────▶│                                    │
+  │                              │  1. FluentValidation (not empty,   │
+  │                              │     valid email format)            │
+  │                              │  2. Check email uniqueness ───────▶│
+  │                              │               ◄──── true/false ────│
+  │                              │  3. Get userId from CurrentTenant  │
+  │                              │  4. Load user by ID ──────────────▶│
+  │                              │               ◄──── user/null ─────│
+  │                              │  5. user.UpdateEmail()             │
+  │                              │  6. SaveChangesAsync ─────────────▶│
+  │                              │               ◄──── updated ───────│
+  │  ◄───────────────────────────│                                    │
+  │  204 No Content              │                                    │
+```
+
+#### Error Responses
+
+| Condition | Error Code | HTTP Status |
+|---|---|---|
+| Invalid email format | Validation exception | 400 Bad Request |
+| Email already in use | `User.EmailAlreadyInUse` | 409 Conflict |
+| User not found | `User.NotFound` | 404 Not Found |
+
+---
+
+## 6. API Endpoint Summary
+
+| Method | Route | Auth | Tag | Description |
+|---|---|---|---|---|
+| `POST` | `/auth/register` | No | Authentication | Create account + issue tokens |
+| `POST` | `/auth/login` | No | Authentication | Verify credentials + issue tokens |
+| `POST` | `/auth/refresh-token` | No (cookie) | Authentication | Rotate refresh token + issue new JWT |
+| `POST` | `/auth/logout` | No (cookie) | Authentication | Revoke session + clear cookie |
+| `GET` | `/auth/me` | **Yes** | Auth | Get current user profile |
+| `POST` | `/auth/forget-password` | No | Authentication | Send password reset email |
+| `PUT` | `/auth/reset-passowrd` | No | Authentication | Consume reset token + set new password |
+| `POST` | `/change-password` | **Yes** | Users | Change password (requires current password) |
+| `PATCH` | `/change-email` | **Yes** | Users | Change email address |
+
+---
+
+## 7. Security Decisions & Notes
+
+| Decision | Detail |
+|---|---|
+| **Refresh token storage** | Server-side in DB (`user_sessions`), NOT in localStorage. Cookie is HttpOnly + Secure + SameSite=None. This prevents XSS from reading the token. |
+| **Token rotation** | Each refresh rotates the token (overwrite in DB). A replayed old token will fail, detecting potential theft. |
+| **Password hashing** | Argon2 (memory-hard, OWASP recommended). Self-contained hash includes salt and cost parameters. |
+| **JWT signing** | HMAC-SHA256 symmetric key (must be ≥ 32 characters). Key is loaded from config/environment — never committed to source control. |
+| **Reset token expiry** | 15 minutes. Short window minimizes risk if the email is intercepted. |
+| **Refresh token expiry** | 7 days. Balances user convenience with security. |
+| **Minimum password length** | 6 characters, enforced at the domain level (`User.UpdatePassword`). |
+| **Soft-delete on User** | Deleting a user soft-deletes the record (global query filter). Sessions cascade-delete. |
+| **Domain events via Outbox** | The forget-password email is sent asynchronously through the Outbox pattern, ensuring the email send is retried on failure and decoupled from the HTTP request. |
+
+---
+
+## 8. Error Codes Reference
+
+| Error Code | Message | HTTP Status |
+|---|---|---|
+| `User.NotFound` | User with email/id {x} is not found | 404 |
+| `User.InvalidCredentials` | The provided credentials are invalid | 401 |
+| `User.ExpiredRefreshToken` | Refresh Token is expired, please login again | 409 |
+| `User.InvalidPassword` | The provided password is invalid | 409 |
+| `User.InvalidPasswordLength` | Password must be at least 6 characters long | 409 |
+| `User.EmailAlreadyInUse` | Email {x} is already in use | 409 |
