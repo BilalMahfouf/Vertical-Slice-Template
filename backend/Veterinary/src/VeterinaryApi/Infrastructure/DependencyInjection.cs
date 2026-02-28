@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
 using System.Text;
+using VeterinaryApi.Common;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.Abstracions.Emails;
 using VeterinaryApi.Common.CQRS;
@@ -109,7 +110,7 @@ public static class DependencyInjection
 
         // ef core config  
         var connectionString = Environment
-            .GetEnvironmentVariable("ConnectionStrings__Default");
+            .GetEnvironmentVariable(AppSettings.DevConnectionStringName);
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
             (sp, options) =>
         {

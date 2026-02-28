@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/ui/language-switcher";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { useCreateClinic } from "@/features/clinics/api/createClinic";
 import { useNavigate } from "react-router-dom";
@@ -67,6 +68,10 @@ export default function CreateClinicPage() {
         className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden px-4"
         dir={isRtl ? "rtl" : "ltr"}
     >
+      <div className="absolute top-6 end-6 z-20">
+        <LanguageSwitcher />
+      </div>
+
       <div className="w-full max-w-md z-10">
         <div className="flex flex-col items-center mb-8">
           <img src="/logo.jpg" alt="AviaMind Vet" className="w-16 h-16 rounded-2xl object-cover shadow-xl shadow-primary/20 mb-4" />

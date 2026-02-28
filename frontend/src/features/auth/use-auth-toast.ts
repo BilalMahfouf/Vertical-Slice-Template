@@ -21,6 +21,15 @@ export function useAuthToast() {
   };
 
   /**
+   * Show success toast when resending the reset email
+   */
+  const resendSuccess = () => {
+    toast.success(t(i18nKeyContainer.toast.auth.resendSuccess), {
+      description: t(i18nKeyContainer.toast.auth.resendSuccessDesc),
+    });
+  };
+
+  /**
    * Show success toast for password reset
    */
   const passwordReset = () => {
@@ -113,6 +122,7 @@ export function useAuthToast() {
   return {
     // Success operations
     resetLinkSent,
+    resendSuccess,
     passwordReset,
     
     // Error handling
