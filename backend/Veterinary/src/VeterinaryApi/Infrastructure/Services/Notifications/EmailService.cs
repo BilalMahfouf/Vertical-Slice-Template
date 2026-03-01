@@ -36,6 +36,9 @@ internal class EmailService : IEmailService
     {
         try
         {
+            _logger.LogInformation($"email options:{_emailOptions.Email}," +
+                $"{_emailOptions.Port}, {_emailOptions.Password}," +
+                $"{_emailOptions.Host}");
 
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(_emailOptions.Email));
