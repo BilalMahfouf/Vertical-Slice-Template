@@ -34,6 +34,7 @@ public class ProcessOutboxMessagesJob : IJob
     private readonly ApplicationDbContext _dbContext;
     private readonly IDomainEventDispatcher _domainEventDispatcher;
     private readonly IDomainEventPublisher _publisher;
+    private readonly ILogger<ProcessOutboxMessagesJob> _logger;
 
     /// <summary>
     /// Initializes the job with required dependencies.
@@ -44,11 +45,13 @@ public class ProcessOutboxMessagesJob : IJob
     public ProcessOutboxMessagesJob(
         ApplicationDbContext context,
         IDomainEventDispatcher domainEventDispatcher,
-        IDomainEventPublisher publisher)
+        IDomainEventPublisher publisher,
+        ILogger<ProcessOutboxMessagesJob> logger)
     {
         _dbContext = context;
         _domainEventDispatcher = domainEventDispatcher;
         _publisher = publisher;
+        _logger = logger;
     }
 
     private static readonly JsonSerializerSettings _serializerSettings = new()
@@ -82,7 +85,9 @@ public class ProcessOutboxMessagesJob : IJob
                 continue;
             }
             await _publisher.PublishAsync(domainEvent, context.CancellationToken);
+            _logger.LogInformation($"event {domainEvent.ToString()} is proccessed");
             outboxMessage.ProcessedOnUtc = DateTime.UtcNow;
+
         }
         await _dbContext.SaveChangesAsync(context.CancellationToken);
     }
