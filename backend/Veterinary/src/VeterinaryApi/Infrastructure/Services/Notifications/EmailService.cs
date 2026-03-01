@@ -15,11 +15,15 @@ namespace VeterinaryApi.Infrastructure.Services.Notifications;
 internal class EmailService : IEmailService
 {
     private readonly EmailOptions _emailOptions;
+    private readonly ILogger<EmailService> _logger;
 
     /// <summary>Initializes the service with the configured email options.</summary>
-    public EmailService(IOptions<EmailOptions> options)
+    public EmailService(
+        IOptions<EmailOptions> options,
+        ILogger<EmailService> logger)
     {
         _emailOptions = options.Value;
+        _logger = logger;
     }
 
     /// <summary>
@@ -53,6 +57,9 @@ internal class EmailService : IEmailService
         }
         catch (Exception ex)
         {
+            _logger.LogError($"An Error occured in email service {ex.Message}");
+            _logger.LogError($"Ex:{ex}");
+
             var error = Error.Failure(
                 "Email.Exception", ex.Message);
             return Result.Failure(error);
