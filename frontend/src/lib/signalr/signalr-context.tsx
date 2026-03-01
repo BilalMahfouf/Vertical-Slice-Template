@@ -16,36 +16,26 @@ import { SignalRContext } from "./SignalRContext";
 
 // ==================== Helper ====================
 
-function buildConnection(): HubConnection | null{
-
-    let accessToken = getValidAccessToken();
-    if (!accessToken) {
-        accessToken = getValidAccessToken();
-    }
-    if(!accessToken) {
+function buildConnection(): HubConnection | null {
+    // Token must already exist – AuthProvider restores it before protected routes render
+    const currentToken = tokenManager.getAccessToken();
+    if (!currentToken) {
         return null;
     }
- const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
     const hubUrl = new URL("/hubs/notification", baseUrl).toString();
 
- const connection = new HubConnectionBuilder()
-    .withUrl(hubUrl, {
-      accessTokenFactory: () => accessToken || "",
-    })
-    .withAutomaticReconnect([ 2000, 10000, 30000]) // Custom retry delays: immediate, 2s, 10s, 30s
-    .configureLogging(LogLevel.Warning)
-    .build();
-    return connection;
+    const connection = new HubConnectionBuilder()
+        .withUrl(hubUrl, {
+            // Always read the *current* token so reconnections use a fresh value
+            accessTokenFactory: () => tokenManager.getAccessToken() || "",
+        })
+        .withAutomaticReconnect([2000, 10000, 30000])
+        .configureLogging(LogLevel.Warning)
+        .build();
 
-}
-function getValidAccessToken(): string | null {
-    const token = tokenManager.getAccessToken();
-    if (!token) {
-        tokenManager.refreshAccessToken().catch((error) => {
-            console.error("Failed to refresh access token:", error);
-        });
-    }
-    return tokenManager.getAccessToken();
+    return connection;
 }
 
 // ==================== Provider ====================

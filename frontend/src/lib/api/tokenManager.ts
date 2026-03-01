@@ -1,144 +1,142 @@
 import api from './api';
 import i18n from '../i18n';
 import i18nKeyContainer from '../i18n/keyContainer';
-import type { AxiosError } from 'axios';
+import { toast } from 'sonner';
+import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
+// ── State ────────────────────────────────────────────────
 let accessToken: string | null = null;
-let isRefreshing = false;
-let refreshSubscribers: Array<{
-  resolve: (token: string) => void;
-  reject: (error: unknown) => void;
-}> = [];
+let refreshPromise: Promise<string | null> | null = null;
 
-// Notify all queued requests with the new token
-const onRefreshed = (token: string) => {
-  refreshSubscribers.forEach((subscriber) => subscriber.resolve(token));
-  refreshSubscribers = [];
+// Listeners for auth-state changes (used by AuthProvider)
+type AuthListener = (token: string | null) => void;
+const listeners: Set<AuthListener> = new Set();
+
+const notifyListeners = (token: string | null) => {
+  listeners.forEach((fn) => fn(token));
 };
 
-// Notify all queued requests that refresh failed
-const onRefreshFailed = (error: unknown) => {
-  refreshSubscribers.forEach((subscriber) => subscriber.reject(error));
-  refreshSubscribers = [];
-};
-
-// Add request to queue
-const addRefreshSubscriber = (
-  resolve: (token: string) => void,
-  reject: (error: unknown) => void
-) => {
-  refreshSubscribers.push({ resolve, reject });
-};
-
+// ── Token Manager ────────────────────────────────────────
 export const tokenManager = {
   getAccessToken: () => accessToken,
-  
+
   setAccessToken: (token: string | null) => {
     accessToken = token;
-  },
-  
-  clearTokens: () => {
-    accessToken = null;
+    notifyListeners(token);
   },
 
-  refreshAccessToken: async (): Promise<string | null> => {
-    try {
-      // refreshToken is sent automatically via httpOnly cookie
-      const response = await api.post('/auth/refresh-token', {}, {
-        skipAuthRefresh: true
-      });
-      if(response.status !== 200) {
+  clearTokens: () => {
+    accessToken = null;
+    notifyListeners(null);
+  },
+
+  /** Subscribe to token changes. Returns an unsubscribe function. */
+  subscribe: (listener: AuthListener) => {
+    listeners.add(listener);
+    listener(accessToken); // fire immediately with current value
+    return () => {
+      listeners.delete(listener);
+    };
+  },
+
+  /**
+   * Singleton refresh — no matter how many callers invoke this concurrently,
+   * only ONE network request is made. Every caller shares the same promise.
+   */
+  refreshAccessToken: (): Promise<string | null> => {
+    if (refreshPromise) return refreshPromise;
+
+    refreshPromise = (async () => {
+      try {
+        const response = await api.post(
+          '/auth/refresh-token',
+          {},
+          { skipAuthRefresh: true } as any, // httpOnly cookie sent automatically
+        );
+
+        if (response.status === 200 && response.data?.value?.token) {
+          const newToken: string = response.data.value.token;
+          tokenManager.setAccessToken(newToken);
+          return newToken;
+        }
+
+        // 200 but no token — treat as failure
         return null;
+      } catch (error) {
+        tokenManager.clearTokens();
+        throw error;
+      } finally {
+        refreshPromise = null; // allow future refreshes
       }
-      const newAccessToken = response.data.value.token;
-      
-      tokenManager.setAccessToken(newAccessToken);
-      return newAccessToken;
-    } catch(error)  {
-      tokenManager.clearTokens();
-      throw error;
-    }
+    })();
+
+    return refreshPromise;
   },
 };
 
-// Request interceptor - attach access token
+// ── Helpers ──────────────────────────────────────────────
+let isRedirecting = false;
+
+function redirectToLogin() {
+  if (isRedirecting) return;
+  isRedirecting = true;
+  const message = i18n.t(i18nKeyContainer.sessionExpiredMessage);
+  toast.error(message);
+  setTimeout(() => {
+    window.location.href = '/login';
+  }, 600);
+}
+
+// ── Request interceptor — attach access token ────────────
 api.interceptors.request.use(
   (config) => {
-    // Skip token attachment for endpoints that don't require auth
-    if (config.skipAuthRefresh) {
-      return config;
-    }
+    if ((config as any).skipAuthRefresh) return config;
+
     const token = tokenManager.getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
-// Response interceptor - handle 401 with token refresh
+// ── Response interceptor — handle 401 with refresh ───────
 api.interceptors.response.use(
-  (response) => response, 
+  (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config;
-    if(!originalRequest) {
-        return Promise.reject(error);
-    }
-    if(originalRequest.skipAuthRefresh) {
-        return Promise.reject(error);
+    const originalRequest = error.config as
+      | (InternalAxiosRequestConfig & { _retry?: boolean; skipAuthRefresh?: boolean })
+      | undefined;
+
+    if (!originalRequest || originalRequest.skipAuthRefresh) {
+      return Promise.reject(error);
     }
 
-    // If 401 and not already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
-      if (isRefreshing) {
-        // Queue this request until refresh completes
-        return new Promise((resolve, reject) => {
-          addRefreshSubscriber(
-            (token: string) => {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-              resolve(api(originalRequest));
-            },
-            (err: unknown) => {
-              reject(err);
-            }
-          );
-        });
-      }
-
-      isRefreshing = true;
 
       try {
+        // All concurrent 401s share the same singleton refresh promise
         const newToken = await tokenManager.refreshAccessToken();
-        
+
         if (newToken) {
-          onRefreshed(newToken);
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return api(originalRequest);
-        } else {
-          // Token refresh failed - notify subscribers and redirect to login
-          tokenManager.clearTokens();
-          onRefreshFailed(error);
-          const message = i18n.t(i18nKeyContainer.sessionExpiredMessage);
-          window.confirm(message);
-          window.location.href = '/login';
-          return Promise.reject(error);
         }
-      } catch (refreshError) {
-        // Clear tokens, notify subscribers on error and redirect to login
+
+        // No token returned — session gone
         tokenManager.clearTokens();
-        onRefreshFailed(refreshError);
-        const message = i18n.t(i18nKeyContainer.sessionExpiredMessage);
-        window.confirm(message);
-        window.location.href = '/login';
+        redirectToLogin();
+        return Promise.reject(error);
+      } catch (refreshError) {
+        // Refresh failed (expired cookie, network, etc.)
+        tokenManager.clearTokens();
+        redirectToLogin();
         return Promise.reject(refreshError);
-      } finally {
-        // Always reset the flag
-        isRefreshing = false;
       }
     }
+
     return Promise.reject(error);
-  }
+  },
 );
