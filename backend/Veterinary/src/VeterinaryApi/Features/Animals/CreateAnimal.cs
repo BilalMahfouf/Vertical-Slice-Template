@@ -9,6 +9,7 @@ using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain;
 using VeterinaryApi.Domain.Animals;
 using VeterinaryApi.Domain.Clients;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Animals;
 
@@ -58,13 +59,16 @@ public static class CreateAnimal
     {
         private readonly IApplicationDbContext _db;
         private readonly IValidator<CreateAnimalCommand> _validator;
+        private readonly ICurrentTenant _currentTenant;
 
         public CreateAnimalCommandHandler(
             IApplicationDbContext db,
-            IValidator<CreateAnimalCommand> validator)
+            IValidator<CreateAnimalCommand> validator,
+            ICurrentTenant currentTenant)
         {
             _db = db;
             _validator = validator;
+            _currentTenant = currentTenant;
         }
 
         public async Task<Result<Response>> Handle(
@@ -73,6 +77,7 @@ public static class CreateAnimal
         {
             await _validator.ValidateAndThrowAsync(command, cancellationToken);
             var client = await _db.Clients
+                .ForTenant(_currentTenant.UserId!.Value)
                 .Where(c => c.Id == command.ClientId)
                 .Select(c => new { c.Id, c.ClinicId })
                 .FirstOrDefaultAsync(cancellationToken);
