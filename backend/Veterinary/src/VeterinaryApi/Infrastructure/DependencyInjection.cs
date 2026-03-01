@@ -111,7 +111,7 @@ public static class DependencyInjection
 
         // ef core config  
         var connectionString = Environment
-            .GetEnvironmentVariable(AppSettings. DevConnectionStringName);
+            .GetEnvironmentVariable(AppSettings.ProductionConnectionStringName);
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
             (sp, options) =>
         {
@@ -123,11 +123,11 @@ public static class DependencyInjection
         }, ServiceLifetime.Scoped);
 
 
-                  // Email Options config 
+        // Email Options config 
         services.Configure<EmailOptions>(options =>
         {
             Console.WriteLine("Configuring EmailOptions from environment variables...");
-            var portString =Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_PORT") ?? throw new InvalidOperationException();
+            var portString = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_PORT") ?? throw new InvalidOperationException();
 
             int.TryParse(portString, out int port);
             options.Port = port;
