@@ -144,6 +144,37 @@ const visitApi = {
       throw new Error('Failed to delete visit');
     }
   },
+
+  /**
+   * Generates and downloads a PDF receipt for a specific visit
+   * @param id - Visit ID (GUID)
+   * @returns void - PDF file is downloaded directly
+   */
+  getVisitReceipt: async (id: string): Promise<void> => {
+    const response = await api.get(`/visits/${id}/receipt`, {
+      responseType: 'blob',
+      timeout: 30000, // PDF generation may take longer than default
+    });
+
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+
+    // Extract filename from Content-Disposition header if available
+    const disposition = response.headers['content-disposition'];
+    let filename = `receipt-${id}.pdf`;
+    if (disposition) {
+      const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+      if (match) filename = match[1].replace(/['"]/g, '');
+    }
+
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  },
 }
 
 export default visitApi;

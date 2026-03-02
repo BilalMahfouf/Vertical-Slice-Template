@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture #FAC-2026-001</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #444;
+            line-height: 1.5;
+            margin: 0;
+            padding: 40px;
+            background-color: #f2f2f2;
+        }
+
+        .invoice-box {
+            max-width: 210mm;
+            min-height: 297mm;
+            margin: auto;
+            background: #fff;
+            padding: 40px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 50px;
+            border-bottom: 2px solid #005f9e;
+            padding-bottom: 20px;
+        }
+
+        .clinic-info h1 {
+            margin: 0;
+            color: #005f9e;
+            font-size: 26px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .clinic-info p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .invoice-meta {
+            text-align: right;
+        }
+
+        .invoice-title {
+            font-size: 32px;
+            font-weight: 300;
+            color: #333;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .meta-row {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+            .meta-row span {
+                font-weight: 600;
+                display: inline-block;
+                min-width: 80px;
+                color: #555;
+            }
+
+        .client-section {
+            margin-bottom: 50px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-left: 5px solid #005f9e;
+            border-radius: 4px;
+        }
+
+        .client-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #888;
+            font-weight: bold;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .client-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .client-phone {
+            font-size: 14px;
+            color: #555;
+            margin: 5px 0 0 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 15px;
+            background-color: #005f9e;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+            font-size: 14px;
+        }
+
+        .col-desc {
+            width: 75%;
+        }
+
+        .col-total {
+            width: 25%;
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .desc-title {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+            color: #2c3e50;
+        }
+
+        .desc-sub {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .total-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .total-box {
+            width: 40%;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-bottom: 3px solid #005f9e;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-label {
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #444;
+        }
+
+        .total-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: #005f9e;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .status-paid {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-unpaid {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .signature-section {
+            position: absolute;
+            bottom: 50px;
+            right: 50px;
+            text-align: center;
+        }
+
+        .signature-box {
+            width: 200px;
+            height: 80px;
+            border: 1px dashed #ccc;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #bbb;
+            font-size: 12px;
+        }
+
+        .signature-label {
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        .footer-legal {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+        }
+
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+
+            .invoice-box {
+                box-shadow: none;
+                border: none;
+                width: 100%;
+                margin: 0;
+                padding: 25px;
+            }
+
+            .header {
+                margin-bottom: 30px;
+            }
+
+            .client-section {
+                margin-bottom: 30px;
+                background-color: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+            }
+
+            thead th {
+                background-color: #005f9e !important;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="invoice-box">
+        <div class="header">
+            <div class="clinic-info">
+                <h1>Clinique Vétérinaire</h1>
+                <p>
+                    123 Rue de la Liberté, Alger Centre<br>
+                    Tél: 021 23 45 67<br>
+                    Email: contact@clinique-vet.dz
+                </p>
+            </div>
+            <div class="invoice-meta">
+                <h2 class="invoice-title">Facture</h2>
+                <div class="meta-row">
+                    <span>N° Facture:</span> FAC-2026-892
+                </div>
+                <div class="meta-row">
+                    <span>Date:</span> 02/03/2026
+                </div>
+                <div class="meta-row" style="margin-top: 8px;">
+                    <span>Statut:</span> <span class="status-badge status-paid">Payé</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="client-section">
+            <span class="client-label">Client</span>
+            <h3 class="client-name">M. Mohamed Amine</h3>
+            <p class="client-phone">0555 12 34 56</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-desc">Description</th>
+                    <th class="col-total">Montant</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span class="desc-title">Consultation & Soins</span>
+                        <span class="desc-sub">Examen général pour chat "Mimi". Injection anti-inflammatoire incluse.</span>
+                    </td>
+                    <td class="col-total">3 500 DA</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="total-container">
+            <div class="total-box">
+                <div class="total-row">
+                    <span class="total-label">Total Net</span>
+                    <span class="total-value">3 500 DA</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signature-section">
+            <div class="signature-label">Cachet et Signature</div>
+            <div class="signature-box">
+                <!-- Space for stamp -->
+            </div>
+        </div>
+
+        <div class="footer-legal">
+            Merci de votre confiance.
+        </div>
+    </div>
+
+</body>
+</html>

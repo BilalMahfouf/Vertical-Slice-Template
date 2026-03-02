@@ -338,6 +338,11 @@ const i18nKeyContainer = {
         paymentStatusPaid: 'visit.paymentStatusPaid',
         paymentStatusPartiallyPaid: 'visit.paymentStatusPartiallyPaid',
         paymentStatusRefunded: 'visit.paymentStatusRefunded',
+        // Receipt
+        generateReceipt: 'visit.generateReceipt',
+        receiptDialogTitle: 'visit.receiptDialogTitle',
+        receiptDialogDescription: 'visit.receiptDialogDescription',
+        generatingReceipt: 'visit.generatingReceipt',
     },
     toast: {
         client: {
@@ -365,6 +370,8 @@ const i18nKeyContainer = {
             updatedDesc: 'toast.visit.updatedDesc',
             deleted: 'toast.visit.deleted',
             deletedDesc: 'toast.visit.deletedDesc',
+            receiptGenerated: 'toast.visit.receiptGenerated',
+            receiptGeneratedDesc: 'toast.visit.receiptGeneratedDesc',
         },
         animal: {
             added: 'toast.animal.added',

@@ -308,7 +308,11 @@
         "paymentStatusPending": "قيد الانتظار",
         "paymentStatusPaid": "مدفوع",
         "paymentStatusPartiallyPaid": "مدفوع جزئياً",
-        "paymentStatusRefunded": "مسترد"
+        "paymentStatusRefunded": "مسترد",
+        "generateReceipt": "إنشاء الفاتورة",
+        "receiptDialogTitle": "إنشاء الفاتورة",
+        "receiptDialogDescription": "سيتم إنشاء فاتورة PDF وتنزيلها لهذه الزيارة.",
+        "generatingReceipt": "جاري الإنشاء..."
     },
     "vaccination": {
         "title": "التطعيمات",
@@ -402,7 +406,9 @@
             "updated": "تم تحديث الزيارة",
             "updatedDesc": "تم تحديث معلومات الزيارة بنجاح.",
             "deleted": "تم حذف الزيارة",
-            "deletedDesc": "تم حذف الزيارة بنجاح."
+            "deletedDesc": "تم حذف الزيارة بنجاح.",
+            "receiptGenerated": "تم إنشاء الفاتورة",
+            "receiptGeneratedDesc": "تم إنشاء الفاتورة وتنزيلها بنجاح."
         },
         "vaccination": {
             "created": "تم إنشاء التطعيم",

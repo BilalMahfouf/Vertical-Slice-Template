@@ -38,6 +38,15 @@ export function useVisitToast() {
   };
 
   /**
+   * Show success toast for receipt generated and downloaded
+   */
+  const receiptGenerated = () => {
+    toast.success(t(i18nKeyContainer.toast.visit.receiptGenerated), {
+      description: t(i18nKeyContainer.toast.visit.receiptGeneratedDesc),
+    });
+  };
+
+  /**
    * Show error toast with domain-specific message
    * Maps backend error codes to localized visit error messages
    */
@@ -130,6 +139,7 @@ export function useVisitToast() {
     created,
     updated,
     deleted,
+    receiptGenerated,
     error,
   };
 }
