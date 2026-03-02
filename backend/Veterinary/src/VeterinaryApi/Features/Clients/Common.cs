@@ -12,4 +12,5 @@ public sealed record ClientReadResponse(
         string Phone,
         string? Notes,
         DateTime CreatedOnUtc,
-        int NumberOfAnimals);
+        int NumberOfAnimals,
+        decimal TotalAmountPayed = 0);
