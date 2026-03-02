@@ -4,10 +4,12 @@ import { Plus, Stethoscope, Syringe, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ConfirmDeleteDialog from "@/components/ui/confirm-delete-dialog";
+import ConfirmActionDialog from "@/components/ui/confirm-action-dialog";
 import VisitDataTable from "./visit-data-table";
 import AddUpdateVisit from "./add-update-visit";
 import ViewVisit from "./view-visit";
 import { useDeleteVisit } from "./use-delete-visit";
+import { useGenerateReceipt } from "./use-generate-receipt";
 import { type VisitTableResponse } from "./visit-api";
 import VaccinationDataTable from "@/features/vaccinations/vaccination-data-table";
 import AddUpdateVaccination from "@/features/vaccinations/add-vaccination";
@@ -26,10 +28,12 @@ export default function VisitPage() {
   const [addUpdateOpen, setAddUpdateOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
   
-  // Selected visit for view/edit/delete
+  // Selected visit for view/edit/delete/receipt
   const [selectedVisitId, setSelectedVisitId] = useState<string | null>(null);
   const [visitToDelete, setVisitToDelete] = useState<VisitTableResponse | null>(null);
+  const [visitForReceipt, setVisitForReceipt] = useState<VisitTableResponse | null>(null);
 
   // Vaccination dialog states
   const [vaccinationAddUpdateOpen, setVaccinationAddUpdateOpen] = useState(false);
@@ -46,6 +50,7 @@ export default function VisitPage() {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
   const { deleteVisit, isDeleting } = useDeleteVisit();
+  const { generateReceipt, isGenerating } = useGenerateReceipt();
   const { deleteVaccination, isDeleting: isDeletingVaccination } = useDeleteVaccination();
 
   // Handlers for Add/Update dialog
@@ -99,6 +104,29 @@ export default function VisitPage() {
           if (isNotFoundError(error)) {
             handleCloseDelete();
           }
+        },
+      });
+    }
+  };
+
+  // Handlers for Generate Receipt dialog
+  const handleOpenReceipt = (visit: VisitTableResponse) => {
+    setVisitForReceipt(visit);
+    setReceiptDialogOpen(true);
+  };
+
+  const handleCloseReceipt = () => {
+    if (!isGenerating) {
+      setReceiptDialogOpen(false);
+      setVisitForReceipt(null);
+    }
+  };
+
+  const handleConfirmReceipt = () => {
+    if (visitForReceipt) {
+      generateReceipt(visitForReceipt.id, {
+        onSuccess: () => {
+          handleCloseReceipt();
         },
       });
     }
@@ -232,6 +260,7 @@ export default function VisitPage() {
             onView={handleOpenView}
             onEdit={handleOpenEdit}
             onDelete={handleOpenDelete}
+            onGenerateReceipt={handleOpenReceipt}
           />
         </TabsContent>
 
@@ -303,6 +332,19 @@ export default function VisitPage() {
       <GetPrescriptionDialog
         open={prescriptionDialogOpen}
         onClose={() => setPrescriptionDialogOpen(false)}
+      />
+
+      {/* Generate Receipt Confirmation Dialog */}
+      <ConfirmActionDialog
+        open={receiptDialogOpen}
+        onClose={handleCloseReceipt}
+        onConfirm={handleConfirmReceipt}
+        title={t(i18nKeyContainer.visit.receiptDialogTitle)}
+        description={t(i18nKeyContainer.visit.receiptDialogDescription)}
+        itemName={visitForReceipt?.animalName}
+        confirmAction={t(i18nKeyContainer.visit.generateReceipt)}
+        actionInProgress={t(i18nKeyContainer.visit.generatingReceipt)}
+        isLoading={isGenerating}
       />
     </div>
   );

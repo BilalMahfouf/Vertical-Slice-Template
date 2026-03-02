@@ -6,7 +6,7 @@ import {
   type RowAction,
 } from "@/components/tables";
 import visitApi, { type VisitTableResponse } from "./visit-api";
-import { Calendar, User, PawPrint, Eye, Pencil, Trash2, DollarSign} from "lucide-react";
+import { Calendar, User, PawPrint, Eye, Pencil, Trash2, DollarSign, Receipt } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,7 @@ interface VisitDataTableProps {
   onView?: (visit: VisitTableResponse) => void;
   onEdit?: (visit: VisitTableResponse) => void;
   onDelete?: (visit: VisitTableResponse) => void;
+  onGenerateReceipt?: (visit: VisitTableResponse) => void;
 }
 
 /**
@@ -146,6 +147,7 @@ export default function VisitDataTable({
   onView,
   onEdit,
   onDelete,
+  onGenerateReceipt,
 }: VisitDataTableProps) {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
@@ -301,6 +303,16 @@ export default function VisitDataTable({
             label: t(i18nKeyContainer.table.edit),
             onClick: () => onEdit(row.original),
             icon: Pencil,
+          });
+        }
+
+        // Generate Receipt action
+        if (onGenerateReceipt) {
+          actions.push({
+            label: t(i18nKeyContainer.visit.generateReceipt),
+            onClick: () => onGenerateReceipt(row.original),
+            icon: Receipt,
+            separator: actions.length > 0,
           });
         }
 

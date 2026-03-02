@@ -308,7 +308,11 @@
         "paymentStatusPending": "Pending",
         "paymentStatusPaid": "Paid",
         "paymentStatusPartiallyPaid": "Partially Paid",
-        "paymentStatusRefunded": "Refunded"
+        "paymentStatusRefunded": "Refunded",
+        "generateReceipt": "Generate Receipt",
+        "receiptDialogTitle": "Generate Receipt",
+        "receiptDialogDescription": "A PDF receipt will be generated and downloaded for this visit.",
+        "generatingReceipt": "Generating..."
     },
     "vaccination": {
         "title": "Vaccinations",
@@ -402,7 +406,9 @@
             "updated": "Visit Updated",
             "updatedDesc": "The visit information has been updated successfully.",
             "deleted": "Visit Deleted",
-            "deletedDesc": "The visit has been deleted successfully."
+            "deletedDesc": "The visit has been deleted successfully.",
+            "receiptGenerated": "Receipt Generated",
+            "receiptGeneratedDesc": "The receipt has been generated and downloaded successfully."
         },
         "vaccination": {
             "created": "Vaccination Created",
