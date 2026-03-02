@@ -12,10 +12,12 @@
 
   <ItemGroup>
     <None Remove="Features\Prescriptions\PrescriptionTemplate.hbs" />
+    <None Remove="Features\Visits\ReceiptTemplate.hbs" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Features\Prescriptions\PrescriptionTemplate.hbs" />
+    <EmbeddedResource Include="Features\Visits\ReceiptTemplate.hbs" />
   </ItemGroup>
 
   <ItemGroup>
