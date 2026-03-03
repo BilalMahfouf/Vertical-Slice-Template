@@ -422,7 +422,9 @@
             "markedAsRead": "Notification lue",
             "markedAsReadDesc": "La notification a été marquée comme lue.",
             "markedAllAsRead": "Toutes les notifications lues",
-            "markedAllAsReadDesc": "Toutes les notifications ont été marquées comme lues."
+            "markedAllAsReadDesc": "Toutes les notifications ont été marquées comme lues.",
+            "pushEnabled": "Notifications bureau activées.",
+            "pushDisabled": "Notifications bureau désactivées."
         },
         "auth": {
             "resetLinkSent": "Email de réinitialisation en file d'attente",
@@ -557,7 +559,10 @@
             "fetchFailed": "Échec du chargement",
             "fetchFailedDesc": "Impossible de charger les notifications. Veuillez réessayer.",
             "markReadFailed": "Action échouée",
-            "markReadFailedDesc": "Impossible de marquer la notification comme lue. Veuillez réessayer."
+            "markReadFailedDesc": "Impossible de marquer la notification comme lue. Veuillez réessayer.",
+            "pushFailed": "Échec push",
+            "pushFailedDesc": "Impossible d'activer les notifications bureau. Veuillez réessayer.",
+            "pushBlocked": "Notifications bloquées"
         }
     },
     "dashboardPage": {
@@ -606,7 +611,16 @@
         "justNow": "À l'instant",
         "minutesAgo": "Il y a {{count}} min",
         "hoursAgo": "Il y a {{count}}h",
-        "daysAgo": "Il y a {{count}}j"
+        "daysAgo": "Il y a {{count}}j",
+        "pushTitle": "Notifications bureau",
+        "pushEnable": "Activer",
+        "pushDisable": "Désactiver",
+        "pushEnabled": "Activé",
+        "pushDisabled": "Désactivé",
+        "pushBlocked": "Bloqué",
+        "pushBlockedDesc": "Les notifications sont bloquées dans les paramètres de votre navigateur.",
+        "pushUnsupported": "Non pris en charge",
+        "pushUnsupportedDesc": "Votre navigateur ne prend pas en charge les notifications bureau."
     },
     "settingsPage": {
         "title": "Paramètres",
@@ -614,7 +628,8 @@
         "openMenu": "Ouvrir le menu des paramètres",
         "tabs": {
             "profile": "Profil",
-            "clinic": "Clinique"
+            "clinic": "Clinique",
+            "notifications": "Notifications"
         },
         "profile": {
             "header": "Informations personnelles",
@@ -678,7 +693,12 @@
             "invalidEmail": "Veuillez entrer une adresse e-mail valide"
         },
         "loading": "Chargement...",
-        "loadError": "Échec du chargement des paramètres. Veuillez réessayer."
+        "loadError": "Échec du chargement des paramètres. Veuillez réessayer.",
+        "notifications": {
+            "header": "Préférences de notification",
+            "description": "Gérez la façon dont vous recevez les notifications",
+            "pushDesc": "Recevez des notifications bureau même lorsque l'application est en arrière-plan."
+        }
     },
     "auth": {
         "forgotPassword": {

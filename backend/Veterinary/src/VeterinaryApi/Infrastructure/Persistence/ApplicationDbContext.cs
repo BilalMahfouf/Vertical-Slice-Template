@@ -69,6 +69,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<Notification> Notifications { get; set; } = null!;
 
     /// <inheritdoc />
+    public DbSet<NotificationPushSubscription> NotificationPushSubscriptions { get; set; } = null!;
+
+    /// <inheritdoc />
     public DbSet<Vaccination> Vaccinations { get; set; } = null!;
 
     /// <summary>

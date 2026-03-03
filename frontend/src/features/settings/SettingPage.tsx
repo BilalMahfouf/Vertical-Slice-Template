@@ -49,6 +49,8 @@ import {
   Menu,
   Loader2,
   Check,
+  Bell,
+  Monitor,
 } from "lucide-react";
 
 // Local imports
@@ -65,6 +67,13 @@ import {
   type ProfileFormValues,
   type ClinicFormValues,
 } from "./schemas";
+import {
+  getPushStatus,
+  ensurePushSubscription,
+  unsubscribeFromPush,
+  type PushStatus,
+} from "../notifications/push-notifications";
+import notificationApi from "../notifications/notification-api";
 
 // ============================================================================
 // Constants
@@ -76,7 +85,7 @@ const SUPPORTED_LANGUAGES = [
   { code: "ar", label: "العربية" },
 ] as const;
 
-type SettingsSection = "profile" | "clinic";
+type SettingsSection = "profile" | "clinic" | "notifications";
 
 // ============================================================================
 // Settings Navigation Item
@@ -139,6 +148,12 @@ function SettingsSidebar({
         label={t(i18nKeyContainer.settingsPage.tabs.clinic)}
         isActive={activeSection === "clinic"}
         onClick={() => onSectionChange("clinic")}
+      />
+      <NavItem
+        icon={<Bell className="h-4 w-4" />}
+        label={t(i18nKeyContainer.settingsPage.tabs.notifications)}
+        isActive={activeSection === "notifications"}
+        onClick={() => onSectionChange("notifications")}
       />
     </nav>
   );
@@ -802,6 +817,152 @@ function ClinicSectionSkeleton() {
 }
 
 // ============================================================================
+// Notifications Section
+// ============================================================================
+
+function NotificationsSection({ t, i18n }: { t: (key: string) => string; i18n: { language: string } }) {
+  const isRtl = i18n.language === "ar";
+  const [pushStatus, setPushStatus] = useState<PushStatus>("disabled");
+  const [isPushLoading, setIsPushLoading] = useState(false);
+  const [isTestLoading, setIsTestLoading] = useState(false);
+
+  useEffect(() => {
+    getPushStatus().then(setPushStatus);
+  }, []);
+
+  const handlePushToggle = async () => {
+    setIsPushLoading(true);
+    try {
+      if (pushStatus === "enabled") {
+        await unsubscribeFromPush();
+        toast.success(t(i18nKeyContainer.toast.notification.pushDisabled));
+      } else {
+        await ensurePushSubscription();
+        toast.success(t(i18nKeyContainer.toast.notification.pushEnabled));
+      }
+      setPushStatus(await getPushStatus());
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "";
+      if (message === "push_permission_denied") {
+        setPushStatus("denied");
+        toast.error(t(i18nKeyContainer.errors.notification.pushBlocked));
+      } else {
+        toast.error(t(i18nKeyContainer.errors.notification.pushFailed));
+      }
+    } finally {
+      setIsPushLoading(false);
+    }
+  };
+
+  const handleTestPush = async () => {
+    setIsTestLoading(true);
+    try {
+      await notificationApi.sendTestPush();
+      toast.success("Test push sent — check your desktop notifications!");
+    } catch {
+      toast.error("Failed to send test push. Check the browser console for details.");
+    } finally {
+      setIsTestLoading(false);
+    }
+  };
+
+  const statusLabel = (() => {
+    if (pushStatus === "enabled")     return t(i18nKeyContainer.notification.pushEnabled);
+    if (pushStatus === "denied")      return t(i18nKeyContainer.notification.pushBlocked);
+    if (pushStatus === "unsupported") return t(i18nKeyContainer.notification.pushUnsupported);
+    return t(i18nKeyContainer.notification.pushDisabled);
+  })();
+
+  const statusColor = (() => {
+    if (pushStatus === "enabled")     return "text-green-600 bg-green-50 ring-green-200";
+    if (pushStatus === "denied")      return "text-red-600 bg-red-50 ring-red-200";
+    if (pushStatus === "unsupported") return "text-slate-500 bg-slate-50 ring-slate-200";
+    return "text-amber-600 bg-amber-50 ring-amber-200";
+  })();
+
+  return (
+    <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"}>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Monitor className="h-5 w-5" />
+            {t(i18nKeyContainer.settingsPage.notifications.header)}
+          </CardTitle>
+          <CardDescription>
+            {t(i18nKeyContainer.settingsPage.notifications.description)}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <p className="text-sm font-medium">
+                {t(i18nKeyContainer.notification.pushTitle)}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {pushStatus === "denied"
+                  ? t(i18nKeyContainer.notification.pushBlockedDesc)
+                  : pushStatus === "unsupported"
+                  ? t(i18nKeyContainer.notification.pushUnsupportedDesc)
+                  : t(i18nKeyContainer.settingsPage.notifications.pushDesc)}
+              </p>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ring-1 ring-inset ${statusColor}`}
+              >
+                {statusLabel}
+              </span>
+              {pushStatus !== "unsupported" && (
+                <Button
+                  variant={pushStatus === "enabled" ? "secondary" : "default"}
+                  size="sm"
+                  disabled={isPushLoading || pushStatus === "denied"}
+                  onClick={handlePushToggle}
+                  className="cursor-pointer"
+                >
+                  {isPushLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : pushStatus === "enabled" ? (
+                    t(i18nKeyContainer.notification.pushDisable)
+                  ) : (
+                    t(i18nKeyContainer.notification.pushEnable)
+                  )}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Test push — only shown when subscribed */}
+          {pushStatus === "enabled" && (
+            <div className="mt-4 pt-4 border-t flex items-center justify-between">
+              <div className="space-y-0.5">
+                <p className="text-sm font-medium">Test Push Notification</p>
+                <p className="text-xs text-muted-foreground">
+                  Send a test push to verify your browser receives it correctly.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={isTestLoading}
+                onClick={handleTestPush}
+                className="cursor-pointer shrink-0"
+              >
+                {isTestLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Send Test"
+                )}
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ============================================================================
 // Main Settings Page
 // ============================================================================
 
@@ -879,6 +1040,9 @@ export default function SettingPage() {
             )}
             {activeSection === "clinic" && (
               <ClinicSection userProfile={userProfile} t={t} />
+            )}
+            {activeSection === "notifications" && (
+              <NotificationsSection t={t} i18n={i18n} />
             )}
           </main>
         </div>

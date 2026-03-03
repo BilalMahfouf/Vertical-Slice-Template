@@ -55,6 +55,9 @@ public interface IApplicationDbContext
     /// <summary>Gets the EF Core <see cref="DbSet{T}"/> for <see cref="Notification"/> entities.</summary>
     public DbSet<Notification> Notifications { get; }
 
+    /// <summary>Gets the EF Core <see cref="DbSet{T}"/> for <see cref="NotificationPushSubscription"/> entities.</summary>
+    public DbSet<NotificationPushSubscription> NotificationPushSubscriptions { get; }
+
     /// <summary>Gets the EF Core <see cref="DbSet{T}"/> for <see cref="Vaccination"/> entities.</summary>
     public DbSet<Vaccination> Vaccinations { get; }
 
