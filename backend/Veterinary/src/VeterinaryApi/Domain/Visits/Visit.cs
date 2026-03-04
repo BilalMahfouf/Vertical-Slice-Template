@@ -131,6 +131,12 @@ public class Visit : Entity
         visit.PaymentAmount = paymentAmount;
         visit.PaymentStatus = paymentStatus;
 
+        if (visit.PaymentStatus is PaymentStatus.Pending)
+        {
+            visit.RaiseDomainEvent(
+                new VisitPaymentPendingReminderDomainEvent(visit.Id));
+        }
+
         return visit;
     }
 

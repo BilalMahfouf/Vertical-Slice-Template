@@ -16,6 +16,7 @@ using VeterinaryApi.Infrastructure.CQRS;
 using VeterinaryApi.Infrastructure.Interceptors;
 using VeterinaryApi.Infrastructure.Notifications;
 using VeterinaryApi.Infrastructure.OutboxMessages;
+using VeterinaryApi.Infrastructure.Notifications.Jobs;
 using VeterinaryApi.Infrastructure.Persistence;
 using VeterinaryApi.Infrastructure.Services.Hashers;
 using VeterinaryApi.Infrastructure.Services.Notifications;
@@ -149,17 +150,29 @@ public static class DependencyInjection
         // Quartz Background job
         services.AddQuartz(configure =>
           {
-              var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
-              configure.
-              AddJob<ProcessOutboxMessagesJob>((sp, opts) =>
+              // Outbox processor — runs every 10 seconds
+              var outboxJobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+              configure
+              .AddJob<ProcessOutboxMessagesJob>((sp, opts) =>
               {
-                  opts.WithIdentity(jobKey);
+                  opts.WithIdentity(outboxJobKey);
               })
               .AddTrigger(trigger =>
-              trigger.ForJob(jobKey)
+              trigger.ForJob(outboxJobKey)
               .WithSimpleSchedule(schedule =>
               schedule.WithIntervalInSeconds(10)
               .RepeatForever()));
+
+              // Daily reminders — runs every day at 08:00 AM UTC
+              var dailyRemindersJobKey = new JobKey(nameof(DailyRemindersJob));
+              configure
+              .AddJob<DailyRemindersJob>((sp, opts) =>
+              {
+                  opts.WithIdentity(dailyRemindersJobKey);
+              })
+              .AddTrigger(trigger =>
+              trigger.ForJob(dailyRemindersJobKey)
+              .WithCronSchedule("0 0 8 * * ?"));
           });
         services.AddQuartzHostedService(opt =>
         opt.WaitForJobsToComplete = true
