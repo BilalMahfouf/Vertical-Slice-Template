@@ -16,16 +16,16 @@ public static class GetVapidPublicKey
     /// <summary>
     /// Carter endpoint that maps <c>GET /push/vapid-public-key</c>.
     /// Requires a valid JWT bearer token. The key is read from the
-    /// <c>WebPush:VapidPublicKey</c> configuration entry (set via environment variable).
+    /// <c>WEBPUSH_VAPID_PUBLIC_KEY</c> environment variable.
     /// </summary>
     public sealed class Endpoint : IEndpoint
     {
         /// <summary>Registers the <c>GET /push/vapid-public-key</c> route.</summary>
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("push/vapid-public-key", [Authorize] (IConfiguration configuration) =>
+            app.MapGet("push/vapid-public-key", [Authorize] () =>
             {
-                var publicKey = configuration["WebPush:VapidPublicKey"];
+                var publicKey = Environment.GetEnvironmentVariable("WEBPUSH_VAPID_PUBLIC_KEY");
 
                 if (string.IsNullOrWhiteSpace(publicKey))
                 {

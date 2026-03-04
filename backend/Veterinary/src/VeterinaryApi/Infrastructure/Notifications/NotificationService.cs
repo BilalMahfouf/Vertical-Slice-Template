@@ -7,6 +7,7 @@ using VeterinaryApi.Domain.Notifications;
 using VeterinaryApi.Infrastructure.Persistence;
 using WebPush;
 
+
 namespace VeterinaryApi.Infrastructure.Notifications;
 
 /// <summary>
@@ -23,7 +24,6 @@ public class NotificationService : INotificatioService
     private readonly IHubContext<NotificationHub> _hubContext;
     private readonly ICurrentTenant _currentUser;
     private readonly IApplicationDbContext _db;
-    private readonly IConfiguration _configuration;
     private readonly ILogger<NotificationService> _logger;
 
     /// <summary>
@@ -32,19 +32,16 @@ public class NotificationService : INotificatioService
     /// <param name="hubContext">The SignalR hub context for real-time in-app delivery.</param>
     /// <param name="currentUser">The ambient current-user context.</param>
     /// <param name="db">The application database context for loading push subscriptions.</param>
-    /// <param name="configuration">App configuration for reading VAPID keys.</param>
     /// <param name="logger">Logger for diagnosing push delivery issues.</param>
     public NotificationService(
         IHubContext<NotificationHub> hubContext,
         ICurrentTenant currentUser,
         IApplicationDbContext db,
-        IConfiguration configuration,
         ILogger<NotificationService> logger)
     {
         _hubContext = hubContext;
         _currentUser = currentUser;
         _db = db;
-        _configuration = configuration;
         _logger = logger;
     }
 
@@ -77,9 +74,9 @@ public class NotificationService : INotificatioService
         Guid userId,
         CancellationToken cancellationToken)
     {
-        var vapidPublicKey = _configuration["WebPush:VapidPublicKey"];
-        var vapidPrivateKey = _configuration["WebPush:VapidPrivateKey"];
-        var vapidSubject = _configuration["WebPush:Subject"];
+        var vapidPublicKey = Environment.GetEnvironmentVariable("WEBPUSH_VAPID_PUBLIC_KEY");
+        var vapidPrivateKey = Environment.GetEnvironmentVariable("WEBPUSH_VAPID_PRIVATE_KEY");
+        var vapidSubject = Environment.GetEnvironmentVariable("WEBPUSH_SUBJECT");
 
         // Skip silently when VAPID is not configured (local dev without push).
         if (string.IsNullOrWhiteSpace(vapidPublicKey)
