@@ -8,7 +8,7 @@ import {
   DateCell,
 } from "@/components/tables";
 import clientApi, { type Client } from "./client-api";
-import { User, Eye, Edit, Trash2, Phone, FileText, PawPrint, DollarSign } from "lucide-react";
+import { User, Eye, Edit, Trash2, Phone, PawPrint, DollarSign } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 
@@ -78,29 +78,7 @@ export default function ClientDataTable({
         </div>
       ),
     },
-    {
-      accessorKey: "notes",
-      header: ({ column }) => (
-        <DataTableColumnHeader 
-          column={column} 
-          title={t(i18nKeyContainer.client.tableNotes)} 
-          enableSorting={false} 
-        />
-      ),
-      cell: ({ row }) => (
-        <div className="max-w-50">
-          {row.original.notes ? (
-            <div className="flex items-start gap-2">
-              <FileText className="h-4 w-4 shrink-0 text-slate-400 mt-0.5" />
-              <span className="text-sm text-slate-600 truncate">{row.original.notes}</span>
-            </div>
-          ) : (
-            <span className="text-sm text-slate-400">{t(i18nKeyContainer.client.noNotes)}</span>
-          )}
-        </div>
-      ),
-    },
-    {
+   {
       accessorKey: "totalAmountPayed",
       header: ({ column }) => (
         <DataTableColumnHeader
