@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
+using Resend;
 using System.Diagnostics;
 using System.Text;
 using VeterinaryApi.Common;
@@ -111,7 +112,7 @@ public static class DependencyInjection
 
         // ef core config  
         var connectionString = Environment
-            .GetEnvironmentVariable(AppSettings.ProductionConnectionStringName);
+            .GetEnvironmentVariable(AppSettings.DevConnectionStringName);
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
             (sp, options) =>
         {
@@ -137,7 +138,6 @@ public static class DependencyInjection
             options.Password = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_PASSWORD") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_PASSWORD environment variable is not set");
             options.Email = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_EMAIL") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_EMAIL environment variable is not set");
         });
-        services.AddSingleton<IEmailService, EmailService>();
 
         services.AddScoped<ICurrentTenant, CurrentUserService>();
 
@@ -172,6 +172,17 @@ public static class DependencyInjection
                     .AsImplementedInterfaces()
                     .WithScopedLifetime());
         services.AddTransient<IDomainEventPublisher, DomainEventPublisher>();
+
+        // resend for sending emails : 
+        services.AddOptions();
+        services.AddHttpClient<ResendClient>();
+        services.Configure<ResendClientOptions>(o =>
+        {
+            o.ApiToken = Environment.GetEnvironmentVariable("RESEND_APITOKEN")!;
+        });
+        services.AddTransient<IResend, ResendClient>();
+        services.AddTransient<IEmailService, ResendEmailService>();
+
         return services;
     }
 

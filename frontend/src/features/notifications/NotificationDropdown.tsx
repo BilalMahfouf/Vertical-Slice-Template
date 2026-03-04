@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, CheckCheck, Loader2 } from "lucide-react";
+import { Bell, CheckCheck, Loader2, Monitor } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -14,6 +15,12 @@ import { cn } from "@/lib/utils";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { useNotifications } from "./use-notifications";
 import { useMarkAsRead, useMarkAllAsRead } from "./use-mark-as-read";
+import {
+    getPushStatus,
+    ensurePushSubscription,
+    unsubscribeFromPush,
+    type PushStatus,
+} from "./push-notifications";
 import type { Notification } from "./notification-api";
 
 /**
@@ -192,6 +199,39 @@ export default function NotificationDropdown() {
 
     const [open, setOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<"all" | "unread">("unread");
+    const [pushStatus, setPushStatus] = useState<PushStatus>("disabled");
+    const [isPushLoading, setIsPushLoading] = useState(false);
+
+    // Refresh push status whenever the dropdown opens.
+    useEffect(() => {
+        if (open) {
+            getPushStatus().then(setPushStatus);
+        }
+    }, [open]);
+
+    const handlePushToggle = async () => {
+        setIsPushLoading(true);
+        try {
+            if (pushStatus === "enabled") {
+                await unsubscribeFromPush();
+                toast.success(t(i18nKeyContainer.toast.notification.pushDisabled));
+            } else {
+                await ensurePushSubscription();
+                toast.success(t(i18nKeyContainer.toast.notification.pushEnabled));
+            }
+            setPushStatus(await getPushStatus());
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "";
+            if (message === "push_permission_denied") {
+                setPushStatus("denied");
+                toast.error(t(i18nKeyContainer.errors.notification.pushBlocked));
+            } else {
+                toast.error(t(i18nKeyContainer.errors.notification.pushFailed));
+            }
+        } finally {
+            setIsPushLoading(false);
+        }
+    };
 
     // Queries
     const {
@@ -383,6 +423,42 @@ export default function NotificationDropdown() {
                         )}
                     </div>
                 </Tabs>
+
+                {/* Desktop push notifications footer */}
+                {pushStatus !== "unsupported" && (
+                    <div className="px-4 py-3 border-t border-slate-100 bg-white">
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <Monitor className="h-4 w-4 shrink-0 text-slate-500" />
+                                <div className="min-w-0">
+                                    <p className="text-xs font-medium text-slate-700">
+                                        {t(i18nKeyContainer.notification.pushTitle)}
+                                    </p>
+                                    {pushStatus === "denied" && (
+                                        <p className="text-xs text-muted-foreground">
+                                            {t(i18nKeyContainer.notification.pushBlockedDesc)}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                            <Button
+                                variant={pushStatus === "enabled" ? "secondary" : "outline"}
+                                size="sm"
+                                disabled={isPushLoading || pushStatus === "denied"}
+                                onClick={handlePushToggle}
+                                className="h-7 px-3 text-xs shrink-0 cursor-pointer"
+                            >
+                                {isPushLoading ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : pushStatus === "enabled" ? (
+                                    t(i18nKeyContainer.notification.pushDisable)
+                                ) : (
+                                    t(i18nKeyContainer.notification.pushEnable)
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                )}
                 </div>
             </DropdownMenuContent>
         </DropdownMenu>

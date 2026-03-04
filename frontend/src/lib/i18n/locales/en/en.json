@@ -422,7 +422,9 @@
             "markedAsRead": "Notification Read",
             "markedAsReadDesc": "The notification has been marked as read.",
             "markedAllAsRead": "All Notifications Read",
-            "markedAllAsReadDesc": "All notifications have been marked as read."
+            "markedAllAsReadDesc": "All notifications have been marked as read.",
+            "pushEnabled": "Desktop notifications enabled.",
+            "pushDisabled": "Desktop notifications disabled."
         },
         "auth": {
             "resetLinkSent": "Reset Email Queued",
@@ -557,7 +559,10 @@
             "fetchFailed": "Failed to Load",
             "fetchFailedDesc": "Unable to load notifications. Please try again.",
             "markReadFailed": "Action Failed",
-            "markReadFailedDesc": "Unable to mark notification as read. Please try again."
+            "markReadFailedDesc": "Unable to mark notification as read. Please try again.",
+            "pushFailed": "Push Failed",
+            "pushFailedDesc": "Unable to enable desktop notifications. Please try again.",
+            "pushBlocked": "Notifications Blocked"
         }
     },
     "dashboardPage": {
@@ -606,7 +611,16 @@
         "justNow": "Just now",
         "minutesAgo": "{{count}} min ago",
         "hoursAgo": "{{count}}h ago",
-        "daysAgo": "{{count}}d ago"
+        "daysAgo": "{{count}}d ago",
+        "pushTitle": "Desktop notifications",
+        "pushEnable": "Enable",
+        "pushDisable": "Disable",
+        "pushEnabled": "Enabled",
+        "pushDisabled": "Disabled",
+        "pushBlocked": "Blocked",
+        "pushBlockedDesc": "Notifications are blocked in your browser settings.",
+        "pushUnsupported": "Not supported",
+        "pushUnsupportedDesc": "Your browser does not support desktop push notifications."
     },
     "settingsPage": {
         "title": "Settings",
@@ -614,7 +628,8 @@
         "openMenu": "Open settings menu",
         "tabs": {
             "profile": "Profile",
-            "clinic": "Clinic"
+            "clinic": "Clinic",
+            "notifications": "Notifications"
         },
         "nav": {
             "profile": "Profile",
@@ -816,7 +831,12 @@
             "invalidEmail": "Please enter a valid email address"
         },
         "loading": "Loading...",
-        "loadError": "Failed to load settings. Please try again."
+        "loadError": "Failed to load settings. Please try again.",
+        "notifications": {
+            "header": "Notification Preferences",
+            "description": "Manage how you receive notifications",
+            "pushDesc": "Receive desktop notifications even when the app is in the background."
+        }
     },
     "auth": {
         "forgotPassword": {

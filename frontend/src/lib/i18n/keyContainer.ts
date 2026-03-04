@@ -32,6 +32,16 @@ const i18nKeyContainer = {
         minutesAgo: 'notification.minutesAgo',
         hoursAgo: 'notification.hoursAgo',
         daysAgo: 'notification.daysAgo',
+        // Web Push
+        pushTitle: 'notification.pushTitle',
+        pushEnable: 'notification.pushEnable',
+        pushDisable: 'notification.pushDisable',
+        pushEnabled: 'notification.pushEnabled',
+        pushDisabled: 'notification.pushDisabled',
+        pushBlocked: 'notification.pushBlocked',
+        pushBlockedDesc: 'notification.pushBlockedDesc',
+        pushUnsupported: 'notification.pushUnsupported',
+        pushUnsupportedDesc: 'notification.pushUnsupportedDesc',
     },
     settings: 'settings',
     logout: 'logout',
@@ -386,6 +396,9 @@ const i18nKeyContainer = {
             markedAsReadDesc: 'toast.notification.markedAsReadDesc',
             markedAllAsRead: 'toast.notification.markedAllAsRead',
             markedAllAsReadDesc: 'toast.notification.markedAllAsReadDesc',
+            // Web Push
+            pushEnabled: 'toast.notification.pushEnabled',
+            pushDisabled: 'toast.notification.pushDisabled',
         },
         auth: {
             resetLinkSent: 'toast.auth.resetLinkSent',
@@ -497,6 +510,10 @@ const i18nKeyContainer = {
             fetchFailedDesc: 'errors.notification.fetchFailedDesc',
             markReadFailed: 'errors.notification.markReadFailed',
             markReadFailedDesc: 'errors.notification.markReadFailedDesc',
+            // Web Push
+            pushFailed: 'errors.notification.pushFailed',
+            pushFailedDesc: 'errors.notification.pushFailedDesc',
+            pushBlocked: 'errors.notification.pushBlocked',
         },
         clinic: {
             notFound: 'errors.clinic.notFound',
@@ -538,6 +555,7 @@ const i18nKeyContainer = {
         tabs: {
             profile: 'settingsPage.tabs.profile',
             clinic: 'settingsPage.tabs.clinic',
+            notifications: 'settingsPage.tabs.notifications',
         },
         profile: {
             header: 'settingsPage.profile.header',
@@ -602,6 +620,11 @@ const i18nKeyContainer = {
         },
         loading: 'settingsPage.loading',
         loadError: 'settingsPage.loadError',
+        notifications: {
+            header: 'settingsPage.notifications.header',
+            description: 'settingsPage.notifications.description',
+            pushDesc: 'settingsPage.notifications.pushDesc',
+        },
     },
     auth: {
         forgotPassword: {
