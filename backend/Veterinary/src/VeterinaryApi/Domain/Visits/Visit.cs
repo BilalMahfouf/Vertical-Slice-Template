@@ -181,10 +181,10 @@ public class Visit : Entity
     private void UpdatePayment(decimal paymentAmount, PaymentStatus paymentStatus)
     {
         ValidatePaymentAmount(paymentAmount);
-        if (paymentStatus is PaymentStatus.Paid)
-        {
-            throw new DomainException(VisitErrors.PaymentAlreadyPayed);
-        }
+        //if (paymentStatus is PaymentStatus.Paid)
+        //{
+        //    throw new DomainException(VisitErrors.PaymentAlreadyPayed);
+        //}
 
         PaymentAmount = paymentAmount;
         PaymentStatus = paymentStatus;

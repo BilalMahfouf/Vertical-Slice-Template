@@ -127,8 +127,12 @@ const visitApi = {
    * @returns void
    */
   updateVisit: async (id: string, data: UpdateVisitRequest): Promise<void> => {
+    console.log('Updating visit with ID:', id, 'Data:', data);
     const response = await api.put(`/visits/${id}`, data);
+    console.log('Update visit response:', response);
     if (response.status !== 200 && response.status !== 204) {
+
+      console.error('Update visit failed:', response);
       throw new Error('Failed to update visit');
     }
   },
