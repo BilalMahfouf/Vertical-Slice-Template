@@ -8,6 +8,7 @@ using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Paginations.OffSet;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Clients;
+using VeterinaryApi.Domain.Visits;
 using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Clients;
@@ -72,7 +73,11 @@ public static class GetAllClients
                                 e.Phone,
                                 e.Notes,
                                 e.CreatedOnUtc,
-                                e.Animals.Count));
+                                e.Animals.Count,
+                                e.Visits
+                                .Where(e => e.PaymentStatus == PaymentStatus.Paid)
+                                .Sum(e => e.PaymentAmount)
+                                ));
 
             Expression<Func<ClientReadResponse, object>> orderSelector = query.SortColumn?
                 .ToLower() switch

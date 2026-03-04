@@ -233,6 +233,7 @@
         "tableAnimals": "Animaux",
         "tableNotes": "Notes",
         "tableRegistered": "Inscrit",
+        "tableTotalPaid": "Total Payé",
         "searchPlaceholder": "Rechercher des clients...",
         "noClients": "Aucun client trouvé."
     },

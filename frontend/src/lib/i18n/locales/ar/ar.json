@@ -233,6 +233,7 @@
         "tableAnimals": "الحيوانات",
         "tableNotes": "ملاحظات",
         "tableRegistered": "تاريخ التسجيل",
+        "tableTotalPaid": "إجمالي المدفوع",
         "searchPlaceholder": "البحث عن العملاء...",
         "noClients": "لم يتم العثور على عملاء."
     },

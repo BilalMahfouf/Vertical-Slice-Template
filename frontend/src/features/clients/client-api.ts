@@ -11,6 +11,7 @@ export type Client = {
   notes?: string;       // string | null
   numberOfAnimals: number; // number of animals for this client
   createdOnUtc: string; // ISO Date string 
+  totalAmountPayed: number; // total amount paid by this client in DZD
 }
 export type CreateClientRequest = {
     firstName: string;

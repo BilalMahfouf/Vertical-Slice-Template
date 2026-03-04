@@ -45,7 +45,7 @@ public class VisitConfiguration : IEntityTypeConfiguration<Visit>
 
 
         builder.HasOne(v => v.Owner)
-            .WithMany()
+            .WithMany(v => v.Visits)
             .HasForeignKey(v => v.OwnerId)
             .OnDelete(DeleteBehavior.Cascade)
             .HasConstraintName("FK_visits_owners_owner_id");

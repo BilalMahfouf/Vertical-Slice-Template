@@ -145,6 +145,7 @@ const i18nKeyContainer = {
         tableAnimals: 'client.tableAnimals',
         tableNotes: 'client.tableNotes',
         tableRegistered: 'client.tableRegistered',
+        tableTotalPaid: 'client.tableTotalPaid',
         searchPlaceholder: 'client.searchPlaceholder',
         noClients: 'client.noClients',
     },

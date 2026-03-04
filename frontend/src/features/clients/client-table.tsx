@@ -8,7 +8,7 @@ import {
   DateCell,
 } from "@/components/tables";
 import clientApi, { type Client } from "./client-api";
-import { User, Eye, Edit, Trash2, Phone, FileText, PawPrint } from "lucide-react";
+import { User, Eye, Edit, Trash2, Phone, FileText, PawPrint, DollarSign } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 
@@ -99,6 +99,29 @@ export default function ClientDataTable({
           )}
         </div>
       ),
+    },
+    {
+      accessorKey: "totalAmountPayed",
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t(i18nKeyContainer.client.tableTotalPaid)}
+          enableSorting={false}
+        />
+      ),
+      cell: ({ row }) => {
+        const formatted = new Intl.NumberFormat(i18n.language, {
+          style: "currency",
+          currency: "DZD",
+          minimumFractionDigits: 2,
+        }).format(row.original.totalAmountPayed);
+        return (
+          <div className="flex items-center gap-2">
+            <DollarSign className="h-4 w-4 text-slate-400" />
+            <span className="font-medium text-slate-900">{formatted}</span>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "createdOnUtc",

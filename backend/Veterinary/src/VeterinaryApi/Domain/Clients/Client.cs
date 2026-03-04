@@ -1,6 +1,7 @@
 ﻿using VeterinaryApi.Domain.Animals;
 using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Domain.Common;
+using VeterinaryApi.Domain.Visits;
 
 namespace VeterinaryApi.Domain.Clients;
 
@@ -38,6 +39,8 @@ public class Client : Entity
     /// Populated by EF Core when explicitly included in a query.
     /// </summary>
     public IReadOnlyCollection<Animal> Animals { get; private set; } = null!;
+
+    public IReadOnlyCollection<Visit> Visits { get; private set; } = null!;
 
     private Client()
     {
