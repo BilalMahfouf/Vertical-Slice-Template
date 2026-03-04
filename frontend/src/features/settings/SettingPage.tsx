@@ -183,7 +183,7 @@ function MobileNav({ activeSection, onSectionChange, t }: MobileNavProps) {
         <Button
           variant="outline"
           size="icon"
-          className="md:hidden cursor-pointer border-border/20"
+          className="md:hidden cursor-pointer border-transparent bg-transparent hover:bg-slate-100"
         >
           <Menu className="h-5 w-5" />
           <span className="sr-only">
@@ -191,16 +191,20 @@ function MobileNav({ activeSection, onSectionChange, t }: MobileNavProps) {
           </span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-64 border-border/20">
-        <SheetHeader>
-          <SheetTitle>{t(i18nKeyContainer.settingsPage.title)}</SheetTitle>
-        </SheetHeader>
-        <div className="mt-6">
-          <SettingsSidebar
-            activeSection={activeSection}
-            onSectionChange={handleSelect}
-            t={t}
-          />
+      <SheetContent side="left" className="w-80 bg-white border-e border-slate-200 p-0 sm:max-w-sm">
+        <div className="flex flex-col h-full bg-white">
+          <SheetHeader className="p-6 bg-white border-b-0 text-left">
+            <SheetTitle className="text-xl font-bold text-slate-900 border-none">
+              {t(i18nKeyContainer.settingsPage.title)}
+            </SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto p-4 bg-white">
+            <SettingsSidebar
+              activeSection={activeSection}
+              onSectionChange={handleSelect}
+              t={t}
+            />
+          </div>
         </div>
       </SheetContent>
     </Sheet>
@@ -882,59 +886,62 @@ function NotificationsSection({ t, i18n }: { t: (key: string) => string; i18n: {
 
   return (
     <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Monitor className="h-5 w-5" />
-            {t(i18nKeyContainer.settingsPage.notifications.header)}
+      {/* Section Header */}
+      <div>
+        <h2 className="text-xl font-semibold tracking-tight">
+          {t(i18nKeyContainer.settingsPage.notifications.header)}
+        </h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          {t(i18nKeyContainer.settingsPage.notifications.description)}
+        </p>
+      </div>
+
+      <Separator className="bg-border/20" />
+
+      {/* Push Notifications Card */}
+      <Card className="border-white shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-base font-medium">
+            <Monitor className="h-4 w-4 text-muted-foreground" />
+            {t(i18nKeyContainer.notification.pushTitle)}
           </CardTitle>
           <CardDescription>
-            {t(i18nKeyContainer.settingsPage.notifications.description)}
+            {pushStatus === "denied"
+              ? t(i18nKeyContainer.notification.pushBlockedDesc)
+              : pushStatus === "unsupported"
+              ? t(i18nKeyContainer.notification.pushUnsupportedDesc)
+              : t(i18nKeyContainer.settingsPage.notifications.pushDesc)}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between gap-4">
-            <div className="space-y-1">
-              <p className="text-sm font-medium">
-                {t(i18nKeyContainer.notification.pushTitle)}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {pushStatus === "denied"
-                  ? t(i18nKeyContainer.notification.pushBlockedDesc)
-                  : pushStatus === "unsupported"
-                  ? t(i18nKeyContainer.notification.pushUnsupportedDesc)
-                  : t(i18nKeyContainer.settingsPage.notifications.pushDesc)}
-              </p>
-            </div>
-            <div className="flex items-center gap-3 shrink-0">
-              <span
-                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ring-1 ring-inset ${statusColor}`}
+            <span
+              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ring-1 ring-inset ${statusColor}`}
+            >
+              {statusLabel}
+            </span>
+            {pushStatus !== "unsupported" && (
+              <Button
+                variant={pushStatus === "enabled" ? "secondary" : "default"}
+                size="sm"
+                disabled={isPushLoading || pushStatus === "denied"}
+                onClick={handlePushToggle}
+                className="cursor-pointer shrink-0"
               >
-                {statusLabel}
-              </span>
-              {pushStatus !== "unsupported" && (
-                <Button
-                  variant={pushStatus === "enabled" ? "secondary" : "default"}
-                  size="sm"
-                  disabled={isPushLoading || pushStatus === "denied"}
-                  onClick={handlePushToggle}
-                  className="cursor-pointer"
-                >
-                  {isPushLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : pushStatus === "enabled" ? (
-                    t(i18nKeyContainer.notification.pushDisable)
-                  ) : (
-                    t(i18nKeyContainer.notification.pushEnable)
-                  )}
-                </Button>
-              )}
-            </div>
+                {isPushLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : pushStatus === "enabled" ? (
+                  t(i18nKeyContainer.notification.pushDisable)
+                ) : (
+                  t(i18nKeyContainer.notification.pushEnable)
+                )}
+              </Button>
+            )}
           </div>
 
           {/* Test push — only shown when subscribed */}
           {pushStatus === "enabled" && (
-            <div className="mt-4 pt-4 border-t flex items-center justify-between">
+            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
               <div className="space-y-0.5">
                 <p className="text-sm font-medium">Test Push Notification</p>
                 <p className="text-xs text-muted-foreground">
@@ -946,7 +953,7 @@ function NotificationsSection({ t, i18n }: { t: (key: string) => string; i18n: {
                 size="sm"
                 disabled={isTestLoading}
                 onClick={handleTestPush}
-                className="cursor-pointer shrink-0"
+                className="cursor-pointer shrink-0 border-slate-200"
               >
                 {isTestLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
