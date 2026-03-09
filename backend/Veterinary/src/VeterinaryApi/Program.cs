@@ -64,7 +64,7 @@ builder.Services.AddCors(options =>
               "http://localhost",
               "http://localhost:5173",
               "http://localhost:5174",
-              "https://www.aviavet.online/"
+              "https://www.aviavet.online"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
