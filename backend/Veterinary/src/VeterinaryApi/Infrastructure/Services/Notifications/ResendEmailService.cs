@@ -13,12 +13,23 @@ public sealed class ResendEmailService(
         SendEmailRequest request,
         CancellationToken cancellationToken)
     {
+        var fromEmail = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_EMAIL");
+        if(fromEmail is null)
+        {
+            logger.LogError("Email configuration error: From email is" +
+                " not configured in environment variables");
+            return Result.Failure(
+                Error
+                .Failure(
+                    "Email configuration error",
+                    "From email is not configured in environment variables"));
+        }
 
         try
         {
             logger.LogInformation("sending email");
             var message = new EmailMessage();
-            message.From = "billelgamer3@gmail.com";
+            message.From = fromEmail;
             message.Subject = request.Subject;
             message.To = request.To;
             message.HtmlBody = request.Body;
