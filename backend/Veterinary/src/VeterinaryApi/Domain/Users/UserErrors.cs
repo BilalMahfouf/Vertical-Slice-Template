@@ -53,5 +53,10 @@ public static class UserErrors
                 Error.Conflict(
             $"{nameof(User)}.EmailAlreadyInUse",
             $"Email {email} is already in use");
+
+    public static Error UsersNotFound =>
+        Error.NotFound(
+            $"{nameof(User)}.UsersNotFound",
+            "No users found in the system");
 }
 

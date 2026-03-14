@@ -23,7 +23,7 @@ public static class Me
         {
             app.MapGet("/auth/me", async (
                 ICurrentTenant currentTenant,
-                IQueryHandler<GetUserById.GetUserByIdQuery, GetUserById.Response> handler,
+                IQueryHandler<GetUserById.GetUserByIdQuery, Shared.Response> handler,
                 CancellationToken ct = default) =>
             {
                 var userId = currentTenant.UserId!.Value;
