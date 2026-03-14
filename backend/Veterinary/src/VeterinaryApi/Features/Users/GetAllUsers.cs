@@ -35,7 +35,8 @@ public static class GetAllUsers
             {
                 usersQuery = usersQuery.Where(u =>
                     u.UserName.ToLower().Contains(query.search) ||
-                    u.FullName.ToLower().Contains(query.search) ||
+                    u.FirstName.ToLower().Contains(query.search) || 
+                    u.LastName.ToLower().Contains(query.search) ||
                     u.Email.ToLower().Contains(query.search));
             }
             var responseQuery = usersQuery.Select(e => new Response(

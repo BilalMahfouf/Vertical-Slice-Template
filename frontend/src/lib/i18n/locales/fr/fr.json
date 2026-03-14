@@ -9,6 +9,10 @@
     "forgotPassword": "Mot de passe oublié?",
     "noAccount": "Vous n'avez pas de compte ?",
     "signUp": "S'inscrire",
+    "app": {
+        "name": "AviaMind Vet",
+        "logoAlt": "Logo AviaMind Vet"
+    },
     "dashboard": "Tableau de bord",
     "animals": "Animaux",
     "clients": "Clients",
@@ -546,7 +550,10 @@
             "emailAlreadyInUse": "Email déjà utilisé",
             "emailAlreadyInUseDesc": "Cette adresse email est déjà associée à un compte.",
             "invalidResetToken": "Lien de réinitialisation invalide",
-            "invalidResetTokenDesc": "Le lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau."
+            "invalidResetTokenDesc": "Le lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau.",
+            "fetchUsers": "Échec du chargement des utilisateurs",
+            "fetchUser": "Échec du chargement de l'utilisateur",
+            "fetchCurrentUser": "Échec du chargement de l'utilisateur courant"
         },
         "validation": "Erreur de validation",
         "validationDesc": "Veuillez vérifier vos informations et réessayer.",
@@ -669,6 +676,14 @@
             "basicInfo": {
                 "title": "Informations de base",
                 "description": "Informations publiques de la clinique"
+            },
+            "staff": {
+                "title": "Équipe et rôles",
+                "description": "Gérez les membres de votre équipe",
+                "role": "Rôle",
+                "status": "Statut",
+                "active": "Actif",
+                "inactive": "Inactif"
             },
             "name": "Nom de la clinique",
             "namePlaceholder": "Entrez le nom de la clinique",

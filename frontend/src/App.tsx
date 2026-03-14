@@ -3,7 +3,7 @@ import MainLayout from './common/layouts/MainLayout';
 import Login from './features/auth/pages/Login';
 import DashboardPage from './features/dashboard/DashboardPage';
 import AnimalPage from './features/animals/AnimalPage';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { QueryClientProvider, QueryClient, useQuery } from '@tanstack/react-query';
 import SettingPage from './features/settings/SettingPage';
 import VisitPage from './features/visits/VisitPage';
 import ClientPage from './features/clients/ClientPage';
@@ -16,6 +16,47 @@ import ResetPasswordPage from './features/auth/pages/ResetPasswordPage';
 import { AuthProvider } from './features/auth/AuthProvider';
 import AuthGuard from './features/auth/AuthGuard';
 import type { AxiosError } from 'axios';
+import { Loader2 } from 'lucide-react';
+import api from './lib/api/api';
+import UserPage from './features/users/UserPage';
+import type { JSX } from 'react';
+import i18n from './lib/i18n';
+import i18nKeyContainer from './lib/i18n/keyContainer';
+
+type CurrentUserResponse = {
+  role: string;
+};
+
+function AdminOnlyRoute({ children }: { children: JSX.Element }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ['auth-me'],
+    queryFn: async () => {
+      const response = await api.get<CurrentUserResponse>('/auth/me');
+      if (response.status !== 200) {
+        throw new Error(i18n.t(i18nKeyContainer.errors.user.fetchCurrentUser));
+      }
+      return response.data;
+    },
+    staleTime: 60000,
+    retry: false,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const isAdmin = data?.role?.toLowerCase() === 'admin';
+
+  if (!isAdmin) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
 
 const router = createBrowserRouter([
   {
@@ -59,6 +100,14 @@ const router = createBrowserRouter([
       {
         path: '/clients',
         element: <ClientPage />,
+      },
+      {
+        path: '/users',
+        element: (
+          <AdminOnlyRoute>
+            <UserPage />
+          </AdminOnlyRoute>
+        ),
       },
       {
         path: '/appointments',

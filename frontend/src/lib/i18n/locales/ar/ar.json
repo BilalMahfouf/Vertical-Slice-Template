@@ -9,6 +9,10 @@
     "forgotPassword": "نسيت كلمة المرور؟",
     "noAccount": "ليس لديك حساب؟",
     "signUp": "إنشاء حساب",
+    "app": {
+        "name": "AviaMind Vet",
+        "logoAlt": "شعار AviaMind Vet"
+    },
     "dashboard": "لوحة التحكم",
     "animals": "الحيوانات",
     "clients": "العملاء",
@@ -546,7 +550,10 @@
             "emailAlreadyInUse": "البريد الإلكتروني مستخدم بالفعل",
             "emailAlreadyInUseDesc": "هذا البريد الإلكتروني مرتبط بحساب آخر بالفعل.",
             "invalidResetToken": "رابط إعادة التعيين غير صالح",
-            "invalidResetTokenDesc": "رابط إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد."
+            "invalidResetTokenDesc": "رابط إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد.",
+            "fetchUsers": "فشل تحميل المستخدمين",
+            "fetchUser": "فشل تحميل المستخدم",
+            "fetchCurrentUser": "فشل تحميل المستخدم الحالي"
         },
         "validation": "خطأ في التحقق",
         "validationDesc": "يرجى التحقق من المدخلات والمحاولة مرة أخرى.",
@@ -669,6 +676,14 @@
             "basicInfo": {
                 "title": "معلومات أساسية",
                 "description": "المعلومات العامة للعيادة"
+            },
+            "staff": {
+                "title": "الفريق والأدوار",
+                "description": "إدارة أعضاء فريق العيادة",
+                "role": "الدور",
+                "status": "الحالة",
+                "active": "نشط",
+                "inactive": "غير نشط"
             },
             "name": "اسم العيادة",
             "namePlaceholder": "أدخل اسم العيادة",

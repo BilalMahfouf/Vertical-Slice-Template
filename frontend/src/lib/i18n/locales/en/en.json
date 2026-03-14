@@ -9,6 +9,10 @@
     "forgotPassword": "Forgot Password?",
     "noAccount": "Don't have an account?",
     "signUp": "Sign up",
+    "app": {
+        "name": "AviaMind Vet",
+        "logoAlt": "AviaMind Vet logo"
+    },
     "dashboard": "Dashboard",
     "animals": "Animals",
     "clients": "Clients",
@@ -546,7 +550,10 @@
             "emailAlreadyInUse": "Email Already In Use",
             "emailAlreadyInUseDesc": "This email address is already associated with an account.",
             "invalidResetToken": "Invalid Reset Link",
-            "invalidResetTokenDesc": "The password reset link is invalid or has expired. Please request a new one."
+            "invalidResetTokenDesc": "The password reset link is invalid or has expired. Please request a new one.",
+            "fetchUsers": "Failed to fetch users",
+            "fetchUser": "Failed to fetch user",
+            "fetchCurrentUser": "Failed to fetch current user"
         },
         "validation": "Validation Error",
         "validationDesc": "Please check your input and try again.",
