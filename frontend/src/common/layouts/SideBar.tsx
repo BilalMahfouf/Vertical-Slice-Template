@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { authApi } from "@/lib/api/auth";
 import { useNavigate } from "react-router-dom";
-import api from "@/lib/api/api";
+import { useCurrentUser } from "@/features/auth/useCurrentUser";
 
 const navigationItems = [
   { pathname: "/dashboard", key: i18nKeyContainer.dashboard, icon: LayoutDashboard },
@@ -24,18 +24,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
   const isRtl = i18n.language === 'ar';
   const navigate = useNavigate();
 
-  const { data: currentUser } = useQuery({
-    queryKey: ['auth-me'],
-    queryFn: async () => {
-      const response = await api.get<{ role: string }>('/auth/me');
-      if (response.status !== 200) {
-        throw new Error(t(i18nKeyContainer.errors.user.fetchCurrentUser));
-      }
-      return response.data;
-    },
-    staleTime: 60000,
-    retry: false,
-  });
+  const { data: currentUser } = useCurrentUser();
 
   const canAccessUsers = currentUser?.role?.toLowerCase() === 'admin';
 

@@ -112,8 +112,9 @@ public static class DependencyInjection
         services.AddScoped<TenantInterceptor>();
 
         // ef core config  
+
         var connectionString = Environment
-            .GetEnvironmentVariable(AppSettings.ProductionConnectionStringName);
+            .GetEnvironmentVariable(AppSettings.DevConnectionStringName);
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
             (sp, options) =>
         {
