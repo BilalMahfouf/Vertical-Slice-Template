@@ -5,6 +5,7 @@ using VeterinaryApi.Common.CQRS;
 using VeterinaryApi.Common.Endpoints;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Users;
+using static VeterinaryApi.Features.Users.Shared;
 
 namespace VeterinaryApi.Features.Users;
 
@@ -19,19 +20,6 @@ public static class GetUserById
     /// </summary>
     /// <param name="UserId">The unique identifier of the user to retrieve.</param>
     public record GetUserByIdQuery(Guid UserId) : IQuery<Response>;
-
-    /// <summary>Read-model DTO returned for a user profile lookup.</summary>
-    /// <param name="Id">The user's unique identifier.</param>
-    /// <param name="UserName">The user's display username.</param>
-    /// <param name="Email">The user's email address.</param>
-    /// <param name="FirstName">The user's first name.</param>
-    /// <param name="LastName">The user's last name.</param>
-    public record Response(
-        Guid Id,
-        string UserName,
-        string Email,
-        string FirstName,
-        string LastName);
 
     /// <summary>
     /// Handles the <see cref="GetUserByIdQuery"/> with a projection query (no entity tracking).
@@ -63,9 +51,12 @@ public static class GetUserById
                 .Select(u => new Response(
                     u.Id,
                     u.UserName,
+                    u.FullName,
                     u.Email,
-                    u.FirstName,
-                    u.LastName))
+                    u.Role.ToString(),
+                    u.IsActive,
+                    u.CreatedOnUtc
+                    ))
                 .AsNoTracking().FirstOrDefaultAsync(cancellationToken);
             if (response is null)
             {

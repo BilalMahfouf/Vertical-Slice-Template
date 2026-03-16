@@ -1,4 +1,4 @@
-import { LayoutDashboard, Stethoscope, Users, Calendar, Clock, Settings, LogOut, Languages } from "lucide-react";
+import { LayoutDashboard, Stethoscope, Users, Calendar, Clock, Settings, LogOut, Languages, Shield } from "lucide-react";
 import SideBarLink from "./SideBarLink";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
@@ -7,11 +7,13 @@ import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { authApi } from "@/lib/api/auth";
 import { useNavigate } from "react-router-dom";
+import { useCurrentUser } from "@/features/auth/useCurrentUser";
 
 const navigationItems = [
   { pathname: "/dashboard", key: i18nKeyContainer.dashboard, icon: LayoutDashboard },
   { pathname: "/animals", key: i18nKeyContainer.animals, icon: Stethoscope },
   { pathname: "/clients", key: i18nKeyContainer.clients, icon: Users },
+  { pathname: "/users", key: i18nKeyContainer.settingsPage.clinic.staff.title, icon: Shield, requiresAdmin: true },
   { pathname: "/appointments", key: i18nKeyContainer.appointments, icon: Calendar },
   { pathname: "/visits", key: i18nKeyContainer.visits, icon: Clock },
   { pathname: "/settings", key: i18nKeyContainer.settings, icon: Settings },
@@ -21,6 +23,10 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === 'ar';
   const navigate = useNavigate();
+
+  const { data: currentUser } = useCurrentUser();
+
+  const canAccessUsers = currentUser?.role?.toLowerCase() === 'admin';
 
   const mutation = useMutation({
     mutationFn: authApi.logout,
@@ -49,8 +55,8 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           <div className="p-6 bg-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img src="/logo.jpg" alt="AviaMind Vet" className="w-12 h-12 rounded-xl object-cover shadow-lg" />
-                <span className="text-xl font-bold text-slate-900">AviaMind Vet</span>
+                <img src="/logo.jpg" alt={t(i18nKeyContainer.app.logoAlt)} className="w-12 h-12 rounded-xl object-cover shadow-lg" />
+                <span className="text-xl font-bold text-slate-900">{t(i18nKeyContainer.app.name)}</span>
               </div>
               <Button
                 variant="ghost"
@@ -65,7 +71,9 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto p-4 space-y-1 bg-white">
-            {navigationItems.map((item) => (
+            {navigationItems
+              .filter((item) => !item.requiresAdmin || canAccessUsers)
+              .map((item) => (
               <SideBarLink
                 key={item.pathname}
                 pathname={item.pathname}
