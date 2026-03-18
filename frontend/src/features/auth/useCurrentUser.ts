@@ -10,7 +10,10 @@ export function useCurrentUser() {
       if (response.status !== 200) {
         throw new Error('Failed to fetch current user');
       }
-      return response.data;
+      console.log('Fetched current user data from API:', response.data);
+
+      const data = response.data;
+       return data;
     },
     staleTime: 60000,
     retry: false,

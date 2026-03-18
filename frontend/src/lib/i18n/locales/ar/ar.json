@@ -46,6 +46,42 @@
         "submit": "إنشاء العيادة",
         "successMessage": "تم إنشاء العيادة بنجاح!"
     },
+    "onboarding": {
+        "clinicInfo": {
+            "title": "إعداد عيادتك",
+            "subtitle": "أخبرنا عن عيادتك للبدء.",
+            "clinicName": "اسم العيادة",
+            "clinicNamePlaceholder": "مثال: عيادة الشفاء البيطرية",
+            "phone": "رقم الهاتف",
+            "phonePlaceholder": "+213 5XX XX XX XX",
+            "address": "العنوان",
+            "addressPlaceholder": "عنوان الشارع",
+            "city": "المدينة",
+            "cityPlaceholder": "مثال: الجزائر العاصمة",
+            "submit": "متابعة",
+            "submitting": "جارٍ الحفظ...",
+            "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+        },
+        "subscribe": {
+            "title": "تفعيل عيادتك",
+            "subtitle": "خطة واحدة بسيطة. كل ما تحتاجه عيادتك.",
+            "planLabel": "الخطة الاحترافية",
+            "planName": "وصول كامل للعيادة",
+            "currency": "دج",
+            "period": "/ شهر",
+            "feature1": "إدارة المواعيد والزيارات",
+            "feature2": "سجلات الحيوانات والعملاء",
+            "feature3": "إدارة الموظفين والأدوار",
+            "feature4": "معالجة الدفع عبر Chargily",
+            "feature5": "مرضى ومواعيد غير محدودة",
+            "trialNote": "تجربة مجانية لمدة {{days}} يومًا — لا يلزم الدفع للبدء",
+            "cta": "ابدأ التجربة المجانية",
+            "ctaLoading": "جارٍ التحويل...",
+            "signinPrompt": "هل لديك حساب بالفعل؟",
+            "signinLink": "تسجيل الدخول",
+            "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+        }
+    },
     "common": {
         "cancel": "إلغاء",
         "confirm": "تأكيد",

@@ -46,6 +46,42 @@
         "submit": "Create Clinic",
         "successMessage": "Clinic created successfully!"
     },
+    "onboarding": {
+        "clinicInfo": {
+            "title": "Set up your clinic",
+            "subtitle": "Tell us about your clinic to get started.",
+            "clinicName": "Clinic name",
+            "clinicNamePlaceholder": "e.g. Al Shifa Veterinary Clinic",
+            "phone": "Phone number",
+            "phonePlaceholder": "+213 5XX XX XX XX",
+            "address": "Address",
+            "addressPlaceholder": "Street address",
+            "city": "City",
+            "cityPlaceholder": "e.g. Algiers",
+            "submit": "Continue",
+            "submitting": "Saving...",
+            "errorGeneric": "Something went wrong. Please try again."
+        },
+        "subscribe": {
+            "title": "Activate your clinic",
+            "subtitle": "One simple plan. Everything your clinic needs.",
+            "planLabel": "Professional Plan",
+            "planName": "Full clinic access",
+            "currency": "DZD",
+            "period": "/ month",
+            "feature1": "Appointment & visit management",
+            "feature2": "Animal & client records",
+            "feature3": "Staff & roles management",
+            "feature4": "Payment processing via Chargily",
+            "feature5": "Unlimited patients & appointments",
+            "trialNote": "{{days}}-day free trial — no payment required to start",
+            "cta": "Start Free Trial",
+            "ctaLoading": "Redirecting...",
+            "signinPrompt": "Already have an account?",
+            "signinLink": "Sign in",
+            "errorGeneric": "Something went wrong. Please try again."
+        }
+    },
     "common": {
         "cancel": "Cancel",
         "confirm": "Confirm",

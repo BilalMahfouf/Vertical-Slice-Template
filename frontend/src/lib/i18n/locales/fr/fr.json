@@ -46,6 +46,42 @@
         "submit": "Cr\u00e9er la clinique",
         "successMessage": "Clinique cr\u00e9\u00e9e avec succ\u00e8s !"
     },
+    "onboarding": {
+        "clinicInfo": {
+            "title": "Configurez votre clinique",
+            "subtitle": "Parlez-nous de votre clinique pour commencer.",
+            "clinicName": "Nom de la clinique",
+            "clinicNamePlaceholder": "ex. Clinique Vétérinaire Al Shifa",
+            "phone": "Numéro de téléphone",
+            "phonePlaceholder": "+213 5XX XX XX XX",
+            "address": "Adresse",
+            "addressPlaceholder": "Adresse postale",
+            "city": "Ville",
+            "cityPlaceholder": "ex. Alger",
+            "submit": "Continuer",
+            "submitting": "Enregistrement...",
+            "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
+        },
+        "subscribe": {
+            "title": "Activez votre clinique",
+            "subtitle": "Un seul forfait. Tout ce dont votre clinique a besoin.",
+            "planLabel": "Forfait Professionnel",
+            "planName": "Accès complet à la clinique",
+            "currency": "DZD",
+            "period": "/ mois",
+            "feature1": "Gestion des rendez-vous et des visites",
+            "feature2": "Dossiers des animaux et des clients",
+            "feature3": "Gestion du personnel et des rôles",
+            "feature4": "Paiement via Chargily",
+            "feature5": "Patients et rendez-vous illimités",
+            "trialNote": "Essai gratuit de {{days}} jours — aucun paiement requis",
+            "cta": "Commencer l'essai gratuit",
+            "ctaLoading": "Redirection...",
+            "signinPrompt": "Vous avez déjà un compte ?",
+            "signinLink": "Se connecter",
+            "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
+        }
+    },
     "common": {
         "cancel": "Annuler",
         "confirm": "Confirmer",
