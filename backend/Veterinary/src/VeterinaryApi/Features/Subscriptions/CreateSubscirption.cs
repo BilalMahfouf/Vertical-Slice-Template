@@ -1,5 +1,6 @@
 ﻿
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
@@ -12,6 +13,7 @@ namespace VeterinaryApi.Features.Subscriptions;
 
 public static class CreateSubscirption
 {
+    public sealed record Request(Guid PlanId);
     public sealed record Command(Guid DoctorId, Guid PlanId) : ICommand<Response>;
     public sealed record Response(Guid Id);
 
@@ -25,6 +27,16 @@ public static class CreateSubscirption
             CancellationToken cancellationToken = default)
         {
             validator.ValidateAndThrow(command);
+
+            var haveExistingActiveSubscription = await db.Subscriptions
+                .AnyAsync(
+                e => e.DoctorId == command.DoctorId && e.Status != SubscriptionStatus.Cancelled,
+                cancellationToken);
+            if (haveExistingActiveSubscription)
+            {
+                return Result<Response>.Failure(SubscriptionErrors
+                    .AlreadyExistAcitveSubscription);
+            }
 
             var plan = await db.SubscriptionPlans
                 .FirstOrDefaultAsync(p => p.Id == command.PlanId, cancellationToken);
@@ -58,15 +70,19 @@ public static class CreateSubscirption
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/subscriptions", async (
-                Command command,
+                [FromBody] Request request,
+                [FromServices] ICurrentTenant tenant,
                 ICommandHandler<Command, Response> handler,
                 CancellationToken ct) =>
             {
+                var command = new Command(tenant.UserId!.Value, request.PlanId);
                 var result = await handler.Handle(command);
                 return result.IsSuccess
                     ? Results.Ok(result.Value)
                     : result.Problem();
-            }).RequireAuthorization();
+            }).RequireAuthorization()
+            .WithTags($"{nameof(Subscriptions)}s")
+            .WithDescription("Create a new subscription for a doctor.");
         }
     }
 }

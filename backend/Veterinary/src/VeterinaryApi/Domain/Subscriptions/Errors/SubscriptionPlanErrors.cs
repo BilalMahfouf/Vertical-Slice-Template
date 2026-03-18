@@ -14,5 +14,11 @@ public static class SubscriptionPlanErrors
             code: $"{nameof(SubscriptionPlan)}.NotFound",
             description: $"Subscription plan  was not found."
         );
+public static Error SubscriptionPlansNotFound
+        => Error.NotFound(
+            code: $"{nameof(SubscriptionPlan)}.NotFound",
+            description: $"Subscription plans  are not found."
+        );
+
 
 }

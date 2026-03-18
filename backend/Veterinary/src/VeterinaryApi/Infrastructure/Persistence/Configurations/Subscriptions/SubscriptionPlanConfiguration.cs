@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VeterinaryApi.Domain.Subscriptions;
 
-namespace VeterinaryApi.Infrastructure.Presistance.Configurations.Subscriptions;
+namespace VeterinaryApi.Infrastructure.Persistence.Configurations.Subscriptions;
 
 public class SubscriptionPlanConfiguration : IEntityTypeConfiguration<SubscriptionPlan>
 {

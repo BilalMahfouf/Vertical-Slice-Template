@@ -2,7 +2,7 @@
 
 public enum SubscriptionStatus
 {
-    Trialing,
+    Trialing=1,
     Active,
     PastDue,
     Cancelled,

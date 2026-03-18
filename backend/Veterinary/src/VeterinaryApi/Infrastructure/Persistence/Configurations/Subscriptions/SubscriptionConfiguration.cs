@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VeterinaryApi.Domain.Subscriptions;
+using VeterinaryApi.Domain.Users;
 
-namespace VeterinaryApi.Infrastructure.Presistance.Configurations.Subscriptions;
+namespace VeterinaryApi.Infrastructure.Persistence.Configurations.Subscriptions;
 
 public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
 {
@@ -21,6 +22,20 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
         builder.Property(s => s.DoctorId)
             .HasColumnName("doctor_id")
             .IsRequired();
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(s => s.DoctorId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_subscriptions_doctor_id");
+
+        builder.Property(s => s.PreviousSubscriptionId)
+            .HasColumnName("previous_subscription_id");
+
+        builder.HasOne<Subscription>()
+            .WithOne()
+            .HasForeignKey<Subscription>(s => s.PreviousSubscriptionId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_subscriptions_previous_subscription_id");
 
         builder.Property(s => s.PlanId)
             .HasColumnName("plan_id")
@@ -52,13 +67,9 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
         builder.Property(s => s.CancelledAt)
             .HasColumnName("cancelled_at");
 
-        builder.Property(s => s.CreatedAt)
-            .HasColumnName("created_at")
-            .IsRequired();
 
         builder.Property(s => s.UpdatedAt)
-            .HasColumnName("updated_at")
-            .IsRequired();
+            .HasColumnName("updated_at");
 
         builder.Property(s => s.CreatedOnUtc)
             .HasColumnName("created_on_utc")

@@ -101,9 +101,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
     AppSettings.appMode = AppMode.Dev;
 }
-
-
-
 app.ApplyMigrations();
 app.UseHttpsRedirection();
 
