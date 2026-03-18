@@ -46,8 +46,13 @@ public static class GetUserById
             GetUserByIdQuery query,
             CancellationToken cancellationToken = default)
         {
+            var subscriptionStatus = await _db.Subscriptions.AsNoTracking()
+                 .OrderByDescending(e => e.CreatedOnUtc)
+                 .Select(e => e.Status.ToString())
+                 .FirstOrDefaultAsync(cancellationToken);
             var response = await _db.Users
                 .Where(u => u.Id == query.UserId)
+                .Include(u => u.Clinic)
                 .Select(u => new Response(
                     u.Id,
                     u.UserName,
@@ -55,6 +60,8 @@ public static class GetUserById
                     u.Email,
                     u.Role.ToString(),
                     u.IsActive,
+                    u.Clinic != null,
+                    subscriptionStatus,
                     u.CreatedOnUtc
                     ))
                 .AsNoTracking().FirstOrDefaultAsync(cancellationToken);

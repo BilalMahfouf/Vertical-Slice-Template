@@ -23,7 +23,7 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
             .HasColumnName("doctor_id")
             .IsRequired();
         builder.HasOne<User>()
-            .WithMany()
+            .WithMany(e => e.Subscriptions)
             .HasForeignKey(s => s.DoctorId)
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_subscriptions_doctor_id");

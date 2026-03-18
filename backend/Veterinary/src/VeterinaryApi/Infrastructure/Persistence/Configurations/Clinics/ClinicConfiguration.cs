@@ -24,6 +24,9 @@ public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
             .HasColumnName("doctor_id")
             .IsRequired();
 
+        builder.HasOne(d => d.Doctor)
+            .WithOne(d => d.Clinic);
+
         builder.Property(c => c.Name)
             .HasColumnName("name")
             .HasMaxLength(200)
