@@ -9,6 +9,7 @@ using FluentValidation;
 using VeterinaryApi.Common.Extensions;
 using VeterinaryApi.Infrastructure.Notifications;
 using VeterinaryApi.Common;
+using VeterinaryApi.Infrastructure.Payments;
 
 
 Env.Load();
@@ -50,6 +51,9 @@ builder.Services.Scan(scan => scan.FromAssembliesOf(typeof(Program))
         .AssignableTo(typeof(ICommandHandler<,>)), publicOnly: false)
     .AsImplementedInterfaces()
         .WithScopedLifetime());
+
+builder.Services.AddPayments();
+
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -114,6 +118,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<NotificationHub>("/hubs/notification");
+
+app.UsePayments();
 
 var api = app.MapGroup("/api/v1");
 api.MapCarter();

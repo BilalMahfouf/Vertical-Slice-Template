@@ -12,7 +12,7 @@ public sealed class Payment : Entity
     public PaymentStatus Status { get; private set; }
     public string Provider { get; private set; } = null!;
     public string? ProviderPaymentId { get; private set; }
-    public string IdempotencyKey { get; private set; }=null!;
+    public string IdempotencyKey { get; private set; } = null!;
     public string? ProviderMetadata { get; private set; }
     public string? FailureReason { get; private set; }
     public DateTime? PaidAt { get; private set; }
@@ -34,28 +34,33 @@ public sealed class Payment : Entity
         return new Payment
         {
             SubscriptionId = subscriptionId,
-            DoctorId       = doctorId,
-            Amount         = amount,
-            Status         = PaymentStatus.Pending,
-            Provider       = provider,
+            DoctorId = doctorId,
+            Amount = amount,
+            Status = PaymentStatus.Pending,
+            Provider = provider,
             IdempotencyKey = idempotencyKey,
         };
     }
 
     public void MarkSucceeded(string providerPaymentId, string? metadata = null)
     {
-        Status            = PaymentStatus.Succeeded;
+        Status = PaymentStatus.Succeeded;
         ProviderPaymentId = providerPaymentId;
-        ProviderMetadata  = metadata;
-        PaidAt            = DateTime.UtcNow;
+        ProviderMetadata = metadata;
+        PaidAt = DateTime.UtcNow;
     }
 
     public void MarkFailed(string reason, string? metadata = null)
     {
-        Status           = PaymentStatus.Failed;
-        FailureReason    = reason;
+        Status = PaymentStatus.Failed;
+        FailureReason = reason;
         ProviderMetadata = metadata;
     }
 
     public void MarkRefunded() => Status = PaymentStatus.Refunded;
+
+    public void SetProviderPaymentId(string? providerPaymentId)
+    {
+        ProviderPaymentId = providerPaymentId;
+    }
 }

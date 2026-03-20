@@ -22,6 +22,8 @@
 
   <ItemGroup>
     <PackageReference Include="Carter" Version="10.0.0" />
+    <PackageReference Include="Chargily.Pay" Version="2.0.3" />
+    <PackageReference Include="Chargily.Pay.AspNet" Version="2.0.1" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />

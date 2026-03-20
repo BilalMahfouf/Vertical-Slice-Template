@@ -25,5 +25,9 @@ public static class SubscriptionErrors
         => Error.Conflict($"{nameof(Subscription)}." +
             $"{nameof(AlreadyExistAcitveSubscription)}",
             "This User Already have a an active subscription");
+    public static Error FailedToRetrieveCheckout(Guid paymentId)
+        => Error.Failure(
+            $"{nameof(Subscription)}.{nameof(FailedToRetrieveCheckout)}",
+            $"Failed to retrieve checkout for payment with ID: {paymentId}");
 
 }
