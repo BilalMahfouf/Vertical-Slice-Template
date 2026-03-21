@@ -16,6 +16,8 @@ import RoleGuard from './features/auth/RoleGuard';
 import UserPage from './features/users/UserPage';
 import CreateClinicPage from './features/clinics/pages/CreateClinicPage';
 import SubscribePage from './features/subscriptions/pages/SubscribePage';
+import PaymentSuccessPage from './features/subscriptions/pages/PaymentSuccessPage';
+import PaymentFailedPage from './features/subscriptions/pages/PaymentFailedPage';
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +51,15 @@ export const router = createBrowserRouter([
       {
         path: '/onboarding/subscribe',
         element: <SubscribePage />,
+      },
+      // Payment callback routes
+      {
+        path: '/payment/success',
+        element: <PaymentSuccessPage />,
+      },
+      {
+        path: '/payment/failed',
+        element: <PaymentFailedPage />,
       },
       // Protected app routes (authenticated + subscription check)
       {

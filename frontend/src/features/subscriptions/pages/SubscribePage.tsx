@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -9,11 +9,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import LanguageSwitcher from '@/components/ui/language-switcher';
 import { useToast } from '@/hooks/use-toast';
 import i18nKeyContainer from '@/lib/i18n/keyContainer';
+import { parseApiError, ErrorCodes } from '@/lib/api/error-types';
 import subscriptionApi from '@/features/subscriptions/api/subscription-api';
 
 export default function SubscribePage() {
   const { t, i18n } = useTranslation();
-  const { handleApiError } = useToast();
+  const { handleApiError, info } = useToast();
+  const navigate = useNavigate();
   const isRtl = i18n.language === 'ar';
 
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
@@ -26,10 +28,25 @@ export default function SubscribePage() {
   const checkoutMutation = useMutation({
     mutationFn: (planId: string) => subscriptionApi.createCheckout(planId),
     onSuccess: (data) => {
-      window.location.href = data.checkoutUrl;
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        navigate('/dashboard');
+      }
     },
     onError: (error) => {
       setSelectedPlanId(null);
+      const parsedError = parseApiError(error);
+
+      if (parsedError.code === ErrorCodes.SUBSCRIPTION_ACTIVE_ALREADY_EXISTS) {
+        info(
+          i18nKeyContainer.errors.subscription.alreadyActive,
+          { description: i18nKeyContainer.errors.subscription.alreadyActiveDesc }
+        );
+        navigate('/dashboard');
+        return;
+      }
+
       handleApiError(error, i18nKeyContainer.onboarding.subscribe.errorGeneric);
     },
   });

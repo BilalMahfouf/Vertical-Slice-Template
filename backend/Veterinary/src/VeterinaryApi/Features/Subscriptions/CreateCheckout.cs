@@ -37,7 +37,7 @@ public static class CreateCheckout
         IOptions<ChargilyOptions> options)
         : ICommandHandler<CreateSubscriptionCheckoutCommand, Response>
     {
-        // 20/3/2024 todo: refactor this spaghetti handler since it do to much work
+        // 20/3/2026 todo: refactor this spaghetti handler since it do to much work
         public async Task<Result<Response>> Handle(
             CreateSubscriptionCheckoutCommand command,
             CancellationToken cancellationToken = default)
@@ -98,10 +98,9 @@ public static class CreateCheckout
             }
 
             var pendingSubscription = await db.Subscriptions
-      .ForTenant(command.DoctorId)
-      .Where(e => e.Status == SubscriptionStatus.Pending)
-
-      .ToListAsync(cancellationToken);
+                                    .ForTenant(command.DoctorId)
+                                    .Where(e => e.Status == SubscriptionStatus.Pending)
+                                    .ToListAsync(cancellationToken);
 
             if (pendingSubscription.Any())
             {

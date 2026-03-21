@@ -80,6 +80,23 @@
             "signinPrompt": "Already have an account?",
             "signinLink": "Sign in",
             "errorGeneric": "Something went wrong. Please try again."
+        },
+        "payment": {
+            "success": {
+                "title": "Payment Successful!",
+                "subtitle": "Thank you for your subscription.",
+                "verifying": "Verifying your payment...",
+                "verified": "Payment verified successfully!",
+                "redirecting": "Redirecting to dashboard in {{seconds}} seconds...",
+                "timeout": "Verification is taking longer than expected",
+                "timeoutDesc": "Your payment may still be processing. You can try going to the dashboard manually.",
+                "goToDashboard": "Go to Dashboard"
+            },
+            "failed": {
+                "title": "Payment Failed",
+                "subtitle": "We couldn't process your payment. Please try again.",
+                "tryAgain": "Try Again"
+            }
         }
     },
     "common": {
@@ -590,6 +607,20 @@
             "fetchUsers": "Failed to fetch users",
             "fetchUser": "Failed to fetch user",
             "fetchCurrentUser": "Failed to fetch current user"
+        },
+        "subscription": {
+            "notFound": "Subscription Not Found",
+            "notFoundDesc": "The subscription could not be found.",
+            "alreadyActive": "Subscription Already Active",
+            "alreadyActiveDesc": "You already have an active subscription.",
+            "alreadyCancelled": "Subscription Already Cancelled",
+            "alreadyCancelledDesc": "This subscription has already been cancelled.",
+            "notActive": "Subscription Not Active",
+            "notActiveDesc": "Your subscription is not currently active.",
+            "checkoutFailed": "Checkout Failed",
+            "checkoutFailedDesc": "We couldn't process your payment. Please try again.",
+            "planNotFound": "Plan Not Found",
+            "planNotFoundDesc": "The selected subscription plan could not be found."
         },
         "validation": "Validation Error",
         "validationDesc": "Please check your input and try again.",

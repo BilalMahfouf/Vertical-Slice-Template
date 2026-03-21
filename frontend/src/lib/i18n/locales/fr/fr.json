@@ -80,6 +80,23 @@
             "signinPrompt": "Vous avez déjà un compte ?",
             "signinLink": "Se connecter",
             "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
+        },
+        "payment": {
+            "success": {
+                "title": "Paiement réussi !",
+                "subtitle": "Merci pour votre abonnement.",
+                "verifying": "Vérification de votre paiement...",
+                "verified": "Paiement vérifié avec succès !",
+                "redirecting": "Redirection vers le tableau de bord dans {{seconds}} secondes...",
+                "timeout": "La vérification prend plus de temps que prévu",
+                "timeoutDesc": "Votre paiement est peut-être encore en cours de traitement. Vous pouvez essayer d'accéder au tableau de bord manuellement.",
+                "goToDashboard": "Aller au tableau de bord"
+            },
+            "failed": {
+                "title": "Échec du paiement",
+                "subtitle": "Nous n'avons pas pu traiter votre paiement. Veuillez réessayer.",
+                "tryAgain": "Réessayer"
+            }
         }
     },
     "common": {
@@ -590,6 +607,20 @@
             "fetchUsers": "Échec du chargement des utilisateurs",
             "fetchUser": "Échec du chargement de l'utilisateur",
             "fetchCurrentUser": "Échec du chargement de l'utilisateur courant"
+        },
+        "subscription": {
+            "notFound": "Abonnement introuvable",
+            "notFoundDesc": "L'abonnement n'a pas été trouvé.",
+            "alreadyActive": "Abonnement déjà actif",
+            "alreadyActiveDesc": "Vous avez déjà un abonnement actif.",
+            "alreadyCancelled": "Abonnement déjà annulé",
+            "alreadyCancelledDesc": "Cet abonnement a déjà été annulé.",
+            "notActive": "Abonnement non actif",
+            "notActiveDesc": "Votre abonnement n'est pas actif actuellement.",
+            "checkoutFailed": "Échec du paiement",
+            "checkoutFailedDesc": "Nous n'avons pas pu traiter votre paiement. Veuillez réessayer.",
+            "planNotFound": "Forfait introuvable",
+            "planNotFoundDesc": "Le forfait d'abonnement sélectionné n'a pas été trouvé."
         },
         "validation": "Erreur de validation",
         "validationDesc": "Veuillez vérifier vos informations et réessayer.",
