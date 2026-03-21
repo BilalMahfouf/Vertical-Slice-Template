@@ -14,6 +14,7 @@ using VeterinaryApi.Domain.Subscriptions;
 using VeterinaryApi.Domain.Subscriptions.Errors;
 using VeterinaryApi.Domain.Users;
 using VeterinaryApi.Infrastructure.Payments;
+using VeterinaryApi.Infrastructure.Persistence;
 
 namespace VeterinaryApi.Features.Subscriptions;
 
@@ -26,7 +27,9 @@ public static class CreateCheckout
     string IdempotencyKey) : ICommand<Response>;
 
     public sealed record Response(
-        string CheckoutUrl);
+        string? CheckoutUrl,
+        string? SubscriptionStatus,
+        Guid SubscriptionId);
 
     public sealed class Handler(
         IApplicationDbContext db,
@@ -40,9 +43,25 @@ public static class CreateCheckout
             CancellationToken cancellationToken = default)
         {
 
+            var hasActiveSubscription = await db.Subscriptions
+                          .AnyAsync(s => s.DoctorId == command.DoctorId &&
+                          (s.Status == SubscriptionStatus.Active ||
+                          s.Status == SubscriptionStatus.Trialing),
+                          cancellationToken);
+            if (hasActiveSubscription)
+            {
+                return Result<Response>.Failure(SubscriptionErrors
+                    .ActiveSubscriptionAlreadyExist);
+            }
 
             var existingPayment = await db.SubscriptionPayments
-                .Select(e => new { e.Id, e.ProviderPaymentId, e.IdempotencyKey })
+                .Select(e => new
+                {
+                    e.Id,
+                    e.ProviderPaymentId,
+                    e.IdempotencyKey,
+                    e.SubscriptionId,
+                })
                 .FirstOrDefaultAsync(e => e.IdempotencyKey == command.IdempotencyKey,
                 cancellationToken);
             if (existingPayment?.ProviderPaymentId is not null)
@@ -58,7 +77,9 @@ public static class CreateCheckout
                 }
 
                 return Result<Response>.Success(new Response(
-                    existingCheckout.Value.CheckoutUrl.ToString()));
+                    existingCheckout.Value.CheckoutUrl.ToString(),
+                    null,
+                   existingPayment.SubscriptionId));
             }
 
 
@@ -76,8 +97,29 @@ public static class CreateCheckout
                     .SubscriptionPlanNotFound(command.PlanId));
             }
 
+            var pendingSubscription = await db.Subscriptions
+      .ForTenant(command.DoctorId)
+      .Where(e => e.Status == SubscriptionStatus.Pending)
+
+      .ToListAsync(cancellationToken);
+
+            if (pendingSubscription.Any())
+            {
+                db.Subscriptions.RemoveRange(pendingSubscription);
+                //await db.SaveChangesAsync(cancellationToken);
+            }
+
             var subscription = Subscription.Create(command.DoctorId, plan);
             db.Subscriptions.Add(subscription);
+
+            if (subscription.Status == SubscriptionStatus.Trialing)
+            {
+                await db.SaveChangesAsync(cancellationToken);
+                return Result<Response>.Success(new Response(
+                    null,
+                    subscription.Status.ToString(),
+                    subscription.Id));
+            }
 
             var payment = Payment.CreatePending(
                 subscription.Id,
@@ -102,8 +144,8 @@ public static class CreateCheckout
                 CollectShippingAddress = false,
                 Metadata = new List<string>
                 {
-                    payment.Id.ToString(),
-                    subscription.Id.ToString()
+                    $"paymentId:{payment.Id.ToString()}",
+                    $"subscriptionId:{subscription.Id.ToString()}"
                 },
             };
             var checkoutResult = await chargilyPayClient.CreateCheckout(checkout);
@@ -117,7 +159,9 @@ public static class CreateCheckout
             await db.SaveChangesAsync(cancellationToken);
 
             return Result<Response>.Success(new Response(
-                checkoutResult.Value.CheckoutUrl!.ToString()));
+                checkoutResult.Value.CheckoutUrl!.ToString(),
+                subscription.Status.ToString(),
+                subscription.Id));
         }
     }
 
@@ -125,7 +169,7 @@ public static class CreateCheckout
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("payments/create-checkout", async (
+            app.MapPost("subscriptions", async (
                 [FromBody] Request request,
                 [FromHeader(Name = "Idempotency-Key")] string idempotencyKey,
                 ICurrentTenant currentTenant,

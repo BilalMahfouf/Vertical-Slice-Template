@@ -35,17 +35,16 @@ public sealed class Payment : Entity
         {
             SubscriptionId = subscriptionId,
             DoctorId = doctorId,
-            Amount = amount,
+            Amount = new Money(amount.Amount, amount.Currency),
             Status = PaymentStatus.Pending,
             Provider = provider,
             IdempotencyKey = idempotencyKey,
         };
     }
 
-    public void MarkSucceeded(string providerPaymentId, string? metadata = null)
+    public void MarkPaid(string? metadata = null)
     {
-        Status = PaymentStatus.Succeeded;
-        ProviderPaymentId = providerPaymentId;
+        Status = PaymentStatus.Paid;
         ProviderMetadata = metadata;
         PaidAt = DateTime.UtcNow;
     }

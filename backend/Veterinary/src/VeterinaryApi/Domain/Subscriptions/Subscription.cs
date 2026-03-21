@@ -38,7 +38,7 @@ public sealed class Subscription : Entity
             DoctorId = doctorId,
             PlanId = plan.Id,
             Plan = plan,
-            Status = hasTrial ? SubscriptionStatus.Trialing : SubscriptionStatus.Active,
+            Status = hasTrial ? SubscriptionStatus.Trialing : SubscriptionStatus.Pending,
             CurrentPeriodStart = now,
             CurrentPeriodEnd = AddInterval(now, plan.BillingInterval, plan.IntervalCount),
             TrialEndsAt = hasTrial ? now.AddDays(plan.TrialDays) : null,

@@ -29,5 +29,14 @@ public static class SubscriptionErrors
         => Error.Failure(
             $"{nameof(Subscription)}.{nameof(FailedToRetrieveCheckout)}",
             $"Failed to retrieve checkout for payment with ID: {paymentId}");
+    public static Error FailedToProcessWebhook(Guid paymentId)
+        => Error.Failure(
+            $"{nameof(Subscription)}.{nameof(FailedToProcessWebhook)}",
+            $"Failed to process webhook for payment with ID: {paymentId}");
+
+    public static Error ActiveSubscriptionAlreadyExist =>
+        Error.Conflict(
+            $"{nameof(Subscription)}.{nameof(ActiveSubscriptionAlreadyExist)}",
+            "An active subscription already exists for this doctor.");
 
 }

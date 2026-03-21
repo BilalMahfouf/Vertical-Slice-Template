@@ -88,6 +88,10 @@ builder.Services.AddCors(options =>
 });
 
 
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    options.AllowSynchronousIO = true;
+//});
 
 builder.Services.AddAuthorization();
 
