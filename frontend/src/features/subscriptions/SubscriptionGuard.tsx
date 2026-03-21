@@ -45,6 +45,10 @@ export default function SubscriptionGuard() {
 
   console.log('User subscription status:', user?.subscriptionStatus);
   // Check subscription status (allow "Active" or "Trialing")
+  if(user?.isSubscriptionExist === false){
+    console.log('No subscription found, redirecting to subscribe page');
+    return <Navigate to="/onboarding/subscribe" replace />;
+  }
   if (
     user &&
     user.subscriptionStatus !== "Active" &&

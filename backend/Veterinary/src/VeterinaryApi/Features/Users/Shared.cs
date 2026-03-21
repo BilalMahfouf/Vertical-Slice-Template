@@ -11,6 +11,7 @@ public static class Shared
             bool IsActive,
             bool ClinicInfromationCompleted,    
             string? SubscriptionStatus,
+            bool? IsSubscriptionExist,
             DateTime CreatedOnUtc
             );
 

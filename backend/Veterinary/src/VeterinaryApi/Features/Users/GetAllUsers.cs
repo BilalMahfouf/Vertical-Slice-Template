@@ -48,6 +48,7 @@ public static class GetAllUsers
                 e.IsActive,
                 e.Clinic != null,
                 null,
+                null,
                 e.CreatedOnUtc
             ));
             Expression<Func<Response, object>>? orderBy = query.SortColumn?.ToLower() switch

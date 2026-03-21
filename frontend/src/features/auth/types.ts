@@ -9,6 +9,7 @@ export type CurrentUser = {
   isActive: boolean;
   clinicInfromationCompleted: boolean;
   subscriptionStatus: SubscriptionStatus | null;
+  isSubscriptionExist: boolean ;
   createdOnUtc: string;
 };
 
