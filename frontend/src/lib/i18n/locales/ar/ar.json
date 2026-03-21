@@ -704,7 +704,8 @@
         "tabs": {
             "profile": "الملف الشخصي",
             "clinic": "العيادة",
-            "notifications": "الإشعارات"
+            "notifications": "الإشعارات",
+            "subscriptions": "الاشتراك"
         },
         "profile": {
             "header": "المعلومات الشخصية",
@@ -781,6 +782,57 @@
             "header": "تفضيلات الإشعارات",
             "description": "إدارة كيفية تلقي الإشعارات",
             "pushDesc": "استقبل إشعارات سطح المكتب حتى عندما يكون التطبيق في الخلفية."
+        },
+        "subscriptions": {
+            "header": "الاشتراك",
+            "description": "راجع خطتك الحالية وفترة الفوترة",
+            "loadError": "تعذر تحميل تفاصيل الاشتراك.",
+            "retry": "إعادة المحاولة",
+            "emptyTitle": "لا يوجد اشتراك نشط",
+            "emptyDescription": "ستظهر تفاصيل الاشتراك هنا عند تفعيل خطة.",
+            "planName": "الخطة",
+            "price": "السعر",
+            "interval": "الفترة",
+            "status": "الحالة",
+            "currentPeriodStart": "بداية الفترة الحالية",
+            "currentPeriodEnd": "نهاية الفترة الحالية",
+            "trialEndsAt": "نهاية التجربة",
+            "cancelledAt": "تاريخ الإلغاء",
+            "updatedAt": "آخر تحديث",
+            "subscriptionId": "معرف الاشتراك",
+            "previousSubscriptionId": "معرف الاشتراك السابق",
+            "notAvailable": "غير متوفر",
+            "overview": {
+                "title": "نظرة عامة على الخطة",
+                "description": "خطتك الحالية وحالة الاشتراك"
+            },
+            "billingCycle": {
+                "title": "دورة الفوترة",
+                "description": "التواريخ المتعلقة بفترة اشتراكك الحالية"
+            },
+            "identifiers": {
+                "title": "المعرفات",
+                "description": "مراجع تقنية للدعم والمتابعة"
+            },
+            "actions": {
+                "title": "الإجراءات",
+                "description": "سيتم تفعيل تعديل الخطة عند توفر نقاط النهاية في الخلفية",
+                "upgrade": "ترقية",
+                "downgrade": "تخفيض",
+                "cancel": "إلغاء",
+                "renew": "تجديد",
+                "comingSoon": "هذه الإجراءات ستكون متاحة قريبًا."
+            },
+            "statusValues": {
+                "active": "نشط",
+                "trialing": "فترة تجريبية",
+                "pending": "قيد الانتظار",
+                "paymentFailed": "فشل الدفع",
+                "pastDue": "متأخر السداد",
+                "cancelled": "ملغي",
+                "expired": "منتهي",
+                "unknown": "غير معروف"
+            }
         }
     },
     "auth": {

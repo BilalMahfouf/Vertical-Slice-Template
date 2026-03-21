@@ -704,7 +704,8 @@
         "tabs": {
             "profile": "Profile",
             "clinic": "Clinic",
-            "notifications": "Notifications"
+            "notifications": "Notifications",
+            "subscriptions": "Subscriptions"
         },
         "nav": {
             "profile": "Profile",
@@ -911,6 +912,57 @@
             "header": "Notification Preferences",
             "description": "Manage how you receive notifications",
             "pushDesc": "Receive desktop notifications even when the app is in the background."
+        },
+        "subscriptions": {
+            "header": "Subscription",
+            "description": "Review your active plan and billing period",
+            "loadError": "Failed to load subscription details.",
+            "retry": "Try again",
+            "emptyTitle": "No active subscription found",
+            "emptyDescription": "Your subscription details will appear here once a plan is active.",
+            "planName": "Plan",
+            "price": "Price",
+            "interval": "Interval",
+            "status": "Status",
+            "currentPeriodStart": "Current period starts",
+            "currentPeriodEnd": "Current period ends",
+            "trialEndsAt": "Trial ends",
+            "cancelledAt": "Cancelled at",
+            "updatedAt": "Last updated",
+            "subscriptionId": "Subscription ID",
+            "previousSubscriptionId": "Previous subscription ID",
+            "notAvailable": "Not available",
+            "overview": {
+                "title": "Plan overview",
+                "description": "Your current plan and subscription status"
+            },
+            "billingCycle": {
+                "title": "Billing cycle",
+                "description": "Dates related to your current subscription period"
+            },
+            "identifiers": {
+                "title": "Identifiers",
+                "description": "Technical references for support and troubleshooting"
+            },
+            "actions": {
+                "title": "Actions",
+                "description": "Plan changes will be enabled once backend actions are available",
+                "upgrade": "Upgrade",
+                "downgrade": "Downgrade",
+                "cancel": "Cancel",
+                "renew": "Renew",
+                "comingSoon": "These actions are coming soon."
+            },
+            "statusValues": {
+                "active": "Active",
+                "trialing": "Trialing",
+                "pending": "Pending",
+                "paymentFailed": "Payment failed",
+                "pastDue": "Past due",
+                "cancelled": "Cancelled",
+                "expired": "Expired",
+                "unknown": "Unknown"
+            }
         }
     },
     "auth": {

@@ -19,6 +19,23 @@ export interface SubscriptionPlan {
   createdOnUtc: string;
 }
 
+export interface MySubscriptionResponse {
+  id: string;
+  doctorId: string;
+  planId: string;
+  planName: string;
+  planDisplayName: string;
+  planPrice: number;
+  planCurrency: string;
+  subscriptionStatus: string;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  trialEndsAt: string | null;
+  cancelledAt: string | null;
+  updatedAt: string | null;
+  previousSubscriptionId: string | null;
+}
+
 interface CreateCheckoutRequest {
   planId: string;
 }
@@ -32,6 +49,14 @@ const subscriptionApi = {
     const response = await api.get<SubscriptionPlan[]>('/subscription-plans');
     if (response.status !== 200) {
       throw new Error('Failed to fetch subscription plans');
+    }
+    return response.data;
+  },
+
+  getMySubscription: async (): Promise<MySubscriptionResponse> => {
+    const response = await api.get<MySubscriptionResponse>('/subscriptions/me');
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch subscription details');
     }
     return response.data;
   },

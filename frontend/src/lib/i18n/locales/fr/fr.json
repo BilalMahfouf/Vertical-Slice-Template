@@ -704,7 +704,8 @@
         "tabs": {
             "profile": "Profil",
             "clinic": "Clinique",
-            "notifications": "Notifications"
+            "notifications": "Notifications",
+            "subscriptions": "Abonnement"
         },
         "profile": {
             "header": "Informations personnelles",
@@ -781,6 +782,57 @@
             "header": "Préférences de notification",
             "description": "Gérez la façon dont vous recevez les notifications",
             "pushDesc": "Recevez des notifications bureau même lorsque l'application est en arrière-plan."
+        },
+        "subscriptions": {
+            "header": "Abonnement",
+            "description": "Consultez votre plan actif et votre période de facturation",
+            "loadError": "Échec du chargement des détails d'abonnement.",
+            "retry": "Réessayer",
+            "emptyTitle": "Aucun abonnement actif trouvé",
+            "emptyDescription": "Les détails de votre abonnement apparaîtront ici lorsqu'un plan sera actif.",
+            "planName": "Plan",
+            "price": "Prix",
+            "interval": "Intervalle",
+            "status": "Statut",
+            "currentPeriodStart": "Début de la période actuelle",
+            "currentPeriodEnd": "Fin de la période actuelle",
+            "trialEndsAt": "Fin de l'essai",
+            "cancelledAt": "Annulé le",
+            "updatedAt": "Dernière mise à jour",
+            "subscriptionId": "ID d'abonnement",
+            "previousSubscriptionId": "ID d'abonnement précédent",
+            "notAvailable": "Non disponible",
+            "overview": {
+                "title": "Vue d'ensemble du plan",
+                "description": "Votre plan actuel et le statut de l'abonnement"
+            },
+            "billingCycle": {
+                "title": "Cycle de facturation",
+                "description": "Dates liées à votre période d'abonnement actuelle"
+            },
+            "identifiers": {
+                "title": "Identifiants",
+                "description": "Références techniques pour le support"
+            },
+            "actions": {
+                "title": "Actions",
+                "description": "Les changements de plan seront activés dès que les endpoints backend seront disponibles",
+                "upgrade": "Mettre à niveau",
+                "downgrade": "Rétrograder",
+                "cancel": "Annuler",
+                "renew": "Renouveler",
+                "comingSoon": "Ces actions seront disponibles bientôt."
+            },
+            "statusValues": {
+                "active": "Actif",
+                "trialing": "En essai",
+                "pending": "En attente",
+                "paymentFailed": "Paiement échoué",
+                "pastDue": "En retard",
+                "cancelled": "Annulé",
+                "expired": "Expiré",
+                "unknown": "Inconnu"
+            }
         }
     },
     "auth": {
