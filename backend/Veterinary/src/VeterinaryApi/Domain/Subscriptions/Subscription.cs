@@ -112,6 +112,11 @@ public sealed class Subscription : Entity
         }
         return true;
     }
+
+    public void PaymentFailed()
+    {
+        Status = SubscriptionStatus.PaymentFailed;
+    }
     private static DateTime AddInterval(DateTime from, string interval, int count) => interval switch
     {
         "month" => from.AddMonths(count),
