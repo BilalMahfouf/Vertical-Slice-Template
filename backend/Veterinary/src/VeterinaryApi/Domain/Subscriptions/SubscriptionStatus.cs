@@ -6,6 +6,7 @@ public enum SubscriptionStatus
     Trialing,
     Active,
     PaymentFailed,
+    PaymentExpired,
     PastDue,
     Cancelled,
     Expired,

@@ -43,5 +43,9 @@ public static class SubscriptionErrors
         Error.Conflict(
             $"{nameof(Subscription)}.{nameof(ActiveSubscriptionAlreadyExist)}",
             "An active subscription already exists for this doctor.");
+    public static Error FailedToCreateCheckout =>
+        Error.Failure(
+            $"{nameof(Subscription)}.{nameof(FailedToCreateCheckout)}",
+            "Failed to create checkout for the subscription.");
 
 }

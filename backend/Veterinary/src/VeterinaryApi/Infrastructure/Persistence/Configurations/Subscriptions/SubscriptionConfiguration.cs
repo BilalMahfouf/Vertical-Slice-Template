@@ -31,9 +31,9 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
         builder.Property(s => s.PreviousSubscriptionId)
             .HasColumnName("previous_subscription_id");
 
-        builder.HasOne<Subscription>()
-            .WithOne()
-            .HasForeignKey<Subscription>(s => s.PreviousSubscriptionId)
+        builder.HasOne(s => s.PreviousSubscription)
+            .WithMany()
+            .HasForeignKey(s => s.PreviousSubscriptionId)
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_subscriptions_previous_subscription_id");
 

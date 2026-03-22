@@ -55,6 +55,12 @@ public sealed class Payment : Entity
         FailureReason = reason;
         ProviderMetadata = metadata;
     }
+    public void MarkExpired(string reason, string? metaData = null)
+    {
+        Status = PaymentStatus.Expired;
+        FailureReason = reason;
+        ProviderMetadata = metaData;
+    }
 
     public void MarkRefunded() => Status = PaymentStatus.Refunded;
 

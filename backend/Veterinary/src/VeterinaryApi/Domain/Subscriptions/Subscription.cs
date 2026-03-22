@@ -16,6 +16,7 @@ public sealed class Subscription : Entity
     public DateTime? UpdatedAt { get; private set; }
 
     public SubscriptionPlan Plan { get; private set; } = null!;
+    public Subscription? PreviousSubscription { get; private set; }
     private readonly List<Payment> _payments = [];
     public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
@@ -71,33 +72,40 @@ public sealed class Subscription : Entity
 
     /// <summary>
     /// To use this method you need to include
-    /// the <see cref="SubscriptionPlan"/> entity, which contains the billing interval and trial period information.
+    /// the <see cref="SubscriptionPlan"/> navigation Property in the
+    /// <paramref name="previousSubscription"/>
     /// </summary>
-    /// <param name="doctorId"></param>
-    /// <param name="plan"></param>
-    /// <returns></returns>k
-    /// <returns></returns>k
-    public static Subscription Renew(Subscription previous, SubscriptionPlan plan)
+    /// <param name="previousSubscription"></param>
+    /// <returns></returns>
+    /// <returns></returns>
+    public static Subscription Renew(Subscription previousSubscription)
     {
-        if (previous.Status is not (SubscriptionStatus.Active
-                                 or SubscriptionStatus.PastDue
+        if (previousSubscription.Status is SubscriptionStatus.Active)
+        {
+            throw new DomainException(
+                SubscriptionErrors.ActiveSubscriptionAlreadyExist);
+        }
+        if (previousSubscription.Status is not (SubscriptionStatus.PastDue
                                  or SubscriptionStatus.Expired))
         {
             throw new DomainException(SubscriptionErrors
                 .SubscriptionNotInRenewableState);
         }
 
-        var start = previous.CurrentPeriodEnd; // period continues from where the last one ended
+        var start = DateTime.UtcNow;
+        var endOfSubscription = AddInterval(
+                start,
+                previousSubscription.Plan.BillingInterval,
+                previousSubscription.Plan.IntervalCount);
 
         return new Subscription
         {
-            DoctorId = previous.DoctorId,
-            PlanId = plan.Id,
-            Plan = plan,
-            PreviousSubscriptionId = previous.Id,
-            Status = SubscriptionStatus.Active,
+            DoctorId = previousSubscription.DoctorId,
+            PlanId = previousSubscription.Plan.Id,
+            PreviousSubscriptionId = previousSubscription.Id,
+            Status = SubscriptionStatus.Pending,
             CurrentPeriodStart = start,
-            CurrentPeriodEnd = AddInterval(start, plan.BillingInterval, plan.IntervalCount),
+            CurrentPeriodEnd = endOfSubscription,
             TrialEndsAt = null, // no trial on renewal
         };
     }
@@ -116,6 +124,10 @@ public sealed class Subscription : Entity
     public void PaymentFailed()
     {
         Status = SubscriptionStatus.PaymentFailed;
+    }
+    public void PaymentExipred()
+    {
+        Status = SubscriptionStatus.PaymentExpired;
     }
     private static DateTime AddInterval(DateTime from, string interval, int count) => interval switch
     {

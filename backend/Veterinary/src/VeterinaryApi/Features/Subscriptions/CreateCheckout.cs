@@ -61,8 +61,10 @@ public static class CreateCheckout
                     e.ProviderPaymentId,
                     e.IdempotencyKey,
                     e.SubscriptionId,
+                    e.Status
                 })
-                .FirstOrDefaultAsync(e => e.IdempotencyKey == command.IdempotencyKey,
+                .FirstOrDefaultAsync(e => e.IdempotencyKey == command.IdempotencyKey &&
+                e.Status == PaymentStatus.Pending,
                 cancellationToken);
             if (existingPayment?.ProviderPaymentId is not null)
             {
@@ -170,7 +172,7 @@ public static class CreateCheckout
         {
             app.MapPost("subscriptions", async (
                 [FromBody] Request request,
-                [FromHeader(Name = "Idempotency-Key")] string idempotencyKey,
+                [FromHeader(Name = $"{Shared.IdempotencyKeyHeader}")] string idempotencyKey,
                 ICurrentTenant currentTenant,
                 ICommandHandler<CreateSubscriptionCheckoutCommand, Response> handler,
                 CancellationToken ct

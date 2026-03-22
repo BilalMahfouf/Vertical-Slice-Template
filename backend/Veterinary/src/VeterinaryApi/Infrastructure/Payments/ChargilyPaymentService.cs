@@ -17,8 +17,13 @@ public sealed class ChargilyPaymentService(
     {
         if (metaData is not null)
         {
-            var allMetaData = new List<string>(metaData);
-            allMetaData.Add($"paymentId:{paymentId.ToString()}");
+
+            var allMetaData = new List<string>()
+            {
+                $"paymentId:{paymentId.ToString()}",
+            };
+            allMetaData.AddRange(metaData);
+
             return allMetaData;
         }
         return new List<string>

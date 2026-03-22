@@ -69,6 +69,12 @@ public static class HandleChargilyWebhook
                 case "checkout.failed":
                     await HandleFailed(payload.Data, cancellationToken);
                     break;
+                case "checkout.expired":
+                    await HandleFailed(payload.Data, cancellationToken);
+                    break;
+                default:
+                    await HandleFailed(payload.Data, cancellationToken);
+                    break;
                     // Ignore all other event types
             }
             await db.SaveChangesAsync(cancellationToken);
@@ -105,7 +111,7 @@ public static class HandleChargilyWebhook
             if (!TryGetPaymentId(data, out var paymentId)) return;
 
             var payment = await db.SubscriptionPayments
-                .Include(e=>e.Subscription)
+                .Include(e => e.Subscription)
                 .FirstOrDefaultAsync(p => p.Id == paymentId, ct);
 
             if (payment is null || payment.Status == PaymentStatus.Failed)
@@ -114,7 +120,7 @@ public static class HandleChargilyWebhook
             payment.MarkFailed(data.FailureReason ?? "Payment failed",
                 JsonSerializer.Serialize(data));
             payment.Subscription.PaymentFailed();
-            
+
             logger.LogInformation("Payment {PaymentId} marked as failed. Reason: {FailureReason}",
                 payment.Id, data.FailureReason);
         }
@@ -145,7 +151,7 @@ public static class HandleChargilyWebhook
             // Read raw body — needed to forward to handler
             using var reader = new StreamReader(httpRequest.Body);
             var rawBody = await reader.ReadToEndAsync(ct);
-            
+
 
             await handler.Handle(new Command(rawBody), ct);
 
