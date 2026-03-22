@@ -29,6 +29,11 @@ public static class SubscriptionErrors
         => Error.Failure(
             $"{nameof(Subscription)}.{nameof(FailedToRetrieveCheckout)}",
             $"Failed to retrieve checkout for payment with ID: {paymentId}");
+    public static Error FailedToRetrieveCheckout()
+        => Error.Failure(
+            $"{nameof(Subscription)}.{nameof(FailedToRetrieveCheckout)}",
+            $"Failed to retrieve checkout ");
+
     public static Error FailedToProcessWebhook(Guid paymentId)
         => Error.Failure(
             $"{nameof(Subscription)}.{nameof(FailedToProcessWebhook)}",

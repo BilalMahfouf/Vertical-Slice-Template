@@ -1,5 +1,6 @@
 ﻿using Chargily.Pay;
 using Chargily.Pay.AspNet;
+using VeterinaryApi.Common.Abstracions.Payments;
 
 namespace VeterinaryApi.Infrastructure.Payments;
 
@@ -7,7 +8,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPayments(this IServiceCollection services)
     {
-        services.AddScoped<ChargilyPaymentService>();
+        services.AddScoped<IPaymentService, ChargilyPaymentService>();
 
         var chargilySecretKey = Environment.GetEnvironmentVariable("CHARGILY_SECRET_KEY");
         services.AddGlobalChargilyPayClient(config =>
