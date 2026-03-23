@@ -6,7 +6,7 @@ using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Subscriptions;
 using VeterinaryApi.Domain.Subscriptions.Errors;
 
-namespace VeterinaryApi.Features.Subscriptions.Endpoints;
+namespace VeterinaryApi.Features.SubscriptionPlans;
 
 public static class GetAllSubscriptionPlans
 {
@@ -32,6 +32,7 @@ public static class GetAllSubscriptionPlans
             CancellationToken cancellationToken = default)
         {
             var plans = await db.SubscriptionPlans
+                .AsNoTracking()
                 .Select(e => new Response(
                     e.Id,
                     e.Name,

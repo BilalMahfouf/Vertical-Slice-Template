@@ -38,6 +38,23 @@ public sealed class SubscriptionPlan : Entity
             IsActive        = true,
         };
     }
+    
+    public void Update(
+        string Name,
+        Money Price,
+        string BillingInterval,
+        int IntervalCount,
+        int TrialDays)
+    {
+        if (string.IsNullOrWhiteSpace(Name)) throw new ArgumentException("Name is required.");
+        if (BillingInterval is not "month" and not "year")
+            throw new ArgumentException("Billing interval must be 'month' or 'year'.");
+        this.Name = Name;
+        this.Price = Price;
+        this.BillingInterval = BillingInterval;
+        this.IntervalCount = IntervalCount;
+        this.TrialDays = TrialDays;
+    }
 
     public void Deactivate() => IsActive = false;
 }
