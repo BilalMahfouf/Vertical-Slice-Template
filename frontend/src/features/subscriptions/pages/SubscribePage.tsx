@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import i18nKeyContainer from '@/lib/i18n/keyContainer';
 import { parseApiError, ErrorCodes } from '@/lib/api/error-types';
 import subscriptionApi from '@/features/subscriptions/api/subscription-api';
+import { PAYMENT_FLOW, setPaymentFlow } from '@/features/subscriptions/payment-flow';
 
 export default function SubscribePage() {
   const { t, i18n } = useTranslation();
@@ -29,6 +30,7 @@ export default function SubscribePage() {
     mutationFn: (planId: string) => subscriptionApi.createCheckout(planId),
     onSuccess: (data) => {
       if (data.checkoutUrl) {
+        setPaymentFlow(PAYMENT_FLOW.SUBSCRIBE);
         window.location.href = data.checkoutUrl;
       } else {
         navigate('/dashboard');

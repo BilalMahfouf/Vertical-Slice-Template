@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LanguageSwitcher from '@/components/ui/language-switcher';
 import i18nKeyContainer from '@/lib/i18n/keyContainer';
+import { PAYMENT_FLOW, clearPaymentFlow, getPaymentFlow } from '@/features/subscriptions/payment-flow';
 
 export default function PaymentFailedPage() {
   const { t, i18n } = useTranslation();
@@ -13,6 +14,14 @@ export default function PaymentFailedPage() {
   const isRtl = i18n.language === 'ar';
 
   const handleTryAgain = () => {
+    const flow = getPaymentFlow();
+    clearPaymentFlow();
+
+    if (flow === PAYMENT_FLOW.RENEW) {
+      navigate('/onboarding/renew');
+      return;
+    }
+
     navigate('/onboarding/subscribe');
   };
 

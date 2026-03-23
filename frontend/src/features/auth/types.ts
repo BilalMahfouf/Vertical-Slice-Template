@@ -1,4 +1,13 @@
-export type SubscriptionStatus = "Active" | "Inactive" | "Expired" | "Trialing";
+export type SubscriptionStatus =
+  | "Pending"
+  | "Trialing"
+  | "Active"
+  | "PaymentFailed"
+  | "PaymentExpired"
+  | "PastDue"
+  | "Cancelled"
+  | "Expired"
+  | "Inactive";
 
 export type CurrentUser = {
   id: string;

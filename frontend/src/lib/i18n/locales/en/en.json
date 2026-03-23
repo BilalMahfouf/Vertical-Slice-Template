@@ -81,6 +81,16 @@
             "signinLink": "Sign in",
             "errorGeneric": "Something went wrong. Please try again."
         },
+        "renew": {
+            "title": "Renew your subscription",
+            "subtitle": "Continue using your clinic workspace without interruption.",
+            "notice": "Your subscription needs renewal. Select a plan to continue.",
+            "cta": "Renew now",
+            "ctaLoading": "Redirecting...",
+            "signinPrompt": "Need a different account?",
+            "signinLink": "Sign in",
+            "errorGeneric": "Something went wrong. Please try again."
+        },
         "payment": {
             "success": {
                 "title": "Payment Successful!",

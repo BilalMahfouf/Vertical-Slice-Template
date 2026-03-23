@@ -111,6 +111,16 @@ const i18nKeyContainer = {
             signinLink: 'onboarding.subscribe.signinLink',
             errorGeneric: 'onboarding.subscribe.errorGeneric',
         },
+        renew: {
+            title: 'onboarding.renew.title',
+            subtitle: 'onboarding.renew.subtitle',
+            notice: 'onboarding.renew.notice',
+            cta: 'onboarding.renew.cta',
+            ctaLoading: 'onboarding.renew.ctaLoading',
+            signinPrompt: 'onboarding.renew.signinPrompt',
+            signinLink: 'onboarding.renew.signinLink',
+            errorGeneric: 'onboarding.renew.errorGeneric',
+        },
         payment: {
             success: {
                 title: 'onboarding.payment.success.title',

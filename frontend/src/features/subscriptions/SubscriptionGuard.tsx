@@ -1,6 +1,15 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { useCurrentUser } from '@/features/auth/useCurrentUser';
+import subscriptionApi from '@/features/subscriptions/api/subscription-api';
+import {
+  isActiveOrTrialingStatus,
+  isExpiredStatus,
+  isPastDueStatus,
+  isPaymentFailedStatus,
+  isSubscribeOnlyStatus,
+} from '@/features/subscriptions/subscription-status';
 
 /**
  * SubscriptionGuard wraps protected app routes.
@@ -12,51 +21,76 @@ import { useCurrentUser } from '@/features/auth/useCurrentUser';
 export default function SubscriptionGuard() {
   const { data: user, isLoading } = useCurrentUser();
   const location = useLocation();
+  const shouldResolvePaymentFailureFlow =
+    !isLoading &&
+    user?.isSubscriptionExist !== false &&
+    isPaymentFailedStatus(user?.subscriptionStatus);
+
+  const paymentFailedFlowQuery = useQuery({
+    queryKey: ['subscription', 'me', 'payment-failed-flow'],
+    queryFn: subscriptionApi.getMySubscription,
+    enabled: shouldResolvePaymentFailureFlow,
+    retry: false,
+  });
 
   // Show loading spinner while fetching user data
-  if (isLoading) {
+  if (isLoading || (shouldResolvePaymentFailureFlow && paymentFailedFlowQuery.isLoading)) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
-  console.log('Current user data:', user);
-
   if (user?.role === 'Admin') {
-    console.log('Admin user detected, bypassing subscription checks');
     return <Outlet />;
   }
-  console.log('Checking subscription status for user:', user?.subscriptionStatus);
- // Prevent redirect loops - if already on an onboarding page, allow access
+
+  // Prevent redirect loops - if already on an onboarding page, allow access
   const isOnOnboardingPage = location.pathname.startsWith('/onboarding');
   if (isOnOnboardingPage) {
-    console.log('Already on onboarding page, allowing access to avoid redirect loop');
     return <Outlet />;
   }
-  console.log('Not on onboarding page, performing subscription checks');
-
-  // Check clinic info completion
-  if (user?.clinicInfromationCompleted === false) {
-    console.log('Clinic information incomplete, redirecting to clinic info page');
-    return <Navigate to="/onboarding/create-clinic" replace />;
-  }
-  console.log('Clinic information completed, checking subscription status');
 
   console.log('User subscription status:', user?.subscriptionStatus);
-  // Check subscription status (allow "Active" or "Trialing")
-  if(user?.isSubscriptionExist === false){
-    console.log('No subscription found, redirecting to subscribe page');
+  // Check clinic info completion
+  if (user?.clinicInfromationCompleted === false) {
+    return <Navigate to="/onboarding/create-clinic" replace />;
+  }
+
+  if (user?.isSubscriptionExist === false) {
     return <Navigate to="/onboarding/subscribe" replace />;
   }
-  if (
-    user &&
-    user.subscriptionStatus !== "Active" &&
-    user.subscriptionStatus !== "Trialing"
-  ) {
+
+  if (isActiveOrTrialingStatus(user?.subscriptionStatus)) {
+    return <Outlet />;
+  }
+
+  if (isExpiredStatus(user?.subscriptionStatus)) {
+    return <Navigate to="/onboarding/renew" replace />;
+  }
+
+  // Allow past-due users to continue using the app during grace period.
+  if (isPastDueStatus(user?.subscriptionStatus)) {
+    return <Outlet />;
+  }
+
+  if (isPaymentFailedStatus(user?.subscriptionStatus)) {
+    console.log('Resolving payment failure flow, subscription details:', paymentFailedFlowQuery.data);
+    if (paymentFailedFlowQuery.data?.previousSubscriptionId) {
+        console.log('Previous subscription ID exists, redirecting to renew page');
+      return <Navigate to="/onboarding/renew"  />;
+    }
+    console.log('No previous subscription ID, redirecting to subscribe page');
     return <Navigate to="/onboarding/subscribe" replace />;
-  } 
-  console.log('Subscription status is active or trialing, allowing access to protected content');
+  }
+
+  if (isSubscribeOnlyStatus(user?.subscriptionStatus)) {
+    return <Navigate to="/onboarding/subscribe" replace />;
+  }
+
+  if (!isActiveOrTrialingStatus(user?.subscriptionStatus)) {
+    return <Navigate to="/onboarding/subscribe" replace />;
+  }
 
 
   // All checks passed - render protected content

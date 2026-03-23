@@ -76,6 +76,20 @@ const subscriptionApi = {
     console.log('Checkout response:', response.data);
     return response.data;
   },
+
+  renewSubscription: async (planId: string): Promise<CheckoutResponse> => {
+    const response = await api.post<CheckoutResponse>('/subscriptions/renew', planId, {
+      headers: {
+        'Idempotency-Key': generateIdempotencyKey(),
+      },
+    });
+
+    if (response.status !== 200 && response.status !== 201) {
+      throw new Error('Failed to renew subscription');
+    }
+
+    return response.data;
+  },
 };
 
 export default subscriptionApi;

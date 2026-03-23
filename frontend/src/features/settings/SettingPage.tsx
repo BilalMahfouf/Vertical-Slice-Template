@@ -1283,35 +1283,6 @@ function SubscriptionsSection({ t }: { t: (key: string) => string }) {
         </CardContent>
       </Card>
 
-      <Card className="border border-slate-200 bg-white shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-base font-medium">
-            {t(i18nKeyContainer.settingsPage.subscriptions.actions.title)}
-          </CardTitle>
-          <CardDescription>
-            {t(i18nKeyContainer.settingsPage.subscriptions.actions.description)}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Button disabled className="cursor-not-allowed" variant="outline">
-              {t(i18nKeyContainer.settingsPage.subscriptions.actions.upgrade)}
-            </Button>
-            <Button disabled className="cursor-not-allowed" variant="outline">
-              {t(i18nKeyContainer.settingsPage.subscriptions.actions.downgrade)}
-            </Button>
-            <Button disabled className="cursor-not-allowed" variant="outline">
-              {t(i18nKeyContainer.settingsPage.subscriptions.actions.cancel)}
-            </Button>
-            <Button disabled className="cursor-not-allowed" variant="outline">
-              {t(i18nKeyContainer.settingsPage.subscriptions.actions.renew)}
-            </Button>
-          </div>
-          <p className="text-xs text-slate-500">
-            {t(i18nKeyContainer.settingsPage.subscriptions.actions.comingSoon)}
-          </p>
-        </CardContent>
-      </Card>
     </div>
   );
 }
@@ -1363,9 +1334,12 @@ export default function SettingPage() {
   const isDoctor = userProfile?.role?.toLowerCase() === "doctor";
 
   useEffect(() => {
+   const foo=()=>{
     if (activeSection === "subscriptions" && !isDoctor) {
       setActiveSection("profile");
     }
+   } 
+   foo();
   }, [activeSection, isDoctor]);
 
   if (isProfileError) {

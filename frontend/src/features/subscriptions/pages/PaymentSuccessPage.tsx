@@ -10,6 +10,7 @@ import LanguageSwitcher from '@/components/ui/language-switcher';
 import i18nKeyContainer from '@/lib/i18n/keyContainer';
 import api from '@/lib/api/api';
 import type { CurrentUser } from '@/features/auth/types';
+import { clearPaymentFlow } from '@/features/subscriptions/payment-flow';
 
 type VerificationState = 'verifying' | 'verified' | 'timeout';
 
@@ -23,7 +24,7 @@ export default function PaymentSuccessPage() {
   const pollCountRef = useRef(0);
   const maxPolls = 7;
 
-  const { data: user, refetch } = useQuery({
+  const { data: user } = useQuery({
     queryKey: ['payment-verification'],
     queryFn: async () => {
       const response = await api.get<CurrentUser>('/auth/me');
@@ -38,6 +39,13 @@ export default function PaymentSuccessPage() {
   });
 
   useEffect(() => {
+    clearPaymentFlow();
+  }, []);
+
+  useEffect(() => {
+const foo=()=>{
+    console.log("state",state)
+    console.log('Polling for subscription status...', pollCountRef.current + 1);
     if (state !== 'verifying') return;
 
     if (user?.subscriptionStatus === 'Active' || user?.subscriptionStatus === 'Trialing') {
@@ -49,6 +57,9 @@ export default function PaymentSuccessPage() {
     if (pollCountRef.current >= maxPolls) {
       setState('timeout');
     }
+}
+foo();
+
   }, [user, state]);
 
   useEffect(() => {

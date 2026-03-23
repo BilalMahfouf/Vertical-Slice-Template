@@ -81,6 +81,16 @@
             "signinLink": "Se connecter",
             "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
         },
+        "renew": {
+            "title": "Renouvelez votre abonnement",
+            "subtitle": "Continuez à utiliser votre espace clinique sans interruption.",
+            "notice": "Votre abonnement doit être renouvelé. Sélectionnez un forfait pour continuer.",
+            "cta": "Renouveler maintenant",
+            "ctaLoading": "Redirection...",
+            "signinPrompt": "Besoin d'un autre compte ?",
+            "signinLink": "Se connecter",
+            "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
+        },
         "payment": {
             "success": {
                 "title": "Paiement réussi !",
