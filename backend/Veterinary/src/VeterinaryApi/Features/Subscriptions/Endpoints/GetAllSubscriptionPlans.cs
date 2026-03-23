@@ -6,7 +6,7 @@ using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Subscriptions;
 using VeterinaryApi.Domain.Subscriptions.Errors;
 
-namespace VeterinaryApi.Features.Subscriptions;
+namespace VeterinaryApi.Features.Subscriptions.Endpoints;
 
 public static class GetAllSubscriptionPlans
 {

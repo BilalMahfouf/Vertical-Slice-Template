@@ -16,7 +16,7 @@ using VeterinaryApi.Domain.Users;
 using VeterinaryApi.Infrastructure.Payments;
 using VeterinaryApi.Infrastructure.Persistence;
 
-namespace VeterinaryApi.Features.Subscriptions;
+namespace VeterinaryApi.Features.Subscriptions.Endpoints;
 
 public static class CreateCheckout
 {

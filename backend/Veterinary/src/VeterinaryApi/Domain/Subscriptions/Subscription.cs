@@ -123,10 +123,17 @@ public sealed class Subscription : Entity
     public void PaymentFailed()
     {
         Status = SubscriptionStatus.PaymentFailed;
+        UpdatedAt = DateTime.UtcNow;
     }
     public void PaymentExipred()
     {
         Status = SubscriptionStatus.PaymentExpired;
+        UpdatedAt = DateTime.UtcNow;
+    }
+    public void MarkExpired()
+    {
+        Status = SubscriptionStatus.Expired;
+        UpdatedAt = DateTime.UtcNow;
     }
     private static DateTime AddInterval(DateTime from, string interval, int count) => interval switch
     {

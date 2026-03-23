@@ -8,7 +8,7 @@ using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Domain.Common;
 using VeterinaryApi.Domain.Subscriptions;
 using VeterinaryApi.Domain.Users;
-using VeterinaryApi.Features.Subscriptions;
+using VeterinaryApi.Features.Subscriptions.Endpoints;
 using VeterinaryApi.Infrastructure.Payments;
 
 namespace Application.Tests.Subscriptions;

@@ -22,6 +22,7 @@ using VeterinaryApi.Infrastructure.Services.Hashers;
 using VeterinaryApi.Infrastructure.Services.Notifications;
 using VeterinaryApi.Infrastructure.Services.Users;
 using VeterinaryApi.Infrastructure.Tenants;
+using VeterinaryApi.Features.Subscriptions.BackgroundJobs;
 
 namespace VeterinaryApi.Infrastructure;
 
@@ -174,10 +175,40 @@ public static class DependencyInjection
               .AddTrigger(trigger =>
               trigger.ForJob(dailyRemindersJobKey)
               .WithCronSchedule("0 0 8 * * ?"));
+
+              // Mark past due subscriptions — runs every day at 00:00 AM UTC
+              var markPastDueSubscriptionJobKey = new JobKey(
+                  nameof(MarkPastDueSubscriptionDailyJob));
+              configure
+              .AddJob<MarkPastDueSubscriptionDailyJob>((sp, opts) =>
+              {
+                  opts.WithIdentity(markPastDueSubscriptionJobKey);
+              })
+              .AddTrigger(trigger =>
+              {
+
+                  trigger.ForJob(markPastDueSubscriptionJobKey)
+                         .WithCronSchedule("0 0 0 * * ?");
+              });
+
+              // Mark expired subscriptions — runs every day at 00:00 AM UTC
+              var markExpiredSubscriptionJobKey = new JobKey(
+                  nameof(MarkExpiredSubscriptionDailyJob));
+              configure
+              .AddJob<MarkExpiredSubscriptionDailyJob>((sp, opts) =>
+              {
+                  opts.WithIdentity(markExpiredSubscriptionJobKey);
+              })
+              .AddTrigger(trigger =>
+              {
+                  trigger.ForJob(markExpiredSubscriptionJobKey)
+                         .WithCronSchedule("0 0 0 * * ?");
+              });
           });
         services.AddQuartzHostedService(opt =>
         opt.WaitForJobsToComplete = true
         );
+
         services.AddSignalR();
         services.AddScoped<INotificatioService, NotificationService>();
         services.Scan(scan => scan.FromAssembliesOf(typeof(Program))
@@ -199,5 +230,7 @@ public static class DependencyInjection
 
         return services;
     }
+
+
 
 }

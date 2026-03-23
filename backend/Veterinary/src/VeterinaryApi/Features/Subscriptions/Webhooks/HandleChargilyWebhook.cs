@@ -8,7 +8,7 @@ using VeterinaryApi.Common.Errors;
 using VeterinaryApi.Common.Results;
 using VeterinaryApi.Domain.Subscriptions;
 
-namespace VeterinaryApi.Features.Subscriptions;
+namespace VeterinaryApi.Features.Subscriptions.Webhooks;
 
 public static class HandleChargilyWebhook
 {
