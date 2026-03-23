@@ -3,6 +3,7 @@ using Chargily.Pay;
 using Chargily.Pay.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reactive.Joins;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.Abstracions.Payments;
 using VeterinaryApi.Common.CQRS;
@@ -17,6 +18,7 @@ public static class RenewSubscription
 {
     public sealed record Command(
         Guid DoctorId,
+        Guid PlanId,
         string IdempotencyKey) : ICommand<Shared.Response>;
     public sealed class CommandHandler(
         IApplicationDbContext db,
@@ -39,9 +41,6 @@ public static class RenewSubscription
                     .ActiveSubscriptionAlreadyExist);
             }
 
-
-
-
             var existingPayment = await db.SubscriptionPayments
                           .Select(e => new
                           {
@@ -53,7 +52,7 @@ public static class RenewSubscription
                           })
                           .FirstOrDefaultAsync(
                           e => e.IdempotencyKey == command.IdempotencyKey
-                          && e.Status==PaymentStatus.Pending,
+                          && e.Status == PaymentStatus.Pending,
                           cancellationToken);
             if (existingPayment?.ProviderPaymentId is not null)
             {
@@ -75,6 +74,14 @@ public static class RenewSubscription
             }
 
 
+            var plan = await db.SubscriptionPlans
+                .FirstOrDefaultAsync(p => p.Id == command.PlanId, cancellationToken);
+            if (plan is null)
+            {
+                return Result<Shared.Response>.Failure(SubscriptionPlanErrors
+                    .SubscriptionPlanNotFound(command.PlanId));
+            }
+
             var oldSubscription = await db.Subscriptions
                 .Where(e => e.DoctorId == command.DoctorId &&
                 (e.Status == SubscriptionStatus.Expired ||
@@ -86,7 +93,7 @@ public static class RenewSubscription
             {
                 return Result<Shared.Response>.Failure(SubscriptionErrors.NotFound);
             }
-            var newSubscription = Subscription.Renew(oldSubscription);
+            var newSubscription = Subscription.Renew(oldSubscription, plan);
             db.Subscriptions.Add(newSubscription);
 
             var amount = new Domain.Common.Money(
@@ -138,10 +145,11 @@ public static class RenewSubscription
                 ICurrentTenant tenant,
                 [FromHeader(Name = $"{Shared.IdempotencyKeyHeader}")]
                   string idempotencyKey,
+                [FromBody] Guid planId,
                 ICommandHandler<Command, Shared.Response> handler,
                 CancellationToken ct) =>
             {
-                var command = new Command(tenant.UserId!.Value, idempotencyKey);
+                var command = new Command(tenant.UserId!.Value, planId, idempotencyKey);
                 var result = await handler.Handle(command);
                 return result.IsSuccess ? Results.Ok(result.Value)
                      : result.Problem();

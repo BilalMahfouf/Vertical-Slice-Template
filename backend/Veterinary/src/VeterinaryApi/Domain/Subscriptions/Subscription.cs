@@ -71,14 +71,13 @@ public sealed class Subscription : Entity
     }
 
     /// <summary>
-    /// To use this method you need to include
-    /// the <see cref="SubscriptionPlan"/> navigation Property in the
-    /// <paramref name="previousSubscription"/>
     /// </summary>
     /// <param name="previousSubscription"></param>
     /// <returns></returns>
     /// <returns></returns>
-    public static Subscription Renew(Subscription previousSubscription)
+    public static Subscription Renew(
+                 Subscription previousSubscription,
+                 SubscriptionPlan plan)
     {
         if (previousSubscription.Status is SubscriptionStatus.Active)
         {
@@ -95,13 +94,13 @@ public sealed class Subscription : Entity
         var start = DateTime.UtcNow;
         var endOfSubscription = AddInterval(
                 start,
-                previousSubscription.Plan.BillingInterval,
-                previousSubscription.Plan.IntervalCount);
+                plan.BillingInterval,
+                plan.IntervalCount);
 
         return new Subscription
         {
             DoctorId = previousSubscription.DoctorId,
-            PlanId = previousSubscription.Plan.Id,
+            PlanId = plan.Id,
             PreviousSubscriptionId = previousSubscription.Id,
             Status = SubscriptionStatus.Pending,
             CurrentPeriodStart = start,

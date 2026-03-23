@@ -35,8 +35,7 @@ public static class Me
             CancellationToken cancellationToken = default)
         {
             var subscription = await db.Subscriptions
-                .Where(e => e.DoctorId == query.DoctorId &&
-                        e.Status != SubscriptionStatus.PaymentFailed)
+                .Where(e => e.DoctorId == query.DoctorId)
                 .OrderByDescending(e => e.CreatedOnUtc)
                 .Select(e => new Response(
                     e.Id,
