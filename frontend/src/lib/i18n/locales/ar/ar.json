@@ -16,6 +16,7 @@
     "dashboard": "لوحة التحكم",
     "animals": "الحيوانات",
     "clients": "العملاء",
+    "subscriptionPlansNav": "خطط الاشتراك",
     "appointments": "المواعيد",
     "visits": "الزيارات",
     "notifications": "الإشعارات",
@@ -441,6 +442,62 @@
         "animalInfo": "معلومات الحيوان",
         "relatedVisit": "الزيارة المرتبطة"
     },
+    "subscriptionPlans": {
+        "title": "خطط الاشتراك",
+        "description": "إدارة جميع خطط الاشتراك المتاحة لحسابات العيادات.",
+        "addPlan": "إضافة خطة",
+        "viewTitle": "تفاصيل خطة الاشتراك",
+        "viewDescription": "عرض المعلومات الكاملة لخطة الاشتراك.",
+        "loadError": "فشل تحميل خطط الاشتراك.",
+        "empty": "لم يتم العثور على خطط اشتراك.",
+        "genericError": "حدث خطأ أثناء معالجة هذه الخطة.",
+        "table": {
+            "name": "الاسم",
+            "slug": "المعرف",
+            "price": "السعر",
+            "interval": "فترة الفوترة",
+            "trialDays": "أيام التجربة",
+            "status": "الحالة",
+            "createdOn": "تاريخ الإنشاء"
+        },
+        "form": {
+            "id": "معرف الخطة",
+            "addTitle": "إضافة خطة اشتراك",
+            "addDescription": "أنشئ خطة اشتراك جديدة متاحة لمستخدمي العيادة.",
+            "updateTitle": "تحديث خطة الاشتراك",
+            "updateDescription": "قم بتعديل خطة الاشتراك المحددة.",
+            "name": "اسم الخطة",
+            "namePlaceholder": "مثال: الخطة الاحترافية",
+            "amount": "المبلغ",
+            "amountMinError": "مبلغ غير صالح",
+            "amountMinErrorDesc": "يجب أن يكون المبلغ أكبر من 50 دج.",
+            "invalidError": "نموذج غير صالح",
+            "invalidErrorDesc": "يرجى ملء جميع الحقول المطلوبة بقيم صحيحة.",
+            "currency": "العملة",
+            "billingInterval": "فترة الفوترة",
+            "selectInterval": "اختر الفترة",
+            "intervalCount": "عدد الفترات",
+            "trialDays": "أيام التجربة",
+            "addAction": "إضافة الخطة",
+            "updateAction": "تحديث الخطة"
+        },
+        "actions": {
+            "activate": "تفعيل",
+            "deactivate": "تعطيل"
+        },
+        "status": {
+            "active": "نشط",
+            "inactive": "غير نشط"
+        },
+        "intervals": {
+            "day": "يوم",
+            "week": "أسبوع",
+            "month": "شهر",
+            "year": "سنة"
+        },
+        "intervalSingle": "كل {{interval}}",
+        "intervalMultiple": "كل {{count}} {{interval}}"
+    },
     "toast": {
         "client": {
             "added": "تمت إضافة العميل",
@@ -449,6 +506,16 @@
             "updatedDesc": "تم تحديث معلومات العميل بنجاح.",
             "deleted": "تم حذف العميل",
             "deletedDesc": "تم حذف العميل بنجاح."
+        },
+        "subscriptionPlan": {
+            "added": "تمت إضافة الخطة",
+            "addedDesc": "تم إنشاء خطة الاشتراك بنجاح.",
+            "updated": "تم تحديث الخطة",
+            "updatedDesc": "تم تحديث خطة الاشتراك بنجاح.",
+            "activated": "تم تفعيل الخطة",
+            "activatedDesc": "خطة الاشتراك أصبحت نشطة الآن.",
+            "deactivated": "تم تعطيل الخطة",
+            "deactivatedDesc": "خطة الاشتراك أصبحت غير نشطة الآن."
         },
         "animal": {
             "added": "تمت إضافة الحيوان",
@@ -631,6 +698,14 @@
             "checkoutFailedDesc": "لم نتمكن من معالجة الدفع. يرجى المحاولة مرة أخرى.",
             "planNotFound": "الخطة غير موجودة",
             "planNotFoundDesc": "لم يتم العثور على خطة الاشتراك المحددة."
+        },
+        "subscriptionPlan": {
+            "alreadyExists": "خطة الاشتراك موجودة بالفعل",
+            "alreadyExistsDesc": "توجد خطة اشتراك بنفس الاسم أو المعرف بالفعل.",
+            "alreadyActive": "خطة الاشتراك نشطة بالفعل",
+            "alreadyActiveDesc": "خطة الاشتراك هذه نشطة بالفعل.",
+            "alreadyNotActive": "خطة الاشتراك غير نشطة بالفعل",
+            "alreadyNotActiveDesc": "خطة الاشتراك هذه غير نشطة بالفعل."
         },
         "validation": "خطأ في التحقق",
         "validationDesc": "يرجى التحقق من المدخلات والمحاولة مرة أخرى.",

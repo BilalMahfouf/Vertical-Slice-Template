@@ -1,4 +1,4 @@
-import { LayoutDashboard, Stethoscope, Users, Calendar, Clock, Settings, LogOut, Languages, Shield } from "lucide-react";
+import { LayoutDashboard, Stethoscope, Users, Calendar, Clock, Settings, LogOut, Languages, Shield, CreditCard } from "lucide-react";
 import SideBarLink from "./SideBarLink";
 import { useTranslation } from "react-i18next";
 import i18nKeyContainer from "@/lib/i18n/keyContainer";
@@ -14,6 +14,7 @@ const navigationItems = [
   { pathname: "/animals", key: i18nKeyContainer.animals, icon: Stethoscope },
   { pathname: "/clients", key: i18nKeyContainer.clients, icon: Users },
   { pathname: "/users", key: i18nKeyContainer.settingsPage.clinic.staff.title, icon: Shield, requiresAdmin: true },
+  { pathname: "/subscription-plans", key: i18nKeyContainer.subscriptionPlansNav, icon: CreditCard, requiresAdmin: true },
   { pathname: "/appointments", key: i18nKeyContainer.appointments, icon: Calendar },
   { pathname: "/visits", key: i18nKeyContainer.visits, icon: Clock },
   { pathname: "/settings", key: i18nKeyContainer.settings, icon: Settings },

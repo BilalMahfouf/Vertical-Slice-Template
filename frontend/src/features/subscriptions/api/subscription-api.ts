@@ -1,22 +1,10 @@
 import api from '@/lib/api/api';
+import subscriptionPlanApi, { type SubscriptionPlan } from './subscription-plan-api';
 
 export interface CheckoutResponse {
   checkoutUrl: string | null;
   subscriptionStatus: string | null;
   subscriptionId: string;
-}
-
-export interface SubscriptionPlan {
-  id: string;
-  name: string;
-  slug: string;
-  amount: number;
-  currency: string;
-  billingInterval: string;
-  intervalCount: number;
-  trialDays: number;
-  isActive: boolean;
-  createdOnUtc: string;
 }
 
 export interface MySubscriptionResponse {
@@ -46,11 +34,7 @@ const generateIdempotencyKey = (): string => {
 
 const subscriptionApi = {
   getSubscriptionPlans: async (): Promise<SubscriptionPlan[]> => {
-    const response = await api.get<SubscriptionPlan[]>('/subscription-plans');
-    if (response.status !== 200) {
-      throw new Error('Failed to fetch subscription plans');
-    }
-    return response.data;
+    return subscriptionPlanApi.getAllSubscriptionPlans();
   },
 
   getMySubscription: async (): Promise<MySubscriptionResponse> => {

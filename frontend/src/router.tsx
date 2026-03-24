@@ -19,6 +19,7 @@ import SubscribePage from './features/subscriptions/pages/SubscribePage';
 import RenewPage from './features/subscriptions/pages/RenewPage';
 import PaymentSuccessPage from './features/subscriptions/pages/PaymentSuccessPage';
 import PaymentFailedPage from './features/subscriptions/pages/PaymentFailedPage';
+import SubscriptionPlansPage from './features/subscriptions/pages/SubscriptionPlansPage';
 
 export const router = createBrowserRouter([
   {
@@ -89,6 +90,14 @@ export const router = createBrowserRouter([
               element: (
                 <RoleGuard requiredRole="admin">
                   <UserPage />
+                </RoleGuard>
+              ),
+            },
+            {
+              path: '/subscription-plans',
+              element: (
+                <RoleGuard requiredRole="admin">
+                  <SubscriptionPlansPage />
                 </RoleGuard>
               ),
             },

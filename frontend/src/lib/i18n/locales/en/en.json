@@ -16,6 +16,7 @@
     "dashboard": "Dashboard",
     "animals": "Animals",
     "clients": "Clients",
+    "subscriptionPlansNav": "Subscription Plans",
     "appointments": "Appointments",
     "visits": "Visits",
     "notifications": "Notifications",
@@ -441,6 +442,62 @@
         "animalInfo": "Animal Information",
         "relatedVisit": "Related Visit"
     },
+    "subscriptionPlans": {
+        "title": "Subscription Plans",
+        "description": "Manage all available subscription plans for your clinic accounts.",
+        "addPlan": "Add Plan",
+        "viewTitle": "Subscription Plan Details",
+        "viewDescription": "View complete subscription plan information.",
+        "loadError": "Failed to load subscription plans.",
+        "empty": "No subscription plans found.",
+        "genericError": "Something went wrong while processing this plan.",
+        "table": {
+            "name": "Name",
+            "slug": "Slug",
+            "price": "Price",
+            "interval": "Billing Interval",
+            "trialDays": "Trial Days",
+            "status": "Status",
+            "createdOn": "Created On"
+        },
+        "form": {
+            "id": "Plan ID",
+            "addTitle": "Add Subscription Plan",
+            "addDescription": "Create a new subscription plan available to clinic users.",
+            "updateTitle": "Update Subscription Plan",
+            "updateDescription": "Edit the selected subscription plan.",
+            "name": "Plan Name",
+            "namePlaceholder": "e.g. Professional Plan",
+            "amount": "Amount",
+            "amountMinError": "Invalid Amount",
+            "amountMinErrorDesc": "Amount must be greater than 50 DZD.",
+            "invalidError": "Invalid Form",
+            "invalidErrorDesc": "Please fill all required fields with valid values.",
+            "currency": "Currency",
+            "billingInterval": "Billing Interval",
+            "selectInterval": "Select interval",
+            "intervalCount": "Interval Count",
+            "trialDays": "Trial Days",
+            "addAction": "Add Plan",
+            "updateAction": "Update Plan"
+        },
+        "actions": {
+            "activate": "Activate",
+            "deactivate": "Deactivate"
+        },
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "intervals": {
+            "day": "day",
+            "week": "week",
+            "month": "month",
+            "year": "year"
+        },
+        "intervalSingle": "Every {{interval}}",
+        "intervalMultiple": "Every {{count}} {{interval}}s"
+    },
     "toast": {
         "client": {
             "added": "Client Added",
@@ -485,6 +542,16 @@
             "updatedDesc": "The vaccination information has been updated successfully.",
             "deleted": "Vaccination Deleted",
             "deletedDesc": "The vaccination has been deleted successfully."
+        },
+        "subscriptionPlan": {
+            "added": "Plan Added",
+            "addedDesc": "The subscription plan has been created successfully.",
+            "updated": "Plan Updated",
+            "updatedDesc": "The subscription plan has been updated successfully.",
+            "activated": "Plan Activated",
+            "activatedDesc": "The subscription plan is now active.",
+            "deactivated": "Plan Deactivated",
+            "deactivatedDesc": "The subscription plan is now inactive."
         },
         "notification": {
             "markedAsRead": "Notification Read",
@@ -631,6 +698,14 @@
             "checkoutFailedDesc": "We couldn't process your payment. Please try again.",
             "planNotFound": "Plan Not Found",
             "planNotFoundDesc": "The selected subscription plan could not be found."
+        },
+        "subscriptionPlan": {
+            "alreadyExists": "Subscription Plan Already Exists",
+            "alreadyExistsDesc": "A subscription plan with the same name or slug already exists.",
+            "alreadyActive": "Subscription Plan Already Active",
+            "alreadyActiveDesc": "This subscription plan is already active.",
+            "alreadyNotActive": "Subscription Plan Already Inactive",
+            "alreadyNotActiveDesc": "This subscription plan is already inactive."
         },
         "validation": "Validation Error",
         "validationDesc": "Please check your input and try again.",

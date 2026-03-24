@@ -16,6 +16,7 @@
     "dashboard": "Tableau de bord",
     "animals": "Animaux",
     "clients": "Clients",
+    "subscriptionPlansNav": "Plans d'abonnement",
     "appointments": "Rendez-vous",
     "visits": "Visites",
     "notifications": "Notifications",
@@ -441,6 +442,62 @@
         "animalInfo": "Informations de l'animal",
         "relatedVisit": "Visite associée"
     },
+    "subscriptionPlans": {
+        "title": "Plans d'abonnement",
+        "description": "Gérez tous les plans d'abonnement disponibles pour les comptes de clinique.",
+        "addPlan": "Ajouter un plan",
+        "viewTitle": "Détails du plan d'abonnement",
+        "viewDescription": "Afficher les informations complètes du plan d'abonnement.",
+        "loadError": "Échec du chargement des plans d'abonnement.",
+        "empty": "Aucun plan d'abonnement trouvé.",
+        "genericError": "Une erreur s'est produite lors du traitement de ce plan.",
+        "table": {
+            "name": "Nom",
+            "slug": "Slug",
+            "price": "Prix",
+            "interval": "Intervalle de facturation",
+            "trialDays": "Jours d'essai",
+            "status": "Statut",
+            "createdOn": "Créé le"
+        },
+        "form": {
+            "id": "ID du plan",
+            "addTitle": "Ajouter un plan d'abonnement",
+            "addDescription": "Créez un nouveau plan d'abonnement disponible pour les utilisateurs de la clinique.",
+            "updateTitle": "Mettre à jour le plan d'abonnement",
+            "updateDescription": "Modifiez le plan d'abonnement sélectionné.",
+            "name": "Nom du plan",
+            "namePlaceholder": "ex. Plan Professionnel",
+            "amount": "Montant",
+            "amountMinError": "Montant invalide",
+            "amountMinErrorDesc": "Le montant doit être supérieur à 50 DZD.",
+            "invalidError": "Formulaire invalide",
+            "invalidErrorDesc": "Veuillez renseigner tous les champs obligatoires avec des valeurs valides.",
+            "currency": "Devise",
+            "billingInterval": "Intervalle de facturation",
+            "selectInterval": "Sélectionner un intervalle",
+            "intervalCount": "Nombre d'intervalles",
+            "trialDays": "Jours d'essai",
+            "addAction": "Ajouter le plan",
+            "updateAction": "Mettre à jour le plan"
+        },
+        "actions": {
+            "activate": "Activer",
+            "deactivate": "Désactiver"
+        },
+        "status": {
+            "active": "Actif",
+            "inactive": "Inactif"
+        },
+        "intervals": {
+            "day": "jour",
+            "week": "semaine",
+            "month": "mois",
+            "year": "année"
+        },
+        "intervalSingle": "Chaque {{interval}}",
+        "intervalMultiple": "Chaque {{count}} {{interval}}"
+    },
     "toast": {
         "client": {
             "added": "Client ajouté",
@@ -449,6 +506,16 @@
             "updatedDesc": "Les informations du client ont été mises à jour avec succès.",
             "deleted": "Client supprimé",
             "deletedDesc": "Le client a été supprimé avec succès."
+        },
+        "subscriptionPlan": {
+            "added": "Plan ajouté",
+            "addedDesc": "Le plan d'abonnement a été créé avec succès.",
+            "updated": "Plan mis à jour",
+            "updatedDesc": "Le plan d'abonnement a été mis à jour avec succès.",
+            "activated": "Plan activé",
+            "activatedDesc": "Le plan d'abonnement est maintenant actif.",
+            "deactivated": "Plan désactivé",
+            "deactivatedDesc": "Le plan d'abonnement est maintenant inactif."
         },
         "animal": {
             "added": "Animal ajouté",
@@ -631,6 +698,14 @@
             "checkoutFailedDesc": "Nous n'avons pas pu traiter votre paiement. Veuillez réessayer.",
             "planNotFound": "Forfait introuvable",
             "planNotFoundDesc": "Le forfait d'abonnement sélectionné n'a pas été trouvé."
+        },
+        "subscriptionPlan": {
+            "alreadyExists": "Plan d'abonnement déjà existant",
+            "alreadyExistsDesc": "Un plan d'abonnement avec le même nom ou slug existe déjà.",
+            "alreadyActive": "Plan d'abonnement déjà actif",
+            "alreadyActiveDesc": "Ce plan d'abonnement est déjà actif.",
+            "alreadyNotActive": "Plan d'abonnement déjà inactif",
+            "alreadyNotActiveDesc": "Ce plan d'abonnement est déjà inactif."
         },
         "validation": "Erreur de validation",
         "validationDesc": "Veuillez vérifier vos informations et réessayer.",

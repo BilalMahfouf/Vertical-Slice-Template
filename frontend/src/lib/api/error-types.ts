@@ -99,6 +99,9 @@ export const ErrorCodes = {
   SUBSCRIPTION_NOT_ACTIVE: "Subscription.SubscriptionNotActive",
   SUBSCRIPTION_FAILED_CHECKOUT: "Subscription.FailedToRetrieveCheckout",
   SUBSCRIPTION_PLAN_NOT_FOUND: "SubscriptionPlan.NotFound",
+  SUBSCRIPTION_PLAN_ALREADY_EXISTS: "SubscriptionPlan.AlreadyExists",
+  SUBSCRIPTION_PLAN_ALREADY_ACTIVE: "SubscriptionPlan.AlreadyActive",
+  SUBSCRIPTION_PLAN_ALREADY_NOT_ACTIVE: "SubscriptionPlan.AlreadyNotActive",
 
   // Generic errors
   VALIDATION_ERROR: "Validation.Error",
@@ -215,6 +218,9 @@ export function getErrorI18nKey(errorCode: string): string {
     [ErrorCodes.SUBSCRIPTION_NOT_ACTIVE]: "errors.subscription.notActive",
     [ErrorCodes.SUBSCRIPTION_FAILED_CHECKOUT]: "errors.subscription.checkoutFailed",
     [ErrorCodes.SUBSCRIPTION_PLAN_NOT_FOUND]: "errors.subscription.planNotFound",
+    [ErrorCodes.SUBSCRIPTION_PLAN_ALREADY_EXISTS]: "errors.subscriptionPlan.alreadyExists",
+    [ErrorCodes.SUBSCRIPTION_PLAN_ALREADY_ACTIVE]: "errors.subscriptionPlan.alreadyActive",
+    [ErrorCodes.SUBSCRIPTION_PLAN_ALREADY_NOT_ACTIVE]: "errors.subscriptionPlan.alreadyNotActive",
 
     // Generic errors
     [ErrorCodes.VALIDATION_ERROR]: "errors.validation",

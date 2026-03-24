@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import i18nKeyContainer from '@/lib/i18n/keyContainer';
 import { parseApiError, ErrorCodes } from '@/lib/api/error-types';
 import subscriptionApi from '@/features/subscriptions/api/subscription-api';
+import subscriptionPlanApi from '@/features/subscriptions/api/subscription-plan-api';
 import { useCurrentUser } from '@/features/auth/useCurrentUser';
 import {
   isActiveOrTrialingStatus,
@@ -54,7 +55,7 @@ export default function RenewPage() {
 
   const plansQuery = useQuery({
     queryKey: ['subscription-plans'],
-    queryFn: subscriptionApi.getSubscriptionPlans,
+    queryFn: subscriptionPlanApi.getAllSubscriptionPlans,
   });
 
   const renewMutation = useMutation({
