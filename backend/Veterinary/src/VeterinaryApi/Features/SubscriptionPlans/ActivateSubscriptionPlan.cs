@@ -7,7 +7,7 @@ using VeterinaryApi.Domain.Subscriptions.Errors;
 
 namespace VeterinaryApi.Features.SubscriptionPlans;
 
-public static class DeactivateSubscriptionPlan
+public static class ActivateSubscriptionPlan
 {
     public sealed record Command(Guid Id) : ICommand;
 
@@ -22,7 +22,7 @@ public static class DeactivateSubscriptionPlan
             {
                 return Result.Failure(SubscriptionPlanErrors.SubscriptionPlanNotFound());
             }
-            subscriptionPlan.Deactivate();
+            subscriptionPlan.Activate();
             await db.SaveChangesAsync(cancellationToken);
             return Result.Success;
         }
@@ -31,7 +31,7 @@ public static class DeactivateSubscriptionPlan
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPatch("/subscription-plans/{id:guid}/deactivate", async (
+            app.MapPatch("/subscription-plans/{id:guid}/activate", async (
                 Guid id,
                 ICommandHandler<Command> handler,
                 CancellationToken ct) =>
@@ -40,12 +40,12 @@ public static class DeactivateSubscriptionPlan
                 return result.IsSuccess ? Results.NoContent() : result.Problem();
             }).RequireAuthorization()
             .WithTags("Subscription Plans")
-            .WithSummary("Deactivate subscription plan")
-            .WithDescription("Deactivates a subscription plan to prevent new subscriptions from using it.")
+            .WithSummary("Activate subscription plan")
+            .WithDescription("Activates a subscription plan so it becomes available for new subscriptions.")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .WithName("DeactivateSubscriptionPlan");
+            .WithName("ActivateSubscriptionPlan");
         }
     }
 }

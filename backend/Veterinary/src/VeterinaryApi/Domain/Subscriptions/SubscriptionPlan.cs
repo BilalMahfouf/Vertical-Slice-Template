@@ -1,4 +1,5 @@
 ﻿using VeterinaryApi.Domain.Common;
+using VeterinaryApi.Domain.Subscriptions.Errors;
 
 namespace VeterinaryApi.Domain.Subscriptions;
 
@@ -29,16 +30,16 @@ public sealed class SubscriptionPlan : Entity
 
         return new SubscriptionPlan
         {
-            Name            = name,
-            Slug            = slug.ToLowerInvariant(),
-            Price           = price,
+            Name = name,
+            Slug = slug.ToLowerInvariant(),
+            Price = price,
             BillingInterval = billingInterval,
-            IntervalCount   = intervalCount,
-            TrialDays       = trialDays,
-            IsActive        = true,
+            IntervalCount = intervalCount,
+            TrialDays = trialDays,
+            IsActive = true,
         };
     }
-    
+
     public void Update(
         string Name,
         Money Price,
@@ -56,5 +57,20 @@ public sealed class SubscriptionPlan : Entity
         this.TrialDays = TrialDays;
     }
 
-    public void Deactivate() => IsActive = false;
+    public void Deactivate()
+    {
+        if (!IsActive)
+        {
+            throw new DomainException(SubscriptionPlanErrors.PlanAlreadyNotActive);
+        }
+        IsActive = false;
+    }
+    public void Activate()
+    {
+        if (IsActive)
+        {
+            throw new DomainException(SubscriptionPlanErrors.PlanAlreadyActive);
+        }
+        IsActive = true;
+    }
 }

@@ -24,6 +24,21 @@ public static class SubscriptionPlanErrors
                 code: $"{nameof(SubscriptionPlan)}.AlreadyExists",
                 description: $"Subscription plan with name {name} already exists."
             );
+    public static Error SubscriptionPlanSlugNotUnique(string slug) =>
+            Error.Conflict(
+                code: $"{nameof(SubscriptionPlan)}.AlreadyExists",
+                description: $"Subscription plan with slug {slug} already exists."
+            );
+    public static Error PlanAlreadyNotActive =>
+            Error.Conflict(
+                code: $"{nameof(SubscriptionPlan)}.AlreadyNotActive",
+                description: $"Subscription plan is already not active."
+            );
+    public static Error PlanAlreadyActive =>
+            Error.Conflict(
+                code: $"{nameof(SubscriptionPlan)}.AlreadyActive",
+                description: $"Subscription plan  is already active."
+            );
 
 
 }

@@ -154,7 +154,15 @@ public static class RenewSubscription
                 return result.IsSuccess ? Results.Ok(result.Value)
                      : result.Problem();
             }).RequireAuthorization()
-            .WithTags("Subscriptions");
+            .WithTags("Subscriptions")
+            .WithSummary("Renew subscription")
+            .WithDescription("Creates a renewal checkout for an expired or past-due subscription.")
+            .Produces<Shared.Response>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .WithName("RenewSubscription");
         }
     }
 }

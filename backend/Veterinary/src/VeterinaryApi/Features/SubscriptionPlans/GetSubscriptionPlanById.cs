@@ -55,7 +55,13 @@ public static class GetSubscriptionPlanById
                     : result.Problem();
 
             }).RequireAuthorization()
-            .WithTags("Subscription Plans");
+            .WithTags("Subscription Plans")
+            .WithSummary("Get subscription plan by ID")
+            .WithDescription("Retrieves a subscription plan by its unique identifier.")
+            .Produces<Shared.Response>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .WithName("GetSubscriptionPlanById");
         }
     }
 }

@@ -13,4 +13,6 @@ public static class Shared
        int TrialDays,
        bool IsActive,
        DateTime CreatedOnUtc);
+
+  
 }

@@ -74,7 +74,13 @@ public static class Me
                 return result.IsSuccess ? Results.Ok(result.Value)
                      : result.Problem();
             }).RequireAuthorization()
-            .WithTags($"{nameof(Subscription)}s");
+            .WithTags($"{nameof(Subscription)}s")
+            .WithSummary("Get current subscription")
+            .WithDescription("Retrieves the latest subscription details for the currently authenticated doctor.")
+            .Produces<Response>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .WithName("GetMySubscription");
         }
     }
 }

@@ -66,7 +66,13 @@ public static class GetAllSubscriptionPlans
                 return result.IsSuccess ? Results.Ok(result.Value)
                 : result.Problem();
             }).RequireAuthorization()
-            .WithTags($"{nameof(SubscriptionPlan)}s");
+            .WithTags($"{nameof(SubscriptionPlan)}s")
+            .WithSummary("Get all subscription plans")
+            .WithDescription("Retrieves all available subscription plans.")
+            .Produces<IEnumerable<Response>>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .WithName("GetAllSubscriptionPlans");
         }
     }
 }

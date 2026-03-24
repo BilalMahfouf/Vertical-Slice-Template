@@ -188,7 +188,15 @@ public static class CreateCheckout
                     : result.Problem();
 
             }).RequireAuthorization()
-            .WithTags($"{nameof(Subscription)}s");
+            .WithTags($"{nameof(Subscription)}s")
+            .WithSummary("Create subscription checkout")
+            .WithDescription("Creates a new subscription checkout for the current authenticated doctor and returns the checkout URL or trialing status.")
+            .Produces<Response>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .WithName("CreateSubscriptionCheckout");
         }
     }
 }

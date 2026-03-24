@@ -95,7 +95,14 @@ public static class CreateSubscriptionPlan
                     result.Value.Id)
                 : result.Problem();
             }).RequireAuthorization()
-            .WithTags($"{nameof(SubscriptionPlan)}s");
+            .WithTags($"{nameof(SubscriptionPlan)}s")
+            .WithSummary("Create subscription plan")
+            .WithDescription("Creates a new subscription plan with billing interval and trial configuration.")
+            .Produces<Guid>(StatusCodes.Status201Created)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status409Conflict)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .WithName("CreateSubscriptionPlan");
         }
     }
 }

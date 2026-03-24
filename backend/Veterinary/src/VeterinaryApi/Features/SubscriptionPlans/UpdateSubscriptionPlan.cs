@@ -107,7 +107,14 @@ public static class UpdateSubscriptionPlan
                 return result.IsSuccess ? Results.Ok(result.Value)
                     : result.Problem();
             }).RequireAuthorization()
-            .WithTags("Subscription Plans");
+            .WithTags("Subscription Plans")
+            .WithSummary("Update subscription plan")
+            .WithDescription("Updates an existing subscription plan by its unique identifier.")
+            .Produces<Response>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .WithName("UpdateSubscriptionPlan");
         }
     }
 }
