@@ -115,7 +115,7 @@ public static class DependencyInjection
         // ef core config  
 
         var connectionString = Environment
-            .GetEnvironmentVariable(AppSettings.DevConnectionStringName);
+            .GetEnvironmentVariable(AppSettings.ProductionConnectionStringName);
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
             (sp, options) =>
         {
