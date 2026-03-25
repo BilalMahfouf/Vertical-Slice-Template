@@ -30,7 +30,9 @@ public static class GetAllUsers
                     .Failure(UserErrors.UsersNotFound);
             }
 
-            var usersQuery = db.Users.AsQueryable();
+            var usersQuery = db.Users
+                .Where(e => e.Role == UserRoles.Doctor)
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(query.search))
             {
                 usersQuery = usersQuery.Where(u =>
