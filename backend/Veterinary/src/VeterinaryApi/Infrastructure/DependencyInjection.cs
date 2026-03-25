@@ -204,7 +204,20 @@ public static class DependencyInjection
                   trigger.ForJob(markExpiredSubscriptionJobKey)
                          .WithCronSchedule("0 0 0 * * ?");
               });
-          });
+
+              var cleanPendingSubscriptionsJobKey = new JobKey(
+                  nameof(CleanPendingSubscriptionsDailyJob));
+              configure
+              .AddJob<CleanPendingSubscriptionsDailyJob>((sp, opts) =>
+              {
+                  opts.WithIdentity(cleanPendingSubscriptionsJobKey);
+              })
+              .AddTrigger(trigger =>
+              {
+                  trigger.ForJob(cleanPendingSubscriptionsJobKey)
+                         .WithCronSchedule("0 0 0 * * ?");
+              });
+        });
         services.AddQuartzHostedService(opt =>
         opt.WaitForJobsToComplete = true
         );

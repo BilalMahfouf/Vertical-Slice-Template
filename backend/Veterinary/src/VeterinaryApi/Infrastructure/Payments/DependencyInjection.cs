@@ -13,7 +13,7 @@ public static class DependencyInjection
         var chargilySecretKey = Environment.GetEnvironmentVariable("CHARGILY_SECRET_KEY");
         services.AddGlobalChargilyPayClient(config =>
         {
-            config.IsLiveMode = false;
+            config.IsLiveMode = true;
             config.ApiSecretKey = chargilySecretKey ??
             throw new InvalidOperationException(
                 "CHARGILY_SECRET_KEY environment variable is not set.");

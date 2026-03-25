@@ -62,6 +62,7 @@ public sealed class Payment : Entity
         ProviderMetadata = metaData;
     }
 
+
     public void MarkRefunded() => Status = PaymentStatus.Refunded;
 
     public void SetProviderPaymentId(string? providerPaymentId)
