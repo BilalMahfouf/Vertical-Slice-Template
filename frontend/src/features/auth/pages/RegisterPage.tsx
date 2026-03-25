@@ -76,7 +76,7 @@ export default function RegisterPage() {
 
       if (loginSuccess) {
           toast.success(t(i18nKeyContainer.register.successMessage));
-          navigate("/create-clinic");
+          navigate("/onboarding/create-clinic");
       } else {
         // Fallback if login fails (e.g., verify email required)
         navigate("/login");

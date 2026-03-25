@@ -80,91 +80,102 @@ public sealed class DailyRemindersJob : IJob
 
         _logger.LogInformation("DailyRemindersJob started at {Time}", now);
 
-        var outboxMessages = new List<OutboxMessage>();
-
-        // ── 1. Upcoming appointment reminders ────────────────────────────────
-        var upcomingAppointments = await _db.Appointments
-            .Where(a =>
-                (a.Status == AppointmentStatus.Confirmed || a.Status == AppointmentStatus.Rescheduled)
-                && a.AppointmentDate >= now
-                && a.AppointmentDate <= in24Hours)
-            .Select(a => new { a.Id, a.TenantId })
-            .ToListAsync(ct);
-
-        foreach (var appt in upcomingAppointments)
+        try
         {
-            var ev = new UpcomingAppointmentReminderDomainEvent(appt.Id)
+            var outboxMessages = new List<OutboxMessage>();
+
+            // ── 1. Upcoming appointment reminders ────────────────────────────────
+            var upcomingAppointments = await _db.Appointments
+                .Where(a =>
+                    (a.Status == AppointmentStatus.Confirmed || a.Status == AppointmentStatus.Rescheduled)
+                    && a.AppointmentDate >= now
+                    && a.AppointmentDate <= in24Hours)
+                .Select(a => new { a.Id, a.TenantId })
+                .ToListAsync(ct);
+
+            foreach (var appt in upcomingAppointments)
             {
-                TenantId = appt.TenantId
-            };
-            outboxMessages.Add(ToOutboxMessage(ev));
-        }
+                var ev = new UpcomingAppointmentReminderDomainEvent(appt.Id)
+                {
+                    TenantId = appt.TenantId
+                };
+                outboxMessages.Add(ToOutboxMessage(ev));
+            }
 
-        _logger.LogInformation("Queued {Count} appointment reminders", upcomingAppointments.Count);
+            _logger.LogInformation("Queued {Count} appointment reminders", upcomingAppointments.Count);
 
-        // ── 2. Vaccination due-date reminders ─────────────────────────────────
-        var dueVaccinations = await _db.Vaccinations
-            .Where(v => v.DueTo.HasValue && v.DueTo.Value >= now && v.DueTo.Value <= in24Hours)
-            .Select(v => new { v.Id, v.TenantId })
-            .ToListAsync(ct);
+            // ── 2. Vaccination due-date reminders ─────────────────────────────────
+            var dueVaccinations = await _db.Vaccinations
+                .Where(v => v.DueTo.HasValue && v.DueTo.Value >= now && v.DueTo.Value <= in24Hours)
+                .Select(v => new { v.Id, v.TenantId })
+                .ToListAsync(ct);
 
-        foreach (var vacc in dueVaccinations)
-        {
-            var ev = new VaccinationDueDateReminderDomainEvent(vacc.Id)
+            foreach (var vacc in dueVaccinations)
             {
-                TenantId = vacc.TenantId
-            };
-            outboxMessages.Add(ToOutboxMessage(ev));
-        }
+                var ev = new VaccinationDueDateReminderDomainEvent(vacc.Id)
+                {
+                    TenantId = vacc.TenantId
+                };
+                outboxMessages.Add(ToOutboxMessage(ev));
+            }
 
-        _logger.LogInformation("Queued {Count} vaccination reminders", dueVaccinations.Count);
+            _logger.LogInformation("Queued {Count} vaccination reminders", dueVaccinations.Count);
 
-        // ── 3. Pending-payment visit reminders ────────────────────────────────
-        var pendingVisits = await _db.Visits
-            .Where(v => v.PaymentStatus == PaymentStatus.Pending)
-            .Select(v => new { v.Id, v.TenantId })
-            .ToListAsync(ct);
+            // ── 3. Pending-payment visit reminders ────────────────────────────────
+            var pendingVisits = await _db.Visits
+                .Where(v => v.PaymentStatus == PaymentStatus.Pending)
+                .Select(v => new { v.Id, v.TenantId })
+                .ToListAsync(ct);
 
-        foreach (var visit in pendingVisits)
-        {
-            var ev = new VisitPaymentPendingReminderDomainEvent(visit.Id)
+            foreach (var visit in pendingVisits)
             {
-                TenantId = visit.TenantId
-            };
-            outboxMessages.Add(ToOutboxMessage(ev));
-        }
+                var ev = new VisitPaymentPendingReminderDomainEvent(visit.Id)
+                {
+                    TenantId = visit.TenantId
+                };
+                outboxMessages.Add(ToOutboxMessage(ev));
+            }
 
-        _logger.LogInformation("Queued {Count} pending-payment visit reminders", pendingVisits.Count);
+            _logger.LogInformation("Queued {Count} pending-payment visit reminders", pendingVisits.Count);
 
-        // ── 4. Motivational daily reminder (one per active user) ──────────────
-        var userIds = await _db.Users
-            .Select(u => u.Id)
-            .ToListAsync(ct);
+            // ── 4. Motivational daily reminder (one per active user) ──────────────
+            var userIds = await _db.Users
+                .Select(u => u.Id)
+                .ToListAsync(ct);
 
-        foreach (var userId in userIds)
-        {
-            var ev = new MotivationalDailyReminderDomainEvent
+            foreach (var userId in userIds)
             {
-                TenantId = userId
-            };
-            outboxMessages.Add(ToOutboxMessage(ev));
+                var ev = new MotivationalDailyReminderDomainEvent
+                {
+                    TenantId = userId
+                };
+                outboxMessages.Add(ToOutboxMessage(ev));
+            }
+
+            _logger.LogInformation("Queued {Count} motivational reminders", userIds.Count);
+
+            // ── Persist all outbox messages in one round-trip ─────────────────────
+            if (outboxMessages.Count == 0)
+            {
+                _logger.LogInformation("DailyRemindersJob: nothing to queue today");
+                return;
+            }
+
+            _db.OutboxMessages.AddRange(outboxMessages);
+            await _db.SaveChangesAsync(ct);
+
+            _logger.LogInformation(
+                "DailyRemindersJob finished — {Total} outbox messages queued",
+                outboxMessages.Count);
         }
-
-        _logger.LogInformation("Queued {Count} motivational reminders", userIds.Count);
-
-        // ── Persist all outbox messages in one round-trip ─────────────────────
-        if (outboxMessages.Count == 0)
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
-            _logger.LogInformation("DailyRemindersJob: nothing to queue today");
-            return;
+            _logger.LogWarning("DailyRemindersJob was cancelled");
         }
-
-        _db.OutboxMessages.AddRange(outboxMessages);
-        await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "DailyRemindersJob finished — {Total} outbox messages queued",
-            outboxMessages.Count);
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "DailyRemindersJob failed unexpectedly");
+        }
     }
 
     /// <summary>

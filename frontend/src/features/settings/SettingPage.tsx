@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -51,6 +52,9 @@ import {
   Check,
   Bell,
   Monitor,
+  CreditCard,
+  CalendarDays,
+  RefreshCcw,
 } from "lucide-react";
 
 // Local imports
@@ -74,6 +78,10 @@ import {
   type PushStatus,
 } from "../notifications/push-notifications";
 import notificationApi from "../notifications/notification-api";
+import subscriptionApi, {
+  type MySubscriptionResponse,
+} from "../subscriptions/api/subscription-api";
+import { parseApiError, ErrorCodes } from "@/lib/api/error-types";
 
 // ============================================================================
 // Constants
@@ -85,7 +93,11 @@ const SUPPORTED_LANGUAGES = [
   { code: "ar", label: "العربية" },
 ] as const;
 
-type SettingsSection = "profile" | "clinic" | "notifications";
+type SettingsSection =
+  | "profile"
+  | "clinic"
+  | "notifications"
+  | "subscriptions";
 
 // ============================================================================
 // Settings Navigation Item
@@ -128,12 +140,14 @@ interface SettingsSidebarProps {
   activeSection: SettingsSection;
   onSectionChange: (section: SettingsSection) => void;
   t: (key: string) => string;
+  canViewSubscriptions: boolean;
 }
 
 function SettingsSidebar({
   activeSection,
   onSectionChange,
   t,
+  canViewSubscriptions,
 }: SettingsSidebarProps) {
   return (
     <nav className="flex flex-col gap-1">
@@ -155,6 +169,14 @@ function SettingsSidebar({
         isActive={activeSection === "notifications"}
         onClick={() => onSectionChange("notifications")}
       />
+      {canViewSubscriptions && (
+        <NavItem
+          icon={<CreditCard className="h-4 w-4" />}
+          label={t(i18nKeyContainer.settingsPage.tabs.subscriptions)}
+          isActive={activeSection === "subscriptions"}
+          onClick={() => onSectionChange("subscriptions")}
+        />
+      )}
     </nav>
   );
 }
@@ -167,9 +189,15 @@ interface MobileNavProps {
   activeSection: SettingsSection;
   onSectionChange: (section: SettingsSection) => void;
   t: (key: string) => string;
+  canViewSubscriptions: boolean;
 }
 
-function MobileNav({ activeSection, onSectionChange, t }: MobileNavProps) {
+function MobileNav({
+  activeSection,
+  onSectionChange,
+  t,
+  canViewSubscriptions,
+}: MobileNavProps) {
   const [open, setOpen] = useState(false);
 
   const handleSelect = (section: SettingsSection) => {
@@ -203,6 +231,7 @@ function MobileNav({ activeSection, onSectionChange, t }: MobileNavProps) {
               activeSection={activeSection}
               onSectionChange={handleSelect}
               t={t}
+              canViewSubscriptions={canViewSubscriptions}
             />
           </div>
         </div>
@@ -337,7 +366,7 @@ function ProfileSection({
       <Separator className="bg-border/20" />
 
       {/* Personal Information Card */}
-      <Card className=" border-white shadow-sm">
+      <Card className="border border-slate-200 bg-white shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-base font-medium">
             {t(i18nKeyContainer.settingsPage.profile.personalInfo.title)}
@@ -471,7 +500,7 @@ function ProfileSection({
       </Card>
 
       {/* Language & Preferences Card */}
-      <Card className="border-white shadow-sm">
+      <Card className="border border-slate-200 bg-white shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-base font-medium">
             {t(i18nKeyContainer.settingsPage.profile.preferences.title)}
@@ -523,7 +552,7 @@ function ProfileSectionSkeleton() {
         <Skeleton className="h-4 w-64 mt-2" />
       </div>
       <Separator className="bg-border/20" />
-      <Card className="border-white shadow-sm">
+      <Card className="border border-slate-200 bg-white shadow-sm">
         <CardHeader className="pb-4">
           <Skeleton className="h-5 w-36" />
           <Skeleton className="h-4 w-56 mt-1" />
@@ -538,7 +567,7 @@ function ProfileSectionSkeleton() {
           <Skeleton className="h-10 w-32" />
         </CardContent>
       </Card>
-      <Card className="border-border/20 shadow-sm">
+      <Card className="border border-slate-200 bg-white shadow-sm">
         <CardHeader className="pb-4">
           <Skeleton className="h-5 w-40" />
           <Skeleton className="h-4 w-56 mt-1" />
@@ -653,7 +682,7 @@ function ClinicSection({ userProfile, t }: ClinicSectionProps) {
       <Separator className="bg-border/20" />
 
       {/* Clinic Details Card */}
-      <Card className="border-white shadow-sm">
+      <Card className="border border-slate-200 bg-white shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-base font-medium">
             {t(i18nKeyContainer.settingsPage.clinic.basicInfo.title)}
@@ -803,7 +832,7 @@ function ClinicSectionSkeleton() {
         <Skeleton className="h-4 w-56 mt-2" />
       </div>
       <Separator className="bg-border/20" />
-      <Card className="border-white shadow-sm">
+      <Card className="border border-slate-200 bg-white shadow-sm">
         <CardHeader className="pb-4">
           <Skeleton className="h-5 w-28" />
           <Skeleton className="h-4 w-64 mt-1" />
@@ -899,7 +928,7 @@ function NotificationsSection({ t, i18n }: { t: (key: string) => string; i18n: {
       <Separator className="bg-border/20" />
 
       {/* Push Notifications Card */}
-      <Card className="border-white shadow-sm">
+      <Card className="border border-slate-200 bg-white shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-base font-medium">
             <Monitor className="h-4 w-4 text-muted-foreground" />
@@ -970,6 +999,320 @@ function NotificationsSection({ t, i18n }: { t: (key: string) => string; i18n: {
 }
 
 // ============================================================================
+// Subscriptions Section
+// ============================================================================
+
+function formatSubscriptionCurrency(amount: number, currency: string) {
+  return new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
+function formatSubscriptionDate(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
+    date
+  );
+}
+
+function getStatusBadgeVariant(status: string) {
+  switch (status.toLowerCase()) {
+    case "active":
+      return "success" as const;
+    case "trialing":
+      return "info" as const;
+    case "pending":
+      return "warning" as const;
+    case "paymentfailed":
+    case "pastdue":
+    case "cancelled":
+    case "expired":
+      return "error" as const;
+    default:
+      return "secondary" as const;
+  }
+}
+
+function getStatusTranslationKey(status: string) {
+  switch (status.toLowerCase()) {
+    case "active":
+      return i18nKeyContainer.settingsPage.subscriptions.statusValues.active;
+    case "trialing":
+      return i18nKeyContainer.settingsPage.subscriptions.statusValues.trialing;
+    case "pending":
+      return i18nKeyContainer.settingsPage.subscriptions.statusValues.pending;
+    case "paymentfailed":
+      return i18nKeyContainer.settingsPage.subscriptions.statusValues.paymentFailed;
+    case "pastdue":
+      return i18nKeyContainer.settingsPage.subscriptions.statusValues.pastDue;
+    case "cancelled":
+      return i18nKeyContainer.settingsPage.subscriptions.statusValues.cancelled;
+    case "expired":
+      return i18nKeyContainer.settingsPage.subscriptions.statusValues.expired;
+    default:
+      return i18nKeyContainer.settingsPage.subscriptions.statusValues.unknown;
+  }
+}
+
+function SubscriptionInfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-lg border border-slate-200 bg-white px-4 py-3">
+      <span className="text-sm text-slate-600">{label}</span>
+      <span className="text-sm font-medium text-slate-900 text-right">{value}</span>
+    </div>
+  );
+}
+
+function SubscriptionsSection({ t }: { t: (key: string) => string }) {
+  const subscriptionQuery = useQuery({
+    queryKey: ["subscription", "me"],
+    queryFn: subscriptionApi.getMySubscription,
+    retry: false,
+  });
+
+  if (subscriptionQuery.isLoading) {
+    return <SubscriptionsSectionSkeleton />;
+  }
+
+  const parsedError = subscriptionQuery.error
+    ? parseApiError(subscriptionQuery.error)
+    : null;
+  const isNotFound =
+    parsedError?.status === 404 ||
+    parsedError?.code === ErrorCodes.SUBSCRIPTION_NOT_FOUND;
+
+  if (subscriptionQuery.isError && !isNotFound) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight">
+            {t(i18nKeyContainer.settingsPage.subscriptions.header)}
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t(i18nKeyContainer.settingsPage.subscriptions.description)}
+          </p>
+        </div>
+
+        <Separator className="bg-border/20" />
+
+        <Card className="border border-slate-200 bg-white shadow-sm">
+          <CardContent className="py-8 space-y-4 text-center">
+            <p className="text-sm text-slate-700">
+              {t(i18nKeyContainer.settingsPage.subscriptions.loadError)}
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              className="cursor-pointer border-slate-200"
+              onClick={() => subscriptionQuery.refetch()}
+            >
+              <RefreshCcw className="me-2 h-4 w-4" />
+              {t(i18nKeyContainer.settingsPage.subscriptions.retry)}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isNotFound || !subscriptionQuery.data) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight">
+            {t(i18nKeyContainer.settingsPage.subscriptions.header)}
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t(i18nKeyContainer.settingsPage.subscriptions.description)}
+          </p>
+        </div>
+
+        <Separator className="bg-border/20" />
+
+        <Card className="border border-slate-200 bg-white shadow-sm">
+          <CardContent className="py-8 text-center">
+            <p className="text-sm text-slate-700">
+              {t(i18nKeyContainer.settingsPage.subscriptions.emptyTitle)}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              {t(i18nKeyContainer.settingsPage.subscriptions.emptyDescription)}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const subscription: MySubscriptionResponse = subscriptionQuery.data;
+  const formattedStart =
+    formatSubscriptionDate(subscription.currentPeriodStart) ??
+    t(i18nKeyContainer.settingsPage.subscriptions.notAvailable);
+  const formattedEnd =
+    formatSubscriptionDate(subscription.currentPeriodEnd) ??
+    t(i18nKeyContainer.settingsPage.subscriptions.notAvailable);
+  const formattedTrialEnd =
+    formatSubscriptionDate(subscription.trialEndsAt) ??
+    t(i18nKeyContainer.settingsPage.subscriptions.notAvailable);
+  const formattedCancelledAt =
+    formatSubscriptionDate(subscription.cancelledAt) ??
+    t(i18nKeyContainer.settingsPage.subscriptions.notAvailable);
+  const formattedUpdatedAt =
+    formatSubscriptionDate(subscription.updatedAt) ??
+    t(i18nKeyContainer.settingsPage.subscriptions.notAvailable);
+
+  const intervalText = subscription.planDisplayName
+    ? subscription.planDisplayName
+    : t(i18nKeyContainer.settingsPage.subscriptions.notAvailable);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold tracking-tight">
+          {t(i18nKeyContainer.settingsPage.subscriptions.header)}
+        </h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          {t(i18nKeyContainer.settingsPage.subscriptions.description)}
+        </p>
+      </div>
+
+      <Separator className="bg-border/20" />
+
+      <Card className="border border-slate-200 bg-white shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-base font-medium">
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            {t(i18nKeyContainer.settingsPage.subscriptions.overview.title)}
+          </CardTitle>
+          <CardDescription>
+            {t(i18nKeyContainer.settingsPage.subscriptions.overview.description)}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <SubscriptionInfoRow
+            label={t(i18nKeyContainer.settingsPage.subscriptions.planName)}
+            value={subscription.planName}
+          />
+          <SubscriptionInfoRow
+            label={t(i18nKeyContainer.settingsPage.subscriptions.price)}
+            value={formatSubscriptionCurrency(
+              subscription.planPrice,
+              subscription.planCurrency
+            )}
+          />
+          <SubscriptionInfoRow
+            label={t(i18nKeyContainer.settingsPage.subscriptions.interval)}
+            value={intervalText}
+          />
+          <div className="flex items-center justify-between gap-4 rounded-lg border border-slate-200 bg-white px-4 py-3">
+            <span className="text-sm text-slate-600">
+              {t(i18nKeyContainer.settingsPage.subscriptions.status)}
+            </span>
+            <Badge variant={getStatusBadgeVariant(subscription.subscriptionStatus)}>
+              {t(getStatusTranslationKey(subscription.subscriptionStatus))}
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border border-slate-200 bg-white shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-base font-medium">
+            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+            {t(i18nKeyContainer.settingsPage.subscriptions.billingCycle.title)}
+          </CardTitle>
+          <CardDescription>
+            {t(i18nKeyContainer.settingsPage.subscriptions.billingCycle.description)}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <SubscriptionInfoRow
+            label={t(i18nKeyContainer.settingsPage.subscriptions.currentPeriodStart)}
+            value={formattedStart}
+          />
+          <SubscriptionInfoRow
+            label={t(i18nKeyContainer.settingsPage.subscriptions.currentPeriodEnd)}
+            value={formattedEnd}
+          />
+          <SubscriptionInfoRow
+            label={t(i18nKeyContainer.settingsPage.subscriptions.trialEndsAt)}
+            value={formattedTrialEnd}
+          />
+          <SubscriptionInfoRow
+            label={t(i18nKeyContainer.settingsPage.subscriptions.cancelledAt)}
+            value={formattedCancelledAt}
+          />
+          <SubscriptionInfoRow
+            label={t(i18nKeyContainer.settingsPage.subscriptions.updatedAt)}
+            value={formattedUpdatedAt}
+          />
+        </CardContent>
+      </Card>
+
+      <Card className="border border-slate-200 bg-white shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-base font-medium">
+            {t(i18nKeyContainer.settingsPage.subscriptions.identifiers.title)}
+          </CardTitle>
+          <CardDescription>
+            {t(i18nKeyContainer.settingsPage.subscriptions.identifiers.description)}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <SubscriptionInfoRow
+            label={t(i18nKeyContainer.settingsPage.subscriptions.subscriptionId)}
+            value={subscription.id}
+          />
+          <SubscriptionInfoRow
+            label={t(i18nKeyContainer.settingsPage.subscriptions.previousSubscriptionId)}
+            value={
+              subscription.previousSubscriptionId ??
+              t(i18nKeyContainer.settingsPage.subscriptions.notAvailable)
+            }
+          />
+        </CardContent>
+      </Card>
+
+    </div>
+  );
+}
+
+function SubscriptionsSectionSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <Skeleton className="h-7 w-40" />
+        <Skeleton className="h-4 w-64 mt-2" />
+      </div>
+      <Separator className="bg-border/20" />
+      {Array.from({ length: 3 }).map((_, idx) => (
+        <Card key={idx} className="border border-slate-200 bg-white shadow-sm">
+          <CardHeader className="pb-4">
+            <Skeleton className="h-5 w-44" />
+            <Skeleton className="h-4 w-60 mt-1" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================================
 // Main Settings Page
 // ============================================================================
 
@@ -987,6 +1330,17 @@ export default function SettingPage() {
     queryKey: ["userProfile"],
     queryFn: settingsApi.getMe,
   });
+
+  const isDoctor = userProfile?.role?.toLowerCase() === "doctor";
+
+  useEffect(() => {
+   const foo=()=>{
+    if (activeSection === "subscriptions" && !isDoctor) {
+      setActiveSection("profile");
+    }
+   } 
+   foo();
+  }, [activeSection, isDoctor]);
 
   if (isProfileError) {
     return (
@@ -1011,6 +1365,7 @@ export default function SettingPage() {
             activeSection={activeSection}
             onSectionChange={setActiveSection}
             t={t}
+            canViewSubscriptions={isDoctor}
           />
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
@@ -1031,6 +1386,7 @@ export default function SettingPage() {
                 activeSection={activeSection}
                 onSectionChange={setActiveSection}
                 t={t}
+                canViewSubscriptions={isDoctor}
               />
             </div>
           </aside>
@@ -1050,6 +1406,9 @@ export default function SettingPage() {
             )}
             {activeSection === "notifications" && (
               <NotificationsSection t={t} i18n={i18n} />
+            )}
+            {activeSection === "subscriptions" && isDoctor && (
+              <SubscriptionsSection t={t} />
             )}
           </main>
         </div>

@@ -9,6 +9,9 @@ public static class Shared
             string Email,
             string Role,
             bool IsActive,
+            bool ClinicInfromationCompleted,    
+            string? SubscriptionStatus,
+            bool? IsSubscriptionExist,
             DateTime CreatedOnUtc
             );
 

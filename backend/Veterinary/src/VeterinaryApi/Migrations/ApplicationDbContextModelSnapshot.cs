@@ -280,7 +280,8 @@ namespace VeterinaryApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
+                    b.HasIndex("DoctorId")
+                        .IsUnique();
 
                     b.HasIndex("TenantId")
                         .HasDatabaseName("ix_clinics_tenant_id");
@@ -389,6 +390,222 @@ namespace VeterinaryApi.Migrations
                         .HasDatabaseName("ix_notification_push_subscriptions_tenant_id");
 
                     b.ToTable("notification_push_subscriptions", (string)null);
+                });
+
+            modelBuilder.Entity("VeterinaryApi.Domain.Subscriptions.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<DateTime?>("DeletedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_on_utc");
+
+                    b.Property<Guid>("DoctorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("doctor_id");
+
+                    b.Property<string>("FailureReason")
+                        .HasColumnType("text")
+                        .HasColumnName("failure_reason");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("idempotency_key");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("paid_at");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("provider");
+
+                    b.Property<string>("ProviderMetadata")
+                        .HasColumnType("text")
+                        .HasColumnName("provider_metadata");
+
+                    b.Property<string>("ProviderPaymentId")
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("provider_payment_id");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("smallint")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subscription_id");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique()
+                        .HasDatabaseName("ix_subscription_payments_idempotency_key");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_subscription_payments_tenant_id");
+
+                    b.ToTable("subscription_payments", (string)null);
+                });
+
+            modelBuilder.Entity("VeterinaryApi.Domain.Subscriptions.Subscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("cancelled_at");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<DateTime>("CurrentPeriodEnd")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("current_period_end");
+
+                    b.Property<DateTime>("CurrentPeriodStart")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("current_period_start");
+
+                    b.Property<DateTime?>("DeletedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_on_utc");
+
+                    b.Property<Guid>("DoctorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("doctor_id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("plan_id");
+
+                    b.Property<Guid?>("PreviousSubscriptionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("previous_subscription_id");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("smallint")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTime?>("TrialEndsAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("trial_ends_at");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("PreviousSubscriptionId");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_subscriptions_tenant_id");
+
+                    b.HasIndex("TenantId", "DoctorId", "Status")
+                        .HasDatabaseName("ix_subscriptions_tenant_id_doctor_id_status");
+
+                    b.ToTable("subscriptions", (string)null);
+                });
+
+            modelBuilder.Entity("VeterinaryApi.Domain.Subscriptions.SubscriptionPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("BillingInterval")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("billing_interval");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<DateTime?>("DeletedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_on_utc");
+
+                    b.Property<int>("IntervalCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("interval_count");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("slug");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<int>("TrialDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("trial_days");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_subscription_plans_tenant_id");
+
+                    b.HasIndex("TenantId", "Slug")
+                        .IsUnique()
+                        .HasDatabaseName("ix_subscription_plans_tenant_id_slug");
+
+                    b.ToTable("subscription_plans", (string)null);
                 });
 
             modelBuilder.Entity("VeterinaryApi.Domain.Users.User", b =>
@@ -765,12 +982,108 @@ namespace VeterinaryApi.Migrations
             modelBuilder.Entity("VeterinaryApi.Domain.Clinics.Clinic", b =>
                 {
                     b.HasOne("VeterinaryApi.Domain.Users.User", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
+                        .WithOne("Clinic")
+                        .HasForeignKey("VeterinaryApi.Domain.Clinics.Clinic", "DoctorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Doctor");
+                });
+
+            modelBuilder.Entity("VeterinaryApi.Domain.Subscriptions.Payment", b =>
+                {
+                    b.HasOne("VeterinaryApi.Domain.Subscriptions.Subscription", "Subscription")
+                        .WithMany("Payments")
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_subscription_payments_subscriptions_subscription_id");
+
+                    b.OwnsOne("VeterinaryApi.Domain.Common.Money", "Amount", b1 =>
+                        {
+                            b1.Property<Guid>("PaymentId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("currency");
+
+                            b1.HasKey("PaymentId");
+
+                            b1.ToTable("subscription_payments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PaymentId");
+                        });
+
+                    b.Navigation("Amount")
+                        .IsRequired();
+
+                    b.Navigation("Subscription");
+                });
+
+            modelBuilder.Entity("VeterinaryApi.Domain.Subscriptions.Subscription", b =>
+                {
+                    b.HasOne("VeterinaryApi.Domain.Users.User", null)
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_subscriptions_doctor_id");
+
+                    b.HasOne("VeterinaryApi.Domain.Subscriptions.SubscriptionPlan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_subscriptions_subscription_plans_plan_id");
+
+                    b.HasOne("VeterinaryApi.Domain.Subscriptions.Subscription", "PreviousSubscription")
+                        .WithMany()
+                        .HasForeignKey("PreviousSubscriptionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_subscriptions_previous_subscription_id");
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("PreviousSubscription");
+                });
+
+            modelBuilder.Entity("VeterinaryApi.Domain.Subscriptions.SubscriptionPlan", b =>
+                {
+                    b.OwnsOne("VeterinaryApi.Domain.Common.Money", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("SubscriptionPlanId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("price_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("price_currency");
+
+                            b1.HasKey("SubscriptionPlanId");
+
+                            b1.ToTable("subscription_plans");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SubscriptionPlanId");
+                        });
+
+                    b.Navigation("Price")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VeterinaryApi.Domain.Users.UserSession", b =>
@@ -820,7 +1133,7 @@ namespace VeterinaryApi.Migrations
                         .HasConstraintName("FK_visits_appointments_appointment_id");
 
                     b.HasOne("VeterinaryApi.Domain.Clients.Client", "Owner")
-                        .WithMany()
+                        .WithMany("Visits")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -836,11 +1149,22 @@ namespace VeterinaryApi.Migrations
             modelBuilder.Entity("VeterinaryApi.Domain.Clients.Client", b =>
                 {
                     b.Navigation("Animals");
+
+                    b.Navigation("Visits");
+                });
+
+            modelBuilder.Entity("VeterinaryApi.Domain.Subscriptions.Subscription", b =>
+                {
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("VeterinaryApi.Domain.Users.User", b =>
                 {
+                    b.Navigation("Clinic");
+
                     b.Navigation("Sessions");
+
+                    b.Navigation("Subscriptions");
                 });
 #pragma warning restore 612, 618
         }

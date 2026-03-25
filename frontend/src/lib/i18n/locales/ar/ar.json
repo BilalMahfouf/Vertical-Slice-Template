@@ -16,6 +16,7 @@
     "dashboard": "لوحة التحكم",
     "animals": "الحيوانات",
     "clients": "العملاء",
+    "subscriptionPlansNav": "خطط الاشتراك",
     "appointments": "المواعيد",
     "visits": "الزيارات",
     "notifications": "الإشعارات",
@@ -45,6 +46,69 @@
         "staffCount": "عدد الموظفين",
         "submit": "إنشاء العيادة",
         "successMessage": "تم إنشاء العيادة بنجاح!"
+    },
+    "onboarding": {
+        "clinicInfo": {
+            "title": "إعداد عيادتك",
+            "subtitle": "أخبرنا عن عيادتك للبدء.",
+            "clinicName": "اسم العيادة",
+            "clinicNamePlaceholder": "مثال: عيادة الشفاء البيطرية",
+            "phone": "رقم الهاتف",
+            "phonePlaceholder": "+213 5XX XX XX XX",
+            "address": "العنوان",
+            "addressPlaceholder": "عنوان الشارع",
+            "city": "المدينة",
+            "cityPlaceholder": "مثال: الجزائر العاصمة",
+            "submit": "متابعة",
+            "submitting": "جارٍ الحفظ...",
+            "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+        },
+        "subscribe": {
+            "title": "تفعيل عيادتك",
+            "subtitle": "خطة واحدة بسيطة. كل ما تحتاجه عيادتك.",
+            "planLabel": "الخطة الاحترافية",
+            "planName": "وصول كامل للعيادة",
+            "currency": "دج",
+            "period": "/ شهر",
+            "feature1": "إدارة المواعيد والزيارات",
+            "feature2": "سجلات الحيوانات والعملاء",
+            "feature3": "إدارة الموظفين والأدوار",
+            "feature4": "معالجة الدفع عبر Chargily",
+            "feature5": "مرضى ومواعيد غير محدودة",
+            "trialNote": "تجربة مجانية لمدة {{days}} يومًا — لا يلزم الدفع للبدء",
+            "cta": "ابدأ التجربة المجانية",
+            "ctaLoading": "جارٍ التحويل...",
+            "signinPrompt": "هل لديك حساب بالفعل؟",
+            "signinLink": "تسجيل الدخول",
+            "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+        },
+        "renew": {
+            "title": "تجديد اشتراكك",
+            "subtitle": "واصل استخدام مساحة العيادة دون انقطاع.",
+            "notice": "اشتراكك يحتاج إلى تجديد. اختر خطة للمتابعة.",
+            "cta": "جدد الآن",
+            "ctaLoading": "جارٍ التحويل...",
+            "signinPrompt": "تحتاج إلى حساب مختلف؟",
+            "signinLink": "تسجيل الدخول",
+            "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+        },
+        "payment": {
+            "success": {
+                "title": "تم الدفع بنجاح!",
+                "subtitle": "شكراً لاشتراكك.",
+                "verifying": "جارٍ التحقق من الدفع...",
+                "verified": "تم التحقق من الدفع بنجاح!",
+                "redirecting": "جارٍ التحويل إلى لوحة التحكم خلال {{seconds}} ثوانٍ...",
+                "timeout": "التحقق يستغرق وقتاً أطول من المتوقع",
+                "timeoutDesc": "قد يكون الدفع لا يزال قيد المعالجة. يمكنك محاولة الذهاب إلى لوحة التحكم يدوياً.",
+                "goToDashboard": "الذهاب إلى لوحة التحكم"
+            },
+            "failed": {
+                "title": "فشل الدفع",
+                "subtitle": "لم نتمكن من معالجة الدفع. يرجى المحاولة مرة أخرى.",
+                "tryAgain": "المحاولة مرة أخرى"
+            }
+        }
     },
     "common": {
         "cancel": "إلغاء",
@@ -378,6 +442,62 @@
         "animalInfo": "معلومات الحيوان",
         "relatedVisit": "الزيارة المرتبطة"
     },
+    "subscriptionPlans": {
+        "title": "خطط الاشتراك",
+        "description": "إدارة جميع خطط الاشتراك المتاحة لحسابات العيادات.",
+        "addPlan": "إضافة خطة",
+        "viewTitle": "تفاصيل خطة الاشتراك",
+        "viewDescription": "عرض المعلومات الكاملة لخطة الاشتراك.",
+        "loadError": "فشل تحميل خطط الاشتراك.",
+        "empty": "لم يتم العثور على خطط اشتراك.",
+        "genericError": "حدث خطأ أثناء معالجة هذه الخطة.",
+        "table": {
+            "name": "الاسم",
+            "slug": "المعرف",
+            "price": "السعر",
+            "interval": "فترة الفوترة",
+            "trialDays": "أيام التجربة",
+            "status": "الحالة",
+            "createdOn": "تاريخ الإنشاء"
+        },
+        "form": {
+            "id": "معرف الخطة",
+            "addTitle": "إضافة خطة اشتراك",
+            "addDescription": "أنشئ خطة اشتراك جديدة متاحة لمستخدمي العيادة.",
+            "updateTitle": "تحديث خطة الاشتراك",
+            "updateDescription": "قم بتعديل خطة الاشتراك المحددة.",
+            "name": "اسم الخطة",
+            "namePlaceholder": "مثال: الخطة الاحترافية",
+            "amount": "المبلغ",
+            "amountMinError": "مبلغ غير صالح",
+            "amountMinErrorDesc": "يجب أن يكون المبلغ أكبر من 50 دج.",
+            "invalidError": "نموذج غير صالح",
+            "invalidErrorDesc": "يرجى ملء جميع الحقول المطلوبة بقيم صحيحة.",
+            "currency": "العملة",
+            "billingInterval": "فترة الفوترة",
+            "selectInterval": "اختر الفترة",
+            "intervalCount": "عدد الفترات",
+            "trialDays": "أيام التجربة",
+            "addAction": "إضافة الخطة",
+            "updateAction": "تحديث الخطة"
+        },
+        "actions": {
+            "activate": "تفعيل",
+            "deactivate": "تعطيل"
+        },
+        "status": {
+            "active": "نشط",
+            "inactive": "غير نشط"
+        },
+        "intervals": {
+            "day": "يوم",
+            "week": "أسبوع",
+            "month": "شهر",
+            "year": "سنة"
+        },
+        "intervalSingle": "كل {{interval}}",
+        "intervalMultiple": "كل {{count}} {{interval}}"
+    },
     "toast": {
         "client": {
             "added": "تمت إضافة العميل",
@@ -386,6 +506,16 @@
             "updatedDesc": "تم تحديث معلومات العميل بنجاح.",
             "deleted": "تم حذف العميل",
             "deletedDesc": "تم حذف العميل بنجاح."
+        },
+        "subscriptionPlan": {
+            "added": "تمت إضافة الخطة",
+            "addedDesc": "تم إنشاء خطة الاشتراك بنجاح.",
+            "updated": "تم تحديث الخطة",
+            "updatedDesc": "تم تحديث خطة الاشتراك بنجاح.",
+            "activated": "تم تفعيل الخطة",
+            "activatedDesc": "خطة الاشتراك أصبحت نشطة الآن.",
+            "deactivated": "تم تعطيل الخطة",
+            "deactivatedDesc": "خطة الاشتراك أصبحت غير نشطة الآن."
         },
         "animal": {
             "added": "تمت إضافة الحيوان",
@@ -555,6 +685,28 @@
             "fetchUser": "فشل تحميل المستخدم",
             "fetchCurrentUser": "فشل تحميل المستخدم الحالي"
         },
+        "subscription": {
+            "notFound": "الاشتراك غير موجود",
+            "notFoundDesc": "لم يتم العثور على الاشتراك.",
+            "alreadyActive": "الاشتراك نشط بالفعل",
+            "alreadyActiveDesc": "لديك اشتراك نشط بالفعل.",
+            "alreadyCancelled": "الاشتراك ملغى بالفعل",
+            "alreadyCancelledDesc": "تم إلغاء هذا الاشتراك بالفعل.",
+            "notActive": "الاشتراك غير نشط",
+            "notActiveDesc": "اشتراكك غير نشط حالياً.",
+            "checkoutFailed": "فشل الدفع",
+            "checkoutFailedDesc": "لم نتمكن من معالجة الدفع. يرجى المحاولة مرة أخرى.",
+            "planNotFound": "الخطة غير موجودة",
+            "planNotFoundDesc": "لم يتم العثور على خطة الاشتراك المحددة."
+        },
+        "subscriptionPlan": {
+            "alreadyExists": "خطة الاشتراك موجودة بالفعل",
+            "alreadyExistsDesc": "توجد خطة اشتراك بنفس الاسم أو المعرف بالفعل.",
+            "alreadyActive": "خطة الاشتراك نشطة بالفعل",
+            "alreadyActiveDesc": "خطة الاشتراك هذه نشطة بالفعل.",
+            "alreadyNotActive": "خطة الاشتراك غير نشطة بالفعل",
+            "alreadyNotActiveDesc": "خطة الاشتراك هذه غير نشطة بالفعل."
+        },
         "validation": "خطأ في التحقق",
         "validationDesc": "يرجى التحقق من المدخلات والمحاولة مرة أخرى.",
         "network": "خطأ في الاتصال",
@@ -637,7 +789,8 @@
         "tabs": {
             "profile": "الملف الشخصي",
             "clinic": "العيادة",
-            "notifications": "الإشعارات"
+            "notifications": "الإشعارات",
+            "subscriptions": "الاشتراك"
         },
         "profile": {
             "header": "المعلومات الشخصية",
@@ -714,6 +867,57 @@
             "header": "تفضيلات الإشعارات",
             "description": "إدارة كيفية تلقي الإشعارات",
             "pushDesc": "استقبل إشعارات سطح المكتب حتى عندما يكون التطبيق في الخلفية."
+        },
+        "subscriptions": {
+            "header": "الاشتراك",
+            "description": "راجع خطتك الحالية وفترة الفوترة",
+            "loadError": "تعذر تحميل تفاصيل الاشتراك.",
+            "retry": "إعادة المحاولة",
+            "emptyTitle": "لا يوجد اشتراك نشط",
+            "emptyDescription": "ستظهر تفاصيل الاشتراك هنا عند تفعيل خطة.",
+            "planName": "الخطة",
+            "price": "السعر",
+            "interval": "الفترة",
+            "status": "الحالة",
+            "currentPeriodStart": "بداية الفترة الحالية",
+            "currentPeriodEnd": "نهاية الفترة الحالية",
+            "trialEndsAt": "نهاية التجربة",
+            "cancelledAt": "تاريخ الإلغاء",
+            "updatedAt": "آخر تحديث",
+            "subscriptionId": "معرف الاشتراك",
+            "previousSubscriptionId": "معرف الاشتراك السابق",
+            "notAvailable": "غير متوفر",
+            "overview": {
+                "title": "نظرة عامة على الخطة",
+                "description": "خطتك الحالية وحالة الاشتراك"
+            },
+            "billingCycle": {
+                "title": "دورة الفوترة",
+                "description": "التواريخ المتعلقة بفترة اشتراكك الحالية"
+            },
+            "identifiers": {
+                "title": "المعرفات",
+                "description": "مراجع تقنية للدعم والمتابعة"
+            },
+            "actions": {
+                "title": "الإجراءات",
+                "description": "سيتم تفعيل تعديل الخطة عند توفر نقاط النهاية في الخلفية",
+                "upgrade": "ترقية",
+                "downgrade": "تخفيض",
+                "cancel": "إلغاء",
+                "renew": "تجديد",
+                "comingSoon": "هذه الإجراءات ستكون متاحة قريبًا."
+            },
+            "statusValues": {
+                "active": "نشط",
+                "trialing": "فترة تجريبية",
+                "pending": "قيد الانتظار",
+                "paymentFailed": "فشل الدفع",
+                "pastDue": "متأخر السداد",
+                "cancelled": "ملغي",
+                "expired": "منتهي",
+                "unknown": "غير معروف"
+            }
         }
     },
     "auth": {

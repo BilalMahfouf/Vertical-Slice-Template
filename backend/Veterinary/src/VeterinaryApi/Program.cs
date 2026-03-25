@@ -9,6 +9,7 @@ using FluentValidation;
 using VeterinaryApi.Common.Extensions;
 using VeterinaryApi.Infrastructure.Notifications;
 using VeterinaryApi.Common;
+using VeterinaryApi.Infrastructure.Payments;
 
 
 Env.Load();
@@ -51,6 +52,9 @@ builder.Services.Scan(scan => scan.FromAssembliesOf(typeof(Program))
     .AsImplementedInterfaces()
         .WithScopedLifetime());
 
+builder.Services.AddPayments();
+
+
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddCarter();
@@ -84,6 +88,10 @@ builder.Services.AddCors(options =>
 });
 
 
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    options.AllowSynchronousIO = true;
+//});
 
 builder.Services.AddAuthorization();
 
@@ -101,9 +109,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
     AppSettings.appMode = AppMode.Dev;
 }
-
-
-
 app.ApplyMigrations();
 app.UseHttpsRedirection();
 
@@ -117,6 +122,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<NotificationHub>("/hubs/notification");
+
+app.UsePayments();
 
 var api = app.MapGroup("/api/v1");
 api.MapCarter();

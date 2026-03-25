@@ -162,7 +162,7 @@ public class ForgetPasswordTests
     }
 
     [Fact]
-    public async Task Handle_WhenUserExists_ShouldSendEmailWithResetLink()
+    public async Task Handle_WhenUserExists_ShouldNotSendEmailDirectly()
     {
         // Arrange
         var email = "test@example.com";
@@ -182,10 +182,8 @@ public class ForgetPasswordTests
             .Setup(jp => jp.GenerateToken(It.IsAny<User>()))
             .Returns(expectedToken);
 
-        SendEmailRequest? capturedEmailRequest = null;
         _mockEmailService
             .Setup(es => es.SendEmailAsync(It.IsAny<SendEmailRequest>(), It.IsAny<CancellationToken>()))
-            .Callback<SendEmailRequest, CancellationToken>((request, ct) => capturedEmailRequest = request)
             .ReturnsAsync(Result.Success);
 
         _mockDbContext
@@ -200,12 +198,7 @@ public class ForgetPasswordTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.NotNull(capturedEmailRequest);
-        Assert.Equal(email, capturedEmailRequest.To);
-        Assert.Equal("Reset Password", capturedEmailRequest.Subject);
-        Assert.Contains("Reset Password", capturedEmailRequest.Body);
-        Assert.Contains(expectedToken, capturedEmailRequest.Body);
-        _mockEmailService.Verify(es => es.SendEmailAsync(It.IsAny<SendEmailRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mockEmailService.Verify(es => es.SendEmailAsync(It.IsAny<SendEmailRequest>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -241,7 +234,7 @@ public class ForgetPasswordTests
         // Assert
         Assert.True(result.IsSuccess);
         _mockDbContext.Verify(db => db.SaveChangesAsync(cancellationToken), Times.Once);
-        _mockEmailService.Verify(es => es.SendEmailAsync(It.IsAny<SendEmailRequest>(), cancellationToken), Times.Once);
+        _mockEmailService.Verify(es => es.SendEmailAsync(It.IsAny<SendEmailRequest>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]

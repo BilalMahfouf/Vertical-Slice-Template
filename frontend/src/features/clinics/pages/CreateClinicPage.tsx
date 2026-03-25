@@ -50,7 +50,7 @@ export default function CreateClinicPage() {
     try {
       await createClinicMutation.mutateAsync(values);
       toast.success(t(i18nKeyContainer.createClinic.successMessage));
-      navigate("/dashboard");
+      navigate("/onboarding/subscribe");
     } catch (error: unknown) {
          // Handle Global Errors
          const axiosError = error as { response?: { data?: { errors?: Array<string | { description: string }> } } };

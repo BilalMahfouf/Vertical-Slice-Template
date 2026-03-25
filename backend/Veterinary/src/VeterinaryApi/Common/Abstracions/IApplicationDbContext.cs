@@ -4,6 +4,7 @@ using VeterinaryApi.Domain.Appointments;
 using VeterinaryApi.Domain.Clients;
 using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Domain.Notifications;
+using VeterinaryApi.Domain.Subscriptions;
 using VeterinaryApi.Domain.Users;
 using VeterinaryApi.Domain.Vaccinations;
 using VeterinaryApi.Domain.Visits;
@@ -60,6 +61,10 @@ public interface IApplicationDbContext
 
     /// <summary>Gets the EF Core <see cref="DbSet{T}"/> for <see cref="Vaccination"/> entities.</summary>
     public DbSet<Vaccination> Vaccinations { get; }
+
+    public DbSet<Subscription> Subscriptions { get; }
+    public DbSet<SubscriptionPlan> SubscriptionPlans { get; }
+    public DbSet<Payment> SubscriptionPayments { get; }
 
     /// <summary>
     /// Asynchronously saves all pending changes in this unit of work to the database.

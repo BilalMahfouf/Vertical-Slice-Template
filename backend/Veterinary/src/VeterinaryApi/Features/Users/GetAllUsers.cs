@@ -13,9 +13,9 @@ namespace VeterinaryApi.Features.Users;
 
 public static class GetAllUsers
 {
-   public sealed class QueryHandler(
-        IApplicationDbContext db)
-        : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
+    public sealed class QueryHandler(
+         IApplicationDbContext db)
+         : IQueryHandler<TableRequest<Response>, OffSetPagedList<Response>>
     {
 
 
@@ -35,7 +35,7 @@ public static class GetAllUsers
             {
                 usersQuery = usersQuery.Where(u =>
                     u.UserName.ToLower().Contains(query.search) ||
-                    u.FirstName.ToLower().Contains(query.search) || 
+                    u.FirstName.ToLower().Contains(query.search) ||
                     u.LastName.ToLower().Contains(query.search) ||
                     u.Email.ToLower().Contains(query.search));
             }
@@ -46,6 +46,9 @@ public static class GetAllUsers
                 e.Email,
                 e.Role.ToString(),
                 e.IsActive,
+                e.Clinic != null,
+                null,
+                null,
                 e.CreatedOnUtc
             ));
             Expression<Func<Response, object>>? orderBy = query.SortColumn?.ToLower() switch
@@ -72,7 +75,7 @@ public static class GetAllUsers
             {
                 tempQuery = tempQuery.OrderBy(orderBy);
             }
-            var items =  tempQuery
+            var items = tempQuery
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToList();

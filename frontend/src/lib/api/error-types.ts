@@ -91,7 +91,18 @@ export const ErrorCodes = {
   USER_INVALID_PASSWORD_LENGTH: "User.InvalidPasswordLength",
   USER_EMAIL_ALREADY_IN_USE: "User.EmailAlreadyInUse",
   USER_INVALID_RESET_TOKEN: "User.InvalidResetToken",
-  
+
+  // Subscription errors
+  SUBSCRIPTION_NOT_FOUND: "Subscription.NotFound",
+  SUBSCRIPTION_ACTIVE_ALREADY_EXISTS: "Subscription.ActiveSubscriptionAlreadyExist",
+  SUBSCRIPTION_ALREADY_CANCELLED: "Subscription.SubscriptionAlreadyCancelled",
+  SUBSCRIPTION_NOT_ACTIVE: "Subscription.SubscriptionNotActive",
+  SUBSCRIPTION_FAILED_CHECKOUT: "Subscription.FailedToRetrieveCheckout",
+  SUBSCRIPTION_PLAN_NOT_FOUND: "SubscriptionPlan.NotFound",
+  SUBSCRIPTION_PLAN_ALREADY_EXISTS: "SubscriptionPlan.AlreadyExists",
+  SUBSCRIPTION_PLAN_ALREADY_ACTIVE: "SubscriptionPlan.AlreadyActive",
+  SUBSCRIPTION_PLAN_ALREADY_NOT_ACTIVE: "SubscriptionPlan.AlreadyNotActive",
+
   // Generic errors
   VALIDATION_ERROR: "Validation.Error",
   SERVER_ERROR: "Server.Error",
@@ -199,7 +210,18 @@ export function getErrorI18nKey(errorCode: string): string {
     [ErrorCodes.USER_NOT_FOUND]: "errors.user.notFound",
     [ErrorCodes.USER_INVALID_CREDENTIALS]: "errors.user.invalidCredentials",
     [ErrorCodes.USER_EXPIRED_REFRESH_TOKEN]: "errors.user.expiredToken",
-    
+
+    // Subscription errors
+    [ErrorCodes.SUBSCRIPTION_NOT_FOUND]: "errors.subscription.notFound",
+    [ErrorCodes.SUBSCRIPTION_ACTIVE_ALREADY_EXISTS]: "errors.subscription.alreadyActive",
+    [ErrorCodes.SUBSCRIPTION_ALREADY_CANCELLED]: "errors.subscription.alreadyCancelled",
+    [ErrorCodes.SUBSCRIPTION_NOT_ACTIVE]: "errors.subscription.notActive",
+    [ErrorCodes.SUBSCRIPTION_FAILED_CHECKOUT]: "errors.subscription.checkoutFailed",
+    [ErrorCodes.SUBSCRIPTION_PLAN_NOT_FOUND]: "errors.subscription.planNotFound",
+    [ErrorCodes.SUBSCRIPTION_PLAN_ALREADY_EXISTS]: "errors.subscriptionPlan.alreadyExists",
+    [ErrorCodes.SUBSCRIPTION_PLAN_ALREADY_ACTIVE]: "errors.subscriptionPlan.alreadyActive",
+    [ErrorCodes.SUBSCRIPTION_PLAN_ALREADY_NOT_ACTIVE]: "errors.subscriptionPlan.alreadyNotActive",
+
     // Generic errors
     [ErrorCodes.VALIDATION_ERROR]: "errors.validation",
     [ErrorCodes.SERVER_ERROR]: "errors.server",

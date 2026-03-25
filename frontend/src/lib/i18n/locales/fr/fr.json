@@ -16,6 +16,7 @@
     "dashboard": "Tableau de bord",
     "animals": "Animaux",
     "clients": "Clients",
+    "subscriptionPlansNav": "Plans d'abonnement",
     "appointments": "Rendez-vous",
     "visits": "Visites",
     "notifications": "Notifications",
@@ -45,6 +46,69 @@
         "staffCount": "Nombre de personnel",
         "submit": "Cr\u00e9er la clinique",
         "successMessage": "Clinique cr\u00e9\u00e9e avec succ\u00e8s !"
+    },
+    "onboarding": {
+        "clinicInfo": {
+            "title": "Configurez votre clinique",
+            "subtitle": "Parlez-nous de votre clinique pour commencer.",
+            "clinicName": "Nom de la clinique",
+            "clinicNamePlaceholder": "ex. Clinique Vétérinaire Al Shifa",
+            "phone": "Numéro de téléphone",
+            "phonePlaceholder": "+213 5XX XX XX XX",
+            "address": "Adresse",
+            "addressPlaceholder": "Adresse postale",
+            "city": "Ville",
+            "cityPlaceholder": "ex. Alger",
+            "submit": "Continuer",
+            "submitting": "Enregistrement...",
+            "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
+        },
+        "subscribe": {
+            "title": "Activez votre clinique",
+            "subtitle": "Un seul forfait. Tout ce dont votre clinique a besoin.",
+            "planLabel": "Forfait Professionnel",
+            "planName": "Accès complet à la clinique",
+            "currency": "DZD",
+            "period": "/ mois",
+            "feature1": "Gestion des rendez-vous et des visites",
+            "feature2": "Dossiers des animaux et des clients",
+            "feature3": "Gestion du personnel et des rôles",
+            "feature4": "Paiement via Chargily",
+            "feature5": "Patients et rendez-vous illimités",
+            "trialNote": "Essai gratuit de {{days}} jours — aucun paiement requis",
+            "cta": "Commencer l'essai gratuit",
+            "ctaLoading": "Redirection...",
+            "signinPrompt": "Vous avez déjà un compte ?",
+            "signinLink": "Se connecter",
+            "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
+        },
+        "renew": {
+            "title": "Renouvelez votre abonnement",
+            "subtitle": "Continuez à utiliser votre espace clinique sans interruption.",
+            "notice": "Votre abonnement doit être renouvelé. Sélectionnez un forfait pour continuer.",
+            "cta": "Renouveler maintenant",
+            "ctaLoading": "Redirection...",
+            "signinPrompt": "Besoin d'un autre compte ?",
+            "signinLink": "Se connecter",
+            "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
+        },
+        "payment": {
+            "success": {
+                "title": "Paiement réussi !",
+                "subtitle": "Merci pour votre abonnement.",
+                "verifying": "Vérification de votre paiement...",
+                "verified": "Paiement vérifié avec succès !",
+                "redirecting": "Redirection vers le tableau de bord dans {{seconds}} secondes...",
+                "timeout": "La vérification prend plus de temps que prévu",
+                "timeoutDesc": "Votre paiement est peut-être encore en cours de traitement. Vous pouvez essayer d'accéder au tableau de bord manuellement.",
+                "goToDashboard": "Aller au tableau de bord"
+            },
+            "failed": {
+                "title": "Échec du paiement",
+                "subtitle": "Nous n'avons pas pu traiter votre paiement. Veuillez réessayer.",
+                "tryAgain": "Réessayer"
+            }
+        }
     },
     "common": {
         "cancel": "Annuler",
@@ -378,6 +442,62 @@
         "animalInfo": "Informations de l'animal",
         "relatedVisit": "Visite associée"
     },
+    "subscriptionPlans": {
+        "title": "Plans d'abonnement",
+        "description": "Gérez tous les plans d'abonnement disponibles pour les comptes de clinique.",
+        "addPlan": "Ajouter un plan",
+        "viewTitle": "Détails du plan d'abonnement",
+        "viewDescription": "Afficher les informations complètes du plan d'abonnement.",
+        "loadError": "Échec du chargement des plans d'abonnement.",
+        "empty": "Aucun plan d'abonnement trouvé.",
+        "genericError": "Une erreur s'est produite lors du traitement de ce plan.",
+        "table": {
+            "name": "Nom",
+            "slug": "Slug",
+            "price": "Prix",
+            "interval": "Intervalle de facturation",
+            "trialDays": "Jours d'essai",
+            "status": "Statut",
+            "createdOn": "Créé le"
+        },
+        "form": {
+            "id": "ID du plan",
+            "addTitle": "Ajouter un plan d'abonnement",
+            "addDescription": "Créez un nouveau plan d'abonnement disponible pour les utilisateurs de la clinique.",
+            "updateTitle": "Mettre à jour le plan d'abonnement",
+            "updateDescription": "Modifiez le plan d'abonnement sélectionné.",
+            "name": "Nom du plan",
+            "namePlaceholder": "ex. Plan Professionnel",
+            "amount": "Montant",
+            "amountMinError": "Montant invalide",
+            "amountMinErrorDesc": "Le montant doit être supérieur à 50 DZD.",
+            "invalidError": "Formulaire invalide",
+            "invalidErrorDesc": "Veuillez renseigner tous les champs obligatoires avec des valeurs valides.",
+            "currency": "Devise",
+            "billingInterval": "Intervalle de facturation",
+            "selectInterval": "Sélectionner un intervalle",
+            "intervalCount": "Nombre d'intervalles",
+            "trialDays": "Jours d'essai",
+            "addAction": "Ajouter le plan",
+            "updateAction": "Mettre à jour le plan"
+        },
+        "actions": {
+            "activate": "Activer",
+            "deactivate": "Désactiver"
+        },
+        "status": {
+            "active": "Actif",
+            "inactive": "Inactif"
+        },
+        "intervals": {
+            "day": "jour",
+            "week": "semaine",
+            "month": "mois",
+            "year": "année"
+        },
+        "intervalSingle": "Chaque {{interval}}",
+        "intervalMultiple": "Chaque {{count}} {{interval}}"
+    },
     "toast": {
         "client": {
             "added": "Client ajouté",
@@ -386,6 +506,16 @@
             "updatedDesc": "Les informations du client ont été mises à jour avec succès.",
             "deleted": "Client supprimé",
             "deletedDesc": "Le client a été supprimé avec succès."
+        },
+        "subscriptionPlan": {
+            "added": "Plan ajouté",
+            "addedDesc": "Le plan d'abonnement a été créé avec succès.",
+            "updated": "Plan mis à jour",
+            "updatedDesc": "Le plan d'abonnement a été mis à jour avec succès.",
+            "activated": "Plan activé",
+            "activatedDesc": "Le plan d'abonnement est maintenant actif.",
+            "deactivated": "Plan désactivé",
+            "deactivatedDesc": "Le plan d'abonnement est maintenant inactif."
         },
         "animal": {
             "added": "Animal ajouté",
@@ -555,6 +685,28 @@
             "fetchUser": "Échec du chargement de l'utilisateur",
             "fetchCurrentUser": "Échec du chargement de l'utilisateur courant"
         },
+        "subscription": {
+            "notFound": "Abonnement introuvable",
+            "notFoundDesc": "L'abonnement n'a pas été trouvé.",
+            "alreadyActive": "Abonnement déjà actif",
+            "alreadyActiveDesc": "Vous avez déjà un abonnement actif.",
+            "alreadyCancelled": "Abonnement déjà annulé",
+            "alreadyCancelledDesc": "Cet abonnement a déjà été annulé.",
+            "notActive": "Abonnement non actif",
+            "notActiveDesc": "Votre abonnement n'est pas actif actuellement.",
+            "checkoutFailed": "Échec du paiement",
+            "checkoutFailedDesc": "Nous n'avons pas pu traiter votre paiement. Veuillez réessayer.",
+            "planNotFound": "Forfait introuvable",
+            "planNotFoundDesc": "Le forfait d'abonnement sélectionné n'a pas été trouvé."
+        },
+        "subscriptionPlan": {
+            "alreadyExists": "Plan d'abonnement déjà existant",
+            "alreadyExistsDesc": "Un plan d'abonnement avec le même nom ou slug existe déjà.",
+            "alreadyActive": "Plan d'abonnement déjà actif",
+            "alreadyActiveDesc": "Ce plan d'abonnement est déjà actif.",
+            "alreadyNotActive": "Plan d'abonnement déjà inactif",
+            "alreadyNotActiveDesc": "Ce plan d'abonnement est déjà inactif."
+        },
         "validation": "Erreur de validation",
         "validationDesc": "Veuillez vérifier vos informations et réessayer.",
         "network": "Erreur de connexion",
@@ -637,7 +789,8 @@
         "tabs": {
             "profile": "Profil",
             "clinic": "Clinique",
-            "notifications": "Notifications"
+            "notifications": "Notifications",
+            "subscriptions": "Abonnement"
         },
         "profile": {
             "header": "Informations personnelles",
@@ -714,6 +867,57 @@
             "header": "Préférences de notification",
             "description": "Gérez la façon dont vous recevez les notifications",
             "pushDesc": "Recevez des notifications bureau même lorsque l'application est en arrière-plan."
+        },
+        "subscriptions": {
+            "header": "Abonnement",
+            "description": "Consultez votre plan actif et votre période de facturation",
+            "loadError": "Échec du chargement des détails d'abonnement.",
+            "retry": "Réessayer",
+            "emptyTitle": "Aucun abonnement actif trouvé",
+            "emptyDescription": "Les détails de votre abonnement apparaîtront ici lorsqu'un plan sera actif.",
+            "planName": "Plan",
+            "price": "Prix",
+            "interval": "Intervalle",
+            "status": "Statut",
+            "currentPeriodStart": "Début de la période actuelle",
+            "currentPeriodEnd": "Fin de la période actuelle",
+            "trialEndsAt": "Fin de l'essai",
+            "cancelledAt": "Annulé le",
+            "updatedAt": "Dernière mise à jour",
+            "subscriptionId": "ID d'abonnement",
+            "previousSubscriptionId": "ID d'abonnement précédent",
+            "notAvailable": "Non disponible",
+            "overview": {
+                "title": "Vue d'ensemble du plan",
+                "description": "Votre plan actuel et le statut de l'abonnement"
+            },
+            "billingCycle": {
+                "title": "Cycle de facturation",
+                "description": "Dates liées à votre période d'abonnement actuelle"
+            },
+            "identifiers": {
+                "title": "Identifiants",
+                "description": "Références techniques pour le support"
+            },
+            "actions": {
+                "title": "Actions",
+                "description": "Les changements de plan seront activés dès que les endpoints backend seront disponibles",
+                "upgrade": "Mettre à niveau",
+                "downgrade": "Rétrograder",
+                "cancel": "Annuler",
+                "renew": "Renouveler",
+                "comingSoon": "Ces actions seront disponibles bientôt."
+            },
+            "statusValues": {
+                "active": "Actif",
+                "trialing": "En essai",
+                "pending": "En attente",
+                "paymentFailed": "Paiement échoué",
+                "pastDue": "En retard",
+                "cancelled": "Annulé",
+                "expired": "Expiré",
+                "unknown": "Inconnu"
+            }
         }
     },
     "auth": {

@@ -39,6 +39,12 @@ public class ResetPasswordTests
         _mockDbContext.Setup(db => db.Users).Returns(mockUserDbSet.Object);
     }
 
+    private void SetupUserSessionsDbSet(List<UserSession> sessions)
+    {
+        var mockUserSessionDbSet = DbSetMockHelper.CreateMockDbSet(sessions);
+        _mockDbContext.Setup(db => db.UserSessions).Returns(mockUserSessionDbSet.Object);
+    }
+
     private static User CreateUserWithSessions(
         string firstName,
         string lastName,
@@ -101,6 +107,7 @@ public class ResetPasswordTests
             []);
 
         SetupUsersDbSet([user]);
+        SetupUserSessionsDbSet([]);
 
         var handler = CreateHandler();
         var command = new ResetPassword.ResetPasswordCommand(
@@ -143,6 +150,7 @@ public class ResetPasswordTests
             [expiredSession]);
 
         SetupUsersDbSet([user]);
+        SetupUserSessionsDbSet([expiredSession]);
 
         var handler = CreateHandler();
         var command = new ResetPassword.ResetPasswordCommand(
@@ -184,6 +192,7 @@ public class ResetPasswordTests
             [refreshSession]);
 
         SetupUsersDbSet([user]);
+        SetupUserSessionsDbSet([refreshSession]);
 
         var handler = CreateHandler();
         var command = new ResetPassword.ResetPasswordCommand(
@@ -227,6 +236,7 @@ public class ResetPasswordTests
             [validSession]);
 
         SetupUsersDbSet([user]);
+        SetupUserSessionsDbSet([validSession]);
 
         _mockPasswordHasher
             .Setup(ph => ph.Hash(newPassword))
@@ -278,6 +288,7 @@ public class ResetPasswordTests
             [validSession]);
 
         SetupUsersDbSet([user]);
+        SetupUserSessionsDbSet([validSession]);
 
         _mockPasswordHasher.Setup(ph => ph.Hash(It.IsAny<string>())).Returns("new-hash");
 
@@ -343,6 +354,7 @@ public class ResetPasswordTests
             [refreshSession, expiredResetSession, validResetSession]);
 
         SetupUsersDbSet([user]);
+        SetupUserSessionsDbSet([refreshSession, expiredResetSession, validResetSession]);
 
         _mockPasswordHasher.Setup(ph => ph.Hash(It.IsAny<string>())).Returns("new-hash");
 
@@ -388,6 +400,7 @@ public class ResetPasswordTests
             [validSession]);
 
         SetupUsersDbSet([user]);
+        SetupUserSessionsDbSet([validSession]);
 
         _mockPasswordHasher.Setup(ph => ph.Hash(It.IsAny<string>())).Returns("new-admin-hash");
 
@@ -434,6 +447,7 @@ public class ResetPasswordTests
             [justExpiredSession]);
 
         SetupUsersDbSet([user]);
+        SetupUserSessionsDbSet([justExpiredSession]);
 
         var handler = CreateHandler();
         var command = new ResetPassword.ResetPasswordCommand(

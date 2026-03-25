@@ -5,6 +5,7 @@ using VeterinaryApi.Domain.Appointments;
 using VeterinaryApi.Domain.Clients;
 using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Domain.Notifications;
+using VeterinaryApi.Domain.Subscriptions;
 using VeterinaryApi.Domain.Users;
 using VeterinaryApi.Domain.Vaccinations;
 using VeterinaryApi.Domain.Visits;
@@ -73,6 +74,12 @@ public class ApplicationDbContext : DbContext
 
     /// <inheritdoc />
     public DbSet<Vaccination> Vaccinations { get; set; } = null!;
+
+
+    public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+    public DbSet<Payment> SubscriptionPayments { get; set; }
+
 
     /// <summary>
     /// Configures the EF Core model by applying all entity configurations found in the assembly.
