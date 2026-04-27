@@ -170,6 +170,14 @@ Without an outbox, domain state could commit while event delivery fails. This te
 ### Event flow diagram
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {
+  "background": "#0b1220",
+  "primaryColor": "#111827",
+  "primaryBorderColor": "#38bdf8",
+  "primaryTextColor": "#e5e7eb",
+  "lineColor": "#94a3b8",
+  "tertiaryColor": "#0f172a"
+}}}%%
 flowchart TB
   subgraph P1[Transaction Boundary - Write Phase]
     C1[1. Feature command executes]
@@ -203,8 +211,8 @@ flowchart TB
   H2 --> MAIL
   HN --> REALTIME
 
-  classDef phase fill:#f8fafc,stroke:#475569,stroke-width:1px;
-  classDef effect fill:#f0f9ff,stroke:#0284c7,stroke-width:1px;
+  classDef phase fill:#111827,stroke:#38bdf8,stroke-width:1.2px,color:#e5e7eb;
+  classDef effect fill:#172554,stroke:#60a5fa,stroke-width:1.2px,color:#e5e7eb;
   class P1,P2 phase;
   class P3 effect;
 ```
