@@ -121,10 +121,7 @@ public static class RefreshToken
 
                 var command = new RefreshTokenCommand(refreshToken);
                 var result = await handler.Handle(command, cancellationToken);
-                return result.IsSuccess ? Results.Ok(new
-                {
-                    result.Value
-                }) : result.Problem();
+                return result.IsSuccess ? Results.Ok(result.Value) : result.Problem();
             })
             .WithTags("Authentication")
             .WithSummary("Refresh access token")

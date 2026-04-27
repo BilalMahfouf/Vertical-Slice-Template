@@ -137,10 +137,7 @@ public static class Login
                 CancellationToken cancellationToken = default) =>
             {
                 var result = await handler.Handle(request, cancellationToken);
-                return result.IsSuccess ? Results.Ok(new
-                {
-                    result.Value
-                }) : result.Problem();
+                return result.IsSuccess ? Results.Ok(result.Value) : result.Problem();
             })
             .WithTags("Authentication")
             .WithSummary("User login")
