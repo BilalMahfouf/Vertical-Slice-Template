@@ -27,31 +27,67 @@ This README gives a full high-level backend architecture, auth flow, outbox/even
 ## High-Level System Design
 
 ```mermaid
-flowchart LR
-  FE[Frontend SPA\nReact + Axios + Token Manager]
-  API[ASP.NET Core API\nMinimal API + Carter\n/api/v1]
-  AUTH[Auth Services\nJWT + Argon2 + Cookies]
-  APP[Feature Slices\nUsers Clinics Clients Animals Visits etc]
-  OUTBOX[Outbox Writer\nEF SaveChanges Interceptor]
-  DB[(PostgreSQL)]
-  JOBS[Quartz Scheduler\nOutbox + Daily Jobs]
-  PUBSUB[In-Memory Event Publisher\nDI Handler Fan-Out]
-  HANDLERS[Domain Event Handlers\nEmail/Notifications/Business Reactions]
-  RT[SignalR + Web Push]
+flowchart TB
+  %% Top-to-bottom layered architecture (more readable on wide docs)
+
+  subgraph C[Client Layer]
+    U[User Browser]
+    FE[Frontend SPA\nReact + Axios + Token Manager]
+    U --> FE
+  end
+
+  subgraph E[Edge and API Layer]
+    API[ASP.NET Core API\nMinimal API + Carter\n/api/v1]
+    MW[Middleware Pipeline\nCORS -> Exception Handling -> AuthN -> AuthZ]
+    EP[Vertical Slice Endpoints\nUsers/Auth/Clinics/Clients/Animals/Visits/...]
+    API --> MW --> EP
+  end
+
+  subgraph AC[Application Core]
+    AUTH[Auth Services\nJWT + Argon2 + Cookie Session]
+    CORE[Command/Query Handlers\nValidation + Domain Logic]
+    TEN[Tenant and Current User Context]
+    OUTW[Outbox Writer\nEF SaveChanges Interceptor]
+    EP --> AUTH
+    EP --> CORE
+    CORE --> TEN
+    CORE --> OUTW
+  end
+
+  subgraph AE[Async and Eventing]
+    QTZ[Quartz Scheduler]
+    OJOB[ProcessOutboxMessagesJob\nPoll every 10s]
+    PUB[In-Memory Domain Event Publisher\nDI-based handler fan-out]
+    HN[Domain Event Handlers\nEmail + Notifications + Business Reactions]
+    QTZ --> OJOB --> PUB --> HN
+  end
+
+  subgraph D[Data and Delivery]
+    DB[(PostgreSQL)]
+    RT[SignalR Hub]
+    WP[Web Push]
+  end
 
   FE -->|HTTPS + withCredentials| API
-  API --> AUTH
-  API --> APP
-  APP --> OUTBOX
   AUTH --> DB
-  APP --> DB
-  OUTBOX --> DB
-  JOBS -->|poll outbox| DB
-  JOBS --> PUBSUB
-  PUBSUB --> HANDLERS
-  HANDLERS --> DB
-  HANDLERS --> RT
+  CORE --> DB
+  OUTW --> DB
+  OJOB -->|read pending outbox messages| DB
+  HN --> DB
+  HN --> RT
+  HN --> WP
   RT --> FE
+  WP --> FE
+
+  classDef layer fill:#f7f9fc,stroke:#5f6b7a,stroke-width:1px;
+  classDef data fill:#eef6ff,stroke:#3b82f6,stroke-width:1px;
+  classDef async fill:#f5fff4,stroke:#16a34a,stroke-width:1px;
+  classDef client fill:#fff8ed,stroke:#d97706,stroke-width:1px;
+
+  class C,E,AC layer;
+  class D data;
+  class AE async;
+  class U,FE client;
 ```
 
 ## Backend Architecture (How It Works)
@@ -158,18 +194,46 @@ Without an outbox, domain state could commit while event delivery fails. This te
 ### Event flow diagram
 
 ```mermaid
-flowchart TD
-  A[Domain Operation] --> B[Entity Raises Domain Event]
-  B --> C[InsertOutboxMessagesInterceptor]
-  C --> D[(outbox_messages table)]
-  D --> E[Quartz ProcessOutboxMessagesJob\nEvery 10s, batch polling]
-  E --> F[DomainEventPublisher]
-  F --> G[IDomainEventHandler A]
-  F --> H[IDomainEventHandler B]
-  F --> I[IDomainEventHandler N]
-  G --> J[Side Effects\nEmail/Notification/DB updates]
-  H --> J
-  I --> J
+flowchart TB
+  subgraph W[Write Path (Synchronous Transaction)]
+    A[Feature Command/Domain Operation]
+    B[Aggregate Raises Domain Event]
+    C[InsertOutboxMessagesInterceptor]
+    D[(outbox_messages)]
+    A --> B --> C --> D
+  end
+
+  subgraph R[Read and Dispatch Path (Asynchronous)]
+    E[ProcessOutboxMessagesJob\nQuartz every 10s]
+    F[Deserialize Event Payload]
+    G[DomainEventPublisher\nIn-memory pub/sub fan-out]
+    H1[IDomainEventHandler 1]
+    H2[IDomainEventHandler 2]
+    HN[IDomainEventHandler N]
+    E --> F --> G
+    G --> H1
+    G --> H2
+    G --> HN
+  end
+
+  subgraph S[Side Effects]
+    DB[(PostgreSQL Updates)]
+    EM[Email Delivery]
+    NT[SignalR/Web Push Notification]
+  end
+
+  D --> E
+  H1 --> DB
+  H2 --> EM
+  HN --> NT
+
+  classDef sync fill:#fff8ed,stroke:#d97706,stroke-width:1px;
+  classDef async fill:#f5fff4,stroke:#16a34a,stroke-width:1px;
+  classDef fx fill:#eef6ff,stroke:#3b82f6,stroke-width:1px;
+
+  class W sync;
+  class R async;
+  class S fx;
 ```
 
 ## How Frontend Uses This Backend
