@@ -27,60 +27,43 @@ This README gives a full high-level backend architecture, auth flow, outbox/even
 ## High-Level System Design
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {
+  "background": "#0b1220",
+  "primaryColor": "#111827",
+  "primaryBorderColor": "#38bdf8",
+  "primaryTextColor": "#e5e7eb",
+  "lineColor": "#94a3b8",
+  "tertiaryColor": "#0f172a"
+}}}%%
 flowchart TB
-  subgraph Z1[Consumer Zone]
-    U[User Browser]
-    FE[Frontend SPA\nReact + Axios + Token Manager]
-    U --> FE
-  end
+  U[User]
+  FE[Frontend SPA]
+  API[ASP.NET Core API\nCarter + /api/v1]
+  APP[Auth and Feature Handlers\nValidation + Domain Rules]
+  DB[(PostgreSQL)]
+  OB[(outbox_messages)]
+  JOB[Quartz Outbox Job\nEvery 10s]
+  EVT[In-Memory Event Handlers]
+  RT[SignalR and Web Push]
 
-  subgraph Z2[Platform Edge]
-    API[Veterinary API\nASP.NET Core + Carter\n/api/v1]
-    MW[Middleware Chain\nCORS -> Exceptions -> AuthN -> AuthZ]
-    ROUTES[Vertical Slice Endpoints\nAuth + Users + Clinics + Clients + Animals + Visits]
-    API --> MW --> ROUTES
-  end
-
-  subgraph Z3[Business and Application Layer]
-    AUTH[Authentication Services\nJWT + Argon2 + Refresh Cookie]
-    APP[Command/Query Handlers\nValidation + Domain Rules]
-    TENANT[Tenant and Current User Context]
-    OUTBOXW[Outbox Write Path\nSaveChanges Interceptor]
-    ROUTES --> AUTH
-    ROUTES --> APP
-    APP --> TENANT
-    APP --> OUTBOXW
-  end
-
-  subgraph Z4[Async Processing Layer]
-    SCHED[Quartz Scheduler]
-    OUTBOXJOB[Outbox Processor Job\nPoll every 10s]
-    BUS[In-Memory Event Bus\nDomainEventPublisher]
-    HANDLERS[Domain Event Handlers\nEmail + Notification + Business Reactions]
-    SCHED --> OUTBOXJOB --> BUS --> HANDLERS
-  end
-
-  subgraph Z5[Data and Delivery Layer]
-    DB[(PostgreSQL)]
-    HUB[SignalR Hub]
-    PUSH[Web Push]
-  end
-
+  U --> FE
   FE -->|HTTPS + credentials| API
-  AUTH --> DB
+  API --> APP
   APP --> DB
-  OUTBOXW --> DB
-  OUTBOXJOB -->|read pending events| DB
-  HANDLERS --> DB
-  HANDLERS --> HUB
-  HANDLERS --> PUSH
-  HUB --> FE
-  PUSH --> FE
+  APP --> OB
+  OB --> JOB
+  JOB --> EVT
+  EVT --> DB
+  EVT --> RT
+  RT --> FE
 
-  classDef zone fill:#f8fafc,stroke:#475569,stroke-width:1px;
-  classDef data fill:#f0f9ff,stroke:#0284c7,stroke-width:1px;
-  class Z1,Z2,Z3,Z4 zone;
-  class Z5 data;
+  classDef core fill:#111827,stroke:#38bdf8,stroke-width:1.2px,color:#e5e7eb;
+  classDef data fill:#172554,stroke:#60a5fa,stroke-width:1.2px,color:#e5e7eb;
+  classDef async fill:#052e16,stroke:#22c55e,stroke-width:1.2px,color:#e5e7eb;
+
+  class U,FE,API,APP core;
+  class DB,OB data;
+  class JOB,EVT,RT async;
 ```
 
 ## Backend Architecture (How It Works)
