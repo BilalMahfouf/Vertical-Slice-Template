@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using Quartz;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Common.CQRS;
-using VeterinaryApi.Domain.Appointments;
 using VeterinaryApi.Domain.Common;
 using VeterinaryApi.Infrastructure.Persistence;
 

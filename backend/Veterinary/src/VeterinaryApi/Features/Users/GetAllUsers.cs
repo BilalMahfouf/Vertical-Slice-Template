@@ -48,7 +48,6 @@ public static class GetAllUsers
                 e.Email,
                 e.Role.ToString(),
                 e.IsActive,
-                e.Clinic != null,
                 null,
                 null,
                 e.CreatedOnUtc

@@ -54,7 +54,6 @@ public static class GetUserById
             var isSubscriptionExist = subscriptionStatus is not null;
             var response = await _db.Users
                 .Where(u => u.Id == query.UserId)
-                .Include(u => u.Clinic)
                 .Select(u => new Response(
                     u.Id,
                     u.UserName,
@@ -62,7 +61,6 @@ public static class GetUserById
                     u.Email,
                     u.Role.ToString(),
                     u.IsActive,
-                    u.Clinic != null,
                     subscriptionStatus,
                     isSubscriptionExist,
                     u.CreatedOnUtc

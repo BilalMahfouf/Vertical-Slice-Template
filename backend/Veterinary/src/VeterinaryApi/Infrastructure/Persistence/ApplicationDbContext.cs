@@ -1,14 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VeterinaryApi.Common.Abstracions;
-using VeterinaryApi.Domain.Animals;
-using VeterinaryApi.Domain.Appointments;
-using VeterinaryApi.Domain.Clients;
-using VeterinaryApi.Domain.Clinics;
 using VeterinaryApi.Domain.Notifications;
 using VeterinaryApi.Domain.Subscriptions;
 using VeterinaryApi.Domain.Users;
-using VeterinaryApi.Domain.Vaccinations;
-using VeterinaryApi.Domain.Visits;
 using VeterinaryApi.Infrastructure.OutboxMessages;
 using VeterinaryApi.Infrastructure.Persistence.Configurations.Users;
 
@@ -49,19 +43,14 @@ public class ApplicationDbContext : DbContext
     public DbSet<UserSession> UserSessions { get; set; } = null!;
 
     /// <inheritdoc />
-    public DbSet<Clinic> Clinics { get; set; } = null!;
 
     /// <inheritdoc />
-    public DbSet<Client> Clients { get; set; } = null!;
 
     /// <inheritdoc />
-    public DbSet<Animal> Animals { get; set; } = null!;
 
     /// <inheritdoc />
-    public DbSet<Appointment> Appointments { get; set; } = null!;
 
     /// <inheritdoc />
-    public DbSet<Visit> Visits { get; set; } = null!;
 
     /// <inheritdoc />
     public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
@@ -73,7 +62,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<NotificationPushSubscription> NotificationPushSubscriptions { get; set; } = null!;
 
     /// <inheritdoc />
-    public DbSet<Vaccination> Vaccinations { get; set; } = null!;
 
 
     public DbSet<Subscription> Subscriptions { get; set; }

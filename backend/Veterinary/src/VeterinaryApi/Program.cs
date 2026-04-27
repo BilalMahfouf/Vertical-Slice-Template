@@ -26,7 +26,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddValidatorsFromAssemblyContaining
-    <VeterinaryApi.Features.Animals.CreateAnimal.Validator>(ServiceLifetime.Singleton);
+    < VeterinaryApi.Features.Users.ChangeEmail.Validator>(ServiceLifetime.Singleton);
 
 builder.Services.AddProblemDetails();
 

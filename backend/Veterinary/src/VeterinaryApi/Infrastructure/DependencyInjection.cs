@@ -16,7 +16,6 @@ using VeterinaryApi.Infrastructure.CQRS;
 using VeterinaryApi.Infrastructure.Interceptors;
 using VeterinaryApi.Infrastructure.Notifications;
 using VeterinaryApi.Infrastructure.OutboxMessages;
-using VeterinaryApi.Infrastructure.Notifications.Jobs;
 using VeterinaryApi.Infrastructure.Persistence;
 using VeterinaryApi.Infrastructure.Services.Hashers;
 using VeterinaryApi.Infrastructure.Services.Notifications;
@@ -165,18 +164,7 @@ public static class DependencyInjection
               schedule.WithIntervalInSeconds(10)
               .RepeatForever()));
 
-              // Daily reminders — runs every day at 08:00 AM UTC
-              var dailyRemindersJobKey = new JobKey(nameof(DailyRemindersJob));
-              configure
-              .AddJob<DailyRemindersJob>((sp, opts) =>
-              {
-                  opts.WithIdentity(dailyRemindersJobKey);
-              })
-              .AddTrigger(trigger =>
-              trigger.ForJob(dailyRemindersJobKey)
-              .WithCronSchedule("0 0 8 * * ?"));
-
-              // Mark past due subscriptions — runs every day at 00:00 AM UTC
+                          // Mark past due subscriptions — runs every day at 00:00 AM UTC
               var markPastDueSubscriptionJobKey = new JobKey(
                   nameof(MarkPastDueSubscriptionDailyJob));
               configure

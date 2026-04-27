@@ -1,5 +1,4 @@
-﻿using VeterinaryApi.Domain.Clinics;
-using VeterinaryApi.Domain.Common;
+﻿using VeterinaryApi.Domain.Common;
 using VeterinaryApi.Domain.Subscriptions;
 
 namespace VeterinaryApi.Domain.Users;
@@ -43,7 +42,6 @@ public class User : Entity
     /// <summary>Gets a value indicating whether the user account is currently active.</summary>
     public bool IsActive { get; private set; }
 
-    public Clinic? Clinic { get; private set; } = null;
 
     private readonly List<UserSession> _sessions = new List<UserSession>();
 
