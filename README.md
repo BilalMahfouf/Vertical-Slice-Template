@@ -28,66 +28,59 @@ This README gives a full high-level backend architecture, auth flow, outbox/even
 
 ```mermaid
 flowchart TB
-  %% Top-to-bottom layered architecture (more readable on wide docs)
-
-  subgraph C[Client Layer]
+  subgraph Z1[Consumer Zone]
     U[User Browser]
     FE[Frontend SPA\nReact + Axios + Token Manager]
     U --> FE
   end
 
-  subgraph E[Edge and API Layer]
-    API[ASP.NET Core API\nMinimal API + Carter\n/api/v1]
-    MW[Middleware Pipeline\nCORS -> Exception Handling -> AuthN -> AuthZ]
-    EP[Vertical Slice Endpoints\nUsers/Auth/Clinics/Clients/Animals/Visits/...]
-    API --> MW --> EP
+  subgraph Z2[Platform Edge]
+    API[Veterinary API\nASP.NET Core + Carter\n/api/v1]
+    MW[Middleware Chain\nCORS -> Exceptions -> AuthN -> AuthZ]
+    ROUTES[Vertical Slice Endpoints\nAuth + Users + Clinics + Clients + Animals + Visits]
+    API --> MW --> ROUTES
   end
 
-  subgraph AC[Application Core]
-    AUTH[Auth Services\nJWT + Argon2 + Cookie Session]
-    CORE[Command/Query Handlers\nValidation + Domain Logic]
-    TEN[Tenant and Current User Context]
-    OUTW[Outbox Writer\nEF SaveChanges Interceptor]
-    EP --> AUTH
-    EP --> CORE
-    CORE --> TEN
-    CORE --> OUTW
+  subgraph Z3[Business and Application Layer]
+    AUTH[Authentication Services\nJWT + Argon2 + Refresh Cookie]
+    APP[Command/Query Handlers\nValidation + Domain Rules]
+    TENANT[Tenant and Current User Context]
+    OUTBOXW[Outbox Write Path\nSaveChanges Interceptor]
+    ROUTES --> AUTH
+    ROUTES --> APP
+    APP --> TENANT
+    APP --> OUTBOXW
   end
 
-  subgraph AE[Async and Eventing]
-    QTZ[Quartz Scheduler]
-    OJOB[ProcessOutboxMessagesJob\nPoll every 10s]
-    PUB[In-Memory Domain Event Publisher\nDI-based handler fan-out]
-    HN[Domain Event Handlers\nEmail + Notifications + Business Reactions]
-    QTZ --> OJOB --> PUB --> HN
+  subgraph Z4[Async Processing Layer]
+    SCHED[Quartz Scheduler]
+    OUTBOXJOB[Outbox Processor Job\nPoll every 10s]
+    BUS[In-Memory Event Bus\nDomainEventPublisher]
+    HANDLERS[Domain Event Handlers\nEmail + Notification + Business Reactions]
+    SCHED --> OUTBOXJOB --> BUS --> HANDLERS
   end
 
-  subgraph D[Data and Delivery]
+  subgraph Z5[Data and Delivery Layer]
     DB[(PostgreSQL)]
-    RT[SignalR Hub]
-    WP[Web Push]
+    HUB[SignalR Hub]
+    PUSH[Web Push]
   end
 
-  FE -->|HTTPS + withCredentials| API
+  FE -->|HTTPS + credentials| API
   AUTH --> DB
-  CORE --> DB
-  OUTW --> DB
-  OJOB -->|read pending outbox messages| DB
-  HN --> DB
-  HN --> RT
-  HN --> WP
-  RT --> FE
-  WP --> FE
+  APP --> DB
+  OUTBOXW --> DB
+  OUTBOXJOB -->|read pending events| DB
+  HANDLERS --> DB
+  HANDLERS --> HUB
+  HANDLERS --> PUSH
+  HUB --> FE
+  PUSH --> FE
 
-  classDef layer fill:#f7f9fc,stroke:#5f6b7a,stroke-width:1px;
-  classDef data fill:#eef6ff,stroke:#3b82f6,stroke-width:1px;
-  classDef async fill:#f5fff4,stroke:#16a34a,stroke-width:1px;
-  classDef client fill:#fff8ed,stroke:#d97706,stroke-width:1px;
-
-  class C,E,AC layer;
-  class D data;
-  class AE async;
-  class U,FE client;
+  classDef zone fill:#f8fafc,stroke:#475569,stroke-width:1px;
+  classDef data fill:#f0f9ff,stroke:#0284c7,stroke-width:1px;
+  class Z1,Z2,Z3,Z4 zone;
+  class Z5 data;
 ```
 
 ## Backend Architecture (How It Works)
@@ -195,45 +188,42 @@ Without an outbox, domain state could commit while event delivery fails. This te
 
 ```mermaid
 flowchart TB
-  subgraph W[Write Path (Synchronous Transaction)]
-    A[Feature Command/Domain Operation]
-    B[Aggregate Raises Domain Event]
-    C[InsertOutboxMessagesInterceptor]
-    D[(outbox_messages)]
-    A --> B --> C --> D
+  subgraph P1[Transaction Boundary - Write Phase]
+    C1[1. Feature command executes]
+    C2[2. Domain event raised by aggregate]
+    C3[3. SaveChanges interceptor captures events]
+    O[(outbox_messages table)]
+    C1 --> C2 --> C3 --> O
   end
 
-  subgraph R[Read and Dispatch Path (Asynchronous)]
-    E[ProcessOutboxMessagesJob\nQuartz every 10s]
-    F[Deserialize Event Payload]
-    G[DomainEventPublisher\nIn-memory pub/sub fan-out]
-    H1[IDomainEventHandler 1]
-    H2[IDomainEventHandler 2]
-    HN[IDomainEventHandler N]
-    E --> F --> G
-    G --> H1
-    G --> H2
-    G --> HN
+  subgraph P2[Asynchronous Delivery Phase]
+    J1[4. Quartz outbox job polls pending rows]
+    J2[5. Event payload deserialized]
+    J3[6. DomainEventPublisher dispatches]
+    H1[Handler A]
+    H2[Handler B]
+    HN[Handler N]
+    J1 --> J2 --> J3
+    J3 --> H1
+    J3 --> H2
+    J3 --> HN
   end
 
-  subgraph S[Side Effects]
-    DB[(PostgreSQL Updates)]
-    EM[Email Delivery]
-    NT[SignalR/Web Push Notification]
+  subgraph P3[Effects and Projections]
+    DB[(PostgreSQL)]
+    MAIL[Email provider]
+    REALTIME[SignalR/Web Push]
   end
 
-  D --> E
+  O --> J1
   H1 --> DB
-  H2 --> EM
-  HN --> NT
+  H2 --> MAIL
+  HN --> REALTIME
 
-  classDef sync fill:#fff8ed,stroke:#d97706,stroke-width:1px;
-  classDef async fill:#f5fff4,stroke:#16a34a,stroke-width:1px;
-  classDef fx fill:#eef6ff,stroke:#3b82f6,stroke-width:1px;
-
-  class W sync;
-  class R async;
-  class S fx;
+  classDef phase fill:#f8fafc,stroke:#475569,stroke-width:1px;
+  classDef effect fill:#f0f9ff,stroke:#0284c7,stroke-width:1px;
+  class P1,P2 phase;
+  class P3 effect;
 ```
 
 ## How Frontend Uses This Backend
