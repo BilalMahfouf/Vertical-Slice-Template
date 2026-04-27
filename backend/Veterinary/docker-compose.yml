@@ -2,7 +2,7 @@ services:
   veterinaryapi:
     image: veterinary-api:latest
     build:
-      context: ./src/VeterinaryApi
+      context: ../
       dockerfile: Dockerfile
     env_file:
        - ./.env
