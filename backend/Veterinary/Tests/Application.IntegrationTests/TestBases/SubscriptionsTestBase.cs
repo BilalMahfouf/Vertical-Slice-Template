@@ -10,6 +10,10 @@ using VeterinaryApi.Domain.Subscriptions;
 using VeterinaryApi.Domain.Users;
 using VeterinaryApi.Infrastructure.Payments;
 using VeterinaryApi.Infrastructure.Persistence;
+using CreateSubscriptionEndpoint = VeterinaryApi.Features.Subscriptions.Endpoints.CreateSubscirption;
+using RenewSubscriptionEndpoint = VeterinaryApi.Features.Subscriptions.Endpoints.RenewSubscription;
+using SubscriptionCheckoutEndpoint = VeterinaryApi.Features.Subscriptions.Endpoints.CreateCheckout;
+using SubscriptionMeEndpoint = VeterinaryApi.Features.Subscriptions.Endpoints.Me;
 
 namespace Application.IntegrationTests.TestBases;
 
@@ -40,31 +44,31 @@ public abstract class SubscriptionsTestBase : IntegrationTestBase
         services.AddSingleton<IPaymentService>(PaymentService);
     }
 
-    protected CreateCheckout.Handler CreateCreateCheckoutHandler(IServiceProvider services)
+    protected SubscriptionCheckoutEndpoint.Handler CreateCreateCheckoutHandler(IServiceProvider services)
     {
-        return new CreateCheckout.Handler(
+        return new SubscriptionCheckoutEndpoint.Handler(
             services.GetRequiredService<IApplicationDbContext>(),
             services.GetRequiredService<IChargilyPayClient>(),
             services.GetRequiredService<IOptions<ChargilyOptions>>());
     }
 
-    protected CreateSubscirption.CommandHandler CreateCreateSubscriptionHandler(IServiceProvider services)
+    protected CreateSubscriptionEndpoint.CommandHandler CreateCreateSubscriptionHandler(IServiceProvider services)
     {
-        return new CreateSubscirption.CommandHandler(
+        return new CreateSubscriptionEndpoint.CommandHandler(
             services.GetRequiredService<IApplicationDbContext>(),
-            services.GetRequiredService<FluentValidation.IValidator<CreateSubscirption.Command>>());
+            services.GetRequiredService<FluentValidation.IValidator<CreateSubscriptionEndpoint.Command>>());
     }
 
-    protected RenewSubscription.CommandHandler CreateRenewSubscriptionHandler(IServiceProvider services)
+    protected RenewSubscriptionEndpoint.CommandHandler CreateRenewSubscriptionHandler(IServiceProvider services)
     {
-        return new RenewSubscription.CommandHandler(
+        return new RenewSubscriptionEndpoint.CommandHandler(
             services.GetRequiredService<IApplicationDbContext>(),
             services.GetRequiredService<IPaymentService>());
     }
 
-    protected Endpoints.Me.QueryHandler CreateSubscriptionMeHandler(IServiceProvider services)
+    protected SubscriptionMeEndpoint.QueryHandler CreateSubscriptionMeHandler(IServiceProvider services)
     {
-        return new Endpoints.Me.QueryHandler(
+        return new SubscriptionMeEndpoint.QueryHandler(
             services.GetRequiredService<IApplicationDbContext>());
     }
 

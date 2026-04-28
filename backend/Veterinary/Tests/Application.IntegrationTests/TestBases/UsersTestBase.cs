@@ -1,7 +1,9 @@
 using Application.IntegrationTests.Infrastructure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using VeterinaryApi.Common.Abstracions;
 using VeterinaryApi.Domain.Users;
+using VeterinaryApi.Features.Users;
 using VeterinaryApi.Infrastructure.Persistence;
 
 namespace Application.IntegrationTests.TestBases;

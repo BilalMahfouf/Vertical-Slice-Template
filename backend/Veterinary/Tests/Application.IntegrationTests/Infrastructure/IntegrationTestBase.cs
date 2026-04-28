@@ -5,7 +5,6 @@ using VeterinaryApi.Common.Abstracions.Emails;
 using VeterinaryApi.Common.Abstracions.Payments;
 using VeterinaryApi.Features.Subscriptions.Endpoints;
 using VeterinaryApi.Features.Users;
-using VeterinaryApi.Infrastructure.Auth;
 using VeterinaryApi.Infrastructure.Interceptors;
 using VeterinaryApi.Infrastructure.OutboxMessages;
 using VeterinaryApi.Infrastructure.Persistence;
@@ -101,14 +100,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
         services.AddSingleton<IPasswordHasher, Argon2PasswordHasher>();
-        services.AddSingleton<IJwtProvider, JwtProvider>();
-        services.AddOptions<JwtOptions>().Configure(options =>
-        {
-            options.SingingKey = "01234567890123456789012345678901";
-            options.Issuer = "integration-tests";
-            options.Audience = "integration-tests";
-            options.LifeTime = 15;
-        });
+        services.AddSingleton<IJwtProvider, TestJwtProvider>();
 
         EmailService = new TestEmailService();
         services.AddSingleton<IEmailService>(EmailService);
